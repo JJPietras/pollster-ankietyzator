@@ -31,6 +31,7 @@ namespace Ankietyzator.Models
 
             services.AddDbContext<AnkietyzatorDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContext")));
+                //options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAmzol")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
