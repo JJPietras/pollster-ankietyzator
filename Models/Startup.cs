@@ -1,5 +1,8 @@
 using System;
 using Ankietyzator.Models.DataModel;
+using Ankietyzator.Services.Implementations;
+using Ankietyzator.Services.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -29,6 +32,10 @@ namespace Ankietyzator.Models
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IRegisterService, RegisterService>();
+            services.AddScoped<ILoginService, LoginService>();
+            
             services.AddDbContext<AnkietyzatorDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContext")));
         }

@@ -1,23 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.ViewModel;
+using Ankietyzator.Models.DTO;
+using Ankietyzator.Models.DTO.Account;
+using Ankietyzator.Models.DTO.Login;
+using Ankietyzator.Services.Interfaces;
 
 namespace Ankietyzator.Controllers
 {
     //[Route("api/[controller]")]
     [ApiController]
+    //[LoginAuth]
     public class AccountsController : ControllerBase
     {
         private readonly AnkietyzatorDBContext _context;
 
-        public AccountsController(AnkietyzatorDBContext context)
+        private readonly IRegisterService _register;
+        private readonly ILoginService _login;
+
+        public AccountsController(AnkietyzatorDBContext context, IRegisterService register, ILoginService login)
         {
             _context = context;
+            _register = register;
+            _login = login;
+            _register.Context = context;
+            _login.Context = context;
         }
 
         //===================== GET =======================//
@@ -25,53 +35,27 @@ namespace Ankietyzator.Controllers
 
         // GET: api/Accounts
         [HttpGet("accounts")]
-        public IEnumerable<AccountView> GetAccounts() => _context.Accounts
-            .Select(a => new AccountView
-            {
-                Id = a.Id,
-                UserName = a.UserName.TrimEnd(),
-                EMail = a.EMail.TrimEnd(),
-                UserType = a.UserType
-            }).ToList();
-
-
-        //TESTER
-        [HttpGet("inserter")]
-        public async Task<ActionResult> AddData()
+        public async Task<IActionResult> GetAccounts()
         {
-            await _context.Accounts.AddAsync(new Account
-            {
-                EMail = "mymail@mail.com", PasswordHash = new byte[] {0x24}, UserName = "UZAR",
-                UserType = UserType.Pollster
-            });
-            await _context.SaveChangesAsync();
-            Account account = (from d in _context.Accounts select d).FirstOrDefault();
-
-            Console.WriteLine(
-                "UserName: {0} UserType: {1}",
-                account.UserName,
-                account.UserType);
-            return NoContent();
+            return Ok(await _register.GetAccounts());
         }
 
+        //TODO: change
         // GET: api/Accounts/5
         [HttpGet("accounts/{id}")]
         public async Task<ActionResult<Account>> GetAccount(int? id)
         {
-            Account account = await _context.Accounts.FindAsync(id);
-            if (account == null) return NotFound();
-            return account;
+            Account getAccountDto = await _context.Accounts.FindAsync(id);
+            if (getAccountDto == null) return NotFound();
+            return getAccountDto;
         }
-
-        // PUT: api/Accounts/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        
         [HttpPut("accounts/{id}")]
-        public async Task<IActionResult> PutAccount(int? id, Account account)
+        public async Task<IActionResult> PutAccount(int? id, Account getAccountDto)
         {
-            if (id != account.Id) return BadRequest();
+            if (id != getAccountDto.Id) return BadRequest();
 
-            _context.Entry(account).State = EntityState.Modified;
+            _context.Entry(getAccountDto).State = EntityState.Modified;
 
             try
             {
@@ -86,41 +70,28 @@ namespace Ankietyzator.Controllers
             return NoContent();
         }
 
-        [HttpPut("accounts")]
-        public async Task<ActionResult<AccountView>> PutAccount([FromBody] AccountRequest accountRequest)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateAccount(UpdateAccountDto updateAccountDto)
         {
-            Account account = _context.Accounts.FirstOrDefault(
-                a => a.UserName == accountRequest.UserName && a.PasswordHash == accountRequest.GetHash());
-            
-            if (account != null) return new ActionResult<AccountView>(new AccountView
-            {
-                Id = account.Id,
-                EMail = account.EMail.TrimEnd(),
-                UserName = account.UserName.TrimEnd(), 
-                UserType = account.UserType
-            });
-            
-            return NotFound();
+            Response<GetAccountDto> accountResponse = await _register.UpdateAccount(updateAccountDto);
+            if (!accountResponse.Success) return Conflict(accountResponse);
+            return CreatedAtAction("UpdateAccount", accountResponse); 
         }
-
-        // POST: api/Accounts
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("accounts")]
-        public async Task<ActionResult<Account>> PostAccount(AccountRequest accountRequest)
+        
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAccount(AddAccountDto addAccountDto)
         {
-            Account newAccount = new Account
-            {
-                EMail = accountRequest.EMail.TrimEnd(),
-                UserName = accountRequest.UserName.TrimEnd(),
-                PasswordHash = accountRequest.GetHash(),
-                UserType = UserType.User
-            };
-
-            await _context.Accounts.AddAsync(newAccount);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAccount", new {id = newAccount.Id}, accountRequest);
+            Response<GetAccountDto> accountResponse = await _register.RegisterAccount(addAccountDto);
+            if (!accountResponse.Success) return Conflict(accountResponse);
+            return CreatedAtAction("RegisterAccount", accountResponse); 
+        }
+        
+        [HttpPost("login")]
+        public IActionResult LoginToAccount(LoginDto loginDto)
+        {
+            Response<GetAccountDto> accountResponse = _login.LoginToAccount(loginDto);
+            if (!accountResponse.Success) return Conflict(accountResponse);
+            return CreatedAtAction("LoginToAccount", accountResponse); 
         }
 
         // DELETE: api/Accounts/5
