@@ -1,8 +1,8 @@
 ﻿using Ankietyzator.Models.DataModel;
 
-namespace Ankietyzator.Models.ViewModel
+namespace Ankietyzator.Models.DTO.Account
 {
-    public class AccountView
+    public class GetAccountDto
     {
         public int? Id { get; set; }
         public string UserName { get; set; }
