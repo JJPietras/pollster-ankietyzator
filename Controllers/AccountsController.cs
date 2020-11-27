@@ -4,16 +4,18 @@ using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.DTO;
 using Ankietyzator.Models.DTO.Account;
 using Ankietyzator.Models.DTO.Login;
 using Ankietyzator.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Ankietyzator.Controllers
 {
     //[Route("api/[controller]")]
     [ApiController]
     //[LoginAuth]
+    [Authorize]
     public class AccountsController : ControllerBase
     {
         private readonly AnkietyzatorDBContext _context;
@@ -31,7 +33,6 @@ namespace Ankietyzator.Controllers
         }
 
         //===================== GET =======================//
-
 
         // GET: api/Accounts
         [HttpGet("accounts")]
