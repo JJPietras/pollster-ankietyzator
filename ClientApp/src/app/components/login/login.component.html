@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+
 <div class="d-flex h-90">
   <div class="login-container m-auto">
     <div class="card boxshadow">
@@ -50,4 +52,16 @@
       </div>
     </div>
   </div>
+</div>
+<div class="google-btn" (click)="SignInWithGoogle()">
+  <div class="google-icon-wrapper">
+    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+  </div>
+  <p class="btn-text"><b>Sign in with google</b></p>
+</div>
+<div class="google-btn" (click)="LogOutFromGoogle()">
+  <div class="google-icon-wrapper">
+    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+  </div>
+  <p class="btn-text"><b>Log-out from google</b></p>
 </div>

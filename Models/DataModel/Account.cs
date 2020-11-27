@@ -2,6 +2,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Models.DataModel
@@ -12,6 +13,7 @@ namespace Ankietyzator.Models.DataModel
         public string UserName { get; set; }
         public string EMail { get; set; }
         public byte[] PasswordHash { get; set; }
+        
         public UserType UserType { get; set; }
         
         public static byte[] GetHash(string password)
