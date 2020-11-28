@@ -1,5 +1,4 @@
 ﻿using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.DTO;
 using Ankietyzator.Models.DTO.Account;
 using AutoMapper;
 
@@ -9,8 +8,8 @@ namespace Ankietyzator
     {
         public AutoMapperProfile()
         {
-            CreateMap<AddAccountDto, Account>();
-            CreateMap<Account, GetAccountDto>();
+            //CreateMap<AddAccountDto, Account>();
+            //CreateMap<Account, GetAccountDto>();
         }
     }
 }

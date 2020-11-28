@@ -29,6 +29,5 @@ export class LoginComponent{
 
   public LogOutFromGoogle() {
     document.location.href = (this.baseUrl + 'google/google-logout')
-    document.location.href = ("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://localhost:5001")
   }
 }
