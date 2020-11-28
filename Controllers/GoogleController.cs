@@ -1,46 +1,73 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Ankietyzator.Models.DataModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Controllers
 {
-    [AllowAnonymous, Route("google")]
+    [Route("google")]
     public class GoogleController : Controller
     {
-        // GET
+        private const int Id = 0;
+        private const int Name = 1;
+        private const int EMail = 2;
+
+        private readonly AnkietyzatorDBContext _context;
+
+        public GoogleController(AnkietyzatorDBContext context) => _context = context;
+
+        [AllowAnonymous]
         [Route("google-login")]
         public IActionResult GoogleLogin()
         {
-            AuthenticationProperties properties = new AuthenticationProperties{ RedirectUri = Url.Action("GoogleResponse")};
+            //signin-google
+            AuthenticationProperties properties = new AuthenticationProperties
+                {RedirectUri = Url.Action("GoogleResponse")};
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
+        //TODO: refactor
+        [AllowAnonymous]
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(c => new
-            {
-                c.Issuer,
-                c.OriginalIssuer,
-                c.Type,
-                c.Value
-            });
+            const string cookieScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            AuthenticateResult result = await HttpContext.AuthenticateAsync(cookieScheme);
 
-            return Ok();
+            Claim[] claims = result.Principal.Claims.ToArray();
+            string email = claims[EMail].Value;
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
+            if (account == null)
+            {
+                Account newAccount = new Account
+                {
+                    EMail = email,
+                    Name = claims[Name].Value,
+                    Tags = "",
+                    UserType = UserType.User
+                };
+                await _context.Accounts.AddAsync(newAccount);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Registered new user: " + newAccount.EMail + " " + newAccount.Name);
+                return Redirect("/user-login");
+            }
+
+            Console.WriteLine("User signed-up: " + account.EMail + " " + account.Name);
+            return Redirect("~/");
         }
 
         [Route("google-logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            Response.Redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=[https://cc-2020-group-one-ankietyzator.azurewebsites.com]");
-            //return Redirect();
-            return Ok();
+            return Redirect("/user-login");
         }
     }
 }

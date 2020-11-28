@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using Ankietyzator.Models.DataModel;
 using Ankietyzator.Services.Implementations;
 using Ankietyzator.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,29 +34,33 @@ namespace Ankietyzator.Models
 
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRegisterService, RegisterService>();
-            services.AddScoped<ILoginService, LoginService>();
 
             services.AddDbContext<AnkietyzatorDBContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContext")));
-            
-            /*services.AddAuthentication().AddGoogle(options =>
-            {
-                IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
+                options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure")));
 
-                options.ClientId = googleAuthNSection["ClientId"];
-                options.ClientSecret = googleAuthNSection["ClientSecret"];
-            });*/
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddCookie(options =>
             {
                 options.LoginPath = "/google/google-login";
+                options.LogoutPath = "/google/google-logout";
+                options.ReturnUrlParameter = "https://localhost:5001";
             }).AddGoogle(options =>
             {
                 IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
+                options.SaveTokens = true;
+                options.ClaimActions.Clear();
+                options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+                //options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+                //options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+                options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+                options.ReturnUrlParameter = "https://localhost:5001";
+                //options.ClaimActions.MapJsonKey("urn:google:profile", "link");
+                //options.ClaimActions.MapJsonKey("picture", "picture");
             });
         }
 
@@ -77,9 +84,9 @@ namespace Ankietyzator.Models
             {
                 app.UseSpaStaticFiles();
             }
-            
+
             app.UseRouting();
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -89,6 +96,12 @@ namespace Ankietyzator.Models
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+
+            app.UseForwardedHeaders(
+                new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                });
 
             app.UseSpa(spa =>
             {
