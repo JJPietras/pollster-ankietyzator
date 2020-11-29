@@ -20,5 +20,11 @@ namespace Ankietyzator.Models
         public DbSet<Answer> Answers { get; set; }
         public DbSet<QuestionStat> QuestionStats { get; set; }
         public DbSet<PollStat> PollStats { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new AnswerConfiguration());
+            base.OnModelCreating(builder);
+        }
     }
 }
