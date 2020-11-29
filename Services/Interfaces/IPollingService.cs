@@ -11,6 +11,10 @@ namespace Ankietyzator.Services.Interfaces
 
         Task<Response<List<GetPollFormDto>>> GetPollForms(int pollsterId);
 
+        Task<Response<List<GetPollFormDto>>> GetArchivedPollForms(int pollsterId);
+        
+        Task<Response<List<GetPollFormDto>>> GetNotArchivedPollForms(int pollsterId);
+
         Task<Response<object>> RemovePollForm(int pollId);
 
         Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, int accountId);

@@ -94,6 +94,8 @@ namespace Ankietyzator.Services.Implementations
             var questionStats = questions
                 .Select(q => new QuestionStat {QuestionId = q.QuestionId, AnswerCounts = GetOptionsCount(q.Options)})
                 .ToList();
+            await Context.QuestionStats.AddRangeAsync(questionStats);
+            await Context.SaveChangesAsync();
             return response.Success(questionStats, QuestionStatsCreatedStr);
         }
 

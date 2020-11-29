@@ -43,15 +43,12 @@ namespace Ankietyzator.Controllers
         {
             string mail = HttpContext.User.Claims.ToArray()[2].Value;
             Response<Account> accountResponse = await _register.GetAccount(mail);
-            if (accountResponse.Data != null)
-            {
-                UserType userType = accountResponse.Data.UserType;
-                Response<List<Account>> accountsResponse = await _register.GetAccounts(userType);
-                if (accountsResponse.Data != null) return Ok(accountsResponse);
-                return Unauthorized(accountsResponse);
-            }
-            
-            return NotFound(accountResponse);
+            if (accountResponse.Data == null) return NotFound(accountResponse);
+            UserType userType = accountResponse.Data.UserType;
+            Response<List<Account>> accountsResponse = await _register.GetAccounts(userType);
+            if (accountsResponse.Data != null) return Ok(accountsResponse);
+            return Unauthorized(accountsResponse);
+
         }
 
         //TODO: change

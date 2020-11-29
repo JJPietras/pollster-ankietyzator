@@ -20,6 +20,7 @@ namespace Ankietyzator.Services.Implementations
         private const string PollRemovedStr = "Poll form removed successfuly";
         private const string PollUpdatedStr = "Poll updated successfuly";
         private const string PollCreatedStr = "Poll created successfuly";
+        private const string PrevPollNotFoundStr = "Could not find previous poll";
         //private const string NotCreatedStr = "Poll could not be created";
 
         public AnkietyzatorDbContext Context { get; set; }
@@ -63,6 +64,22 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(pollFormsDto, PollFormsSuccessStr);
         }
 
+        public async Task<Response<List<GetPollFormDto>>> GetArchivedPollForms(int pollsterId)
+        {
+            var pollsResponse = await GetPollForms(pollsterId);
+            if (pollsResponse.Data == null) return pollsResponse;
+            pollsResponse.Data = pollsResponse.Data.Where(p => p.Archived).ToList();
+            return pollsResponse;
+        }
+
+        public async Task<Response<List<GetPollFormDto>>> GetNotArchivedPollForms(int pollsterId)
+        {
+            var pollsResponse = await GetPollForms(pollsterId);
+            if (pollsResponse.Data == null) return pollsResponse;
+            pollsResponse.Data = pollsResponse.Data.Where(p => !p.Archived).ToList();
+            return pollsResponse;
+        }
+
         public async Task<Response<object>> RemovePollForm(int pollId)
         {
             var response = new Response<object>();
@@ -78,9 +95,12 @@ namespace Ankietyzator.Services.Implementations
 
         public async Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, int accountId)
         {
-            //TODO: move old form to the archives
+            var response = new Response<GetPollFormDto>();
+            var previousForm = await Context.PollForms.FindAsync(pollForm.PreviousPollId);
+            if (previousForm == null) return response.Failure(PrevPollNotFoundStr);
+            previousForm.Archived = true;
             var createPollFormDto = _mapper.Map<CreatePollFormDto>(pollForm);
-            var response = await CreatePollForm(createPollFormDto, accountId);
+            response = await CreatePollForm(createPollFormDto, accountId);
             if (response.Data != null) response.Message = PollUpdatedStr;
             return response;
         }
