@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Controllers
 {
+    [ApiController]
     [Route("google")]
     public class GoogleController : Controller
     {

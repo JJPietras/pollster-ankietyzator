@@ -80,9 +80,9 @@ namespace Ankietyzator.Services.Implementations
             return pollsResponse;
         }
 
-        public async Task<Response<object>> RemovePollForm(int pollId)
+        public async Task<Response<GetPollFormDto>> RemovePollForm(int pollId)
         {
-            var response = new Response<object>();
+            var response = new Response<GetPollFormDto>();
             var pollForm = await Context.PollForms.FindAsync(pollId);
             if (pollForm == null) return response.Failure(NoPollFormStr);
             await _questionService.RemoveQuestions(pollId);
@@ -90,7 +90,7 @@ namespace Ankietyzator.Services.Implementations
             await Context.SaveChangesAsync();
             await _statService.RemovePollStats(pollId);
             await _statService.RemoveQuestionsStats(pollId);
-            return response.Success(null, PollRemovedStr);
+            return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
 
         public async Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, int accountId)

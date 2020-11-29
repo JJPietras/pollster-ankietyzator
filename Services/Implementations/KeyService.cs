@@ -10,6 +10,7 @@ namespace Ankietyzator.Services.Implementations
 {
     public class KeyService : IKeyService
     {
+        private const string KeyExistsStr = "Key with key string or email already exists";
         private const string KeysFetchedStr = "Keys fetched successfuly";
         private const string KeyFetchedStr = "Key fetched successfuly";
         private const string KeyRemovedStr = "Key removed successfuly";
@@ -60,11 +61,16 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(dalKey, KeyUpdatedStr);
         }
 
-        public async Task<Response<object>> AddPollsterKey(UpgradeKey upgradeKey)
+        public async Task<Response<UpgradeKey>> AddPollsterKey(UpgradeKey upgradeKey)
         {
+            var response = new Response<UpgradeKey>();
+            var existingKey = await Context.UpgradeKeys.FirstOrDefaultAsync(
+                u => u.Key == upgradeKey.Key || u.EMail == upgradeKey.EMail
+            );
+            if (existingKey != null) return response.Failure(KeyExistsStr);
             await Context.UpgradeKeys.AddAsync(upgradeKey);
             await Context.SaveChangesAsync();
-            return new Response<object>().Success(null, KeyAddedStr);
+            return response.Success(null, KeyAddedStr);
         }
     }
 }

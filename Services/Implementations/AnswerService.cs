@@ -16,7 +16,7 @@ namespace Ankietyzator.Services.Implementations
         private const string AnswersCreatedStr = "Answers created successfuly";
         
         public AnkietyzatorDbContext Context { get; set; }
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public AnswerService(IMapper mapper)
         {
@@ -40,6 +40,8 @@ namespace Ankietyzator.Services.Implementations
         {
             var dalAnswers = answers.Select(a => _mapper.Map<Answer>(a)).ToList();
             foreach (Answer dalAnswer in dalAnswers) dalAnswer.AccountId = userId;
+            await Context.Answers.AddRangeAsync(dalAnswers);
+            await Context.SaveChangesAsync();
             var getAnswers = dalAnswers.Select(a => _mapper.Map<GetAnswerDto>(a)).ToList();
             return new Response<List<GetAnswerDto>>().Success(getAnswers, AnswersCreatedStr);
         }

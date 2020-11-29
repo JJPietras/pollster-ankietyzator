@@ -77,7 +77,7 @@ namespace Ankietyzator.Services.Implementations
 
         //======================================= UPDATE =======================================//
 
-        private bool InvalidPollsterKey(UpdateAccountDto createAccountDto, UpgradeKey key, string eMail)
+        private static bool InvalidPollsterKey(UpdateAccountDto createAccountDto, UpgradeKey key, string eMail)
         {
             string dtoKey = createAccountDto.PollsterKey;
             if (dtoKey == null) return false;
