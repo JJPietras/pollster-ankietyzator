@@ -33,6 +33,11 @@ namespace Ankietyzator.Models
 
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRegisterService, RegisterService>();
+            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddScoped<IKeyService, KeyService>();
+            services.AddScoped<IPollingService, PollingService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IStatService, StatService>();
 
             services.AddDbContext<AnkietyzatorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure")));

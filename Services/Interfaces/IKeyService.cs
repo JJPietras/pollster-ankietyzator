@@ -12,11 +12,11 @@ namespace Ankietyzator.Services.Interfaces
         
         Task<Response<UpgradeKey>> GetPollsterKey(string key);
         
+        Task<Response<UpgradeKey>> UpdatePollsterKey(UpdateUpgradeKeyDto upgradeKey);
+        
         Task<Response<UpgradeKey>> RemovePollsterKey(string key);
 
-        Task<Response<UpgradeKey>> UpdatePollsterKey(UpdateUpgradeKeyDto upgradeKey);
-
-        Task<Response<object>> AddPollsterKey(UpgradeKey upgradeKey);
+        Task<Response<UpgradeKey>> AddPollsterKey(UpgradeKey upgradeKey);
         
     }
 }
