@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Ankietyzator.Models.DataModel;
+using Ankietyzator.Models;
+using Ankietyzator.Models.DataModel.AccountModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -19,9 +20,9 @@ namespace Ankietyzator.Controllers
         private const int Name = 1;
         private const int EMail = 2;
 
-        private readonly AnkietyzatorDBContext _context;
+        private readonly AnkietyzatorDbContext _context;
 
-        public GoogleController(AnkietyzatorDBContext context) => _context = context;
+        public GoogleController(AnkietyzatorDbContext context) => _context = context;
 
         [AllowAnonymous]
         [Route("google-login")]

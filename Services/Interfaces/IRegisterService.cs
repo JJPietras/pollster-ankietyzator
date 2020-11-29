@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
-using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.DTO.Account;
+using Ankietyzator.Models.DataModel.AccountModel;
+using Ankietyzator.Models.DTO.AccountDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IRegisterService
+    public interface IRegisterService : IDbContextService
     {
-        AnkietyzatorDBContext Context { set; }
         Task<Response<List<Account>>> GetAccounts(UserType userType);
         Task<Response<Account>> GetAccount(string email);
         Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto);
