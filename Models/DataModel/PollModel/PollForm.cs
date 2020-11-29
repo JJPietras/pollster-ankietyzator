@@ -22,7 +22,9 @@ namespace Ankietyzator.Models.DataModel.PollModel
         public string Emails { get; set; }
 
         [Required]
-        public bool NonAnonymous { get; set; } = false;
+        public bool NonAnonymous { get; set; }
+
+        [Required] public bool Archived { get; set; } = false;
     }
     
     public class PollFormDbContext : DbContext

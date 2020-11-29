@@ -90,6 +90,7 @@ CREATE TABLE [dbo].[PollForms]
     [Tags]         [nvarchar](1000)     NOT NULL,
     [EMails]       [nvarchar](1000)     NOT NULL,
     [NonAnonymous] [tinyint]            NOT NULL,
+    [Archived]     [tinyint]            NOT NULL,
 
     CONSTRAINT [poll_forms_primary_key]
         PRIMARY KEY ([PollId]),

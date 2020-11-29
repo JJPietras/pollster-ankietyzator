@@ -21,14 +21,17 @@ namespace Ankietyzator.Services.Implementations
         private const string AccountFoundStr = "Account fetched successfuly";
 
         private const string UserNotAdminStr = "Could not fetch users data. User is not Admin";
+        private const string InvalidKeyStr = "Provided polster key is invalid";
         private const string GetAccountsStr = "Successfuly queried registrations";
 
         public AnkietyzatorDbContext Context { get; set; }
-        
+
+        private readonly IKeyService _keyService;
         private readonly IMapper _mapper;
 
-        public RegisterService(IMapper mapper)
+        public RegisterService(IMapper mapper, IKeyService keyService)
         {
+            _keyService = keyService;
             _mapper = mapper;
         }
 
@@ -36,8 +39,7 @@ namespace Ankietyzator.Services.Implementations
         {
             Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
             var response = new Response<Account>();
-            if (account == null) return response.Failure(NoAccountStr);
-            return response.Success(account, AccountFoundStr);
+            return account == null ? response.Failure(NoAccountStr) : response.Success(account, AccountFoundStr);
         }
         
         public async Task<Response<List<Account>>> GetAccounts(UserType userType)
@@ -59,29 +61,28 @@ namespace Ankietyzator.Services.Implementations
 
             Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.AccountId == updateAccountDto.Id);
             if (account == null) return response.Failure(InvalidIndexStr);
-            MakeAccountChanges(account, updateAccountDto);
 
+            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.PollsterKey);
+            if (keyResponse.Data == null) return response.Failure(keyResponse.Message);
+            var key = keyResponse.Data;
+            
+            if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
+            
+            MakeAccountChanges(account, updateAccountDto);
             await Context.SaveChangesAsync();
             
             return response.Success(_mapper.Map<Account>(account), SuccessfulUpdateStr);
         }
 
 
-        //======================================= ADD =======================================//
-
-        //TODO: implement
-        /*private static bool PollsterKeyNotExists(AddAccountDto addAccountDto) =>
-            addAccountDto.PollsterKey != null /*&& TODO#3#;*/
-
-        /*private Account MapAddAccountDtoOnoAccount(AddAccountDto addAccountDto)
-        {
-            Account newAccount = _mapper.Map<Account>(addAccountDto);
-            newAccount.PasswordHash = Account.GetHash(addAccountDto.Password);
-            newAccount.UserType = UserType.User;
-            return newAccount;
-        }#2# #1#*/
-        
         //======================================= UPDATE =======================================//
+
+        private bool InvalidPollsterKey(UpdateAccountDto createAccountDto, UpgradeKey key, string eMail)
+        {
+            string dtoKey = createAccountDto.PollsterKey;
+            if (dtoKey == null) return false;
+            return key == null || key.EMail != eMail && key.EMail.Length > 0;
+        }
 
         private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.PollsterKey != null);
 

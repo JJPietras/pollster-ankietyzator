@@ -34,7 +34,7 @@ namespace Ankietyzator.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        //TODO: refactor
+        //TODO: move part to RegisterService
         [AllowAnonymous]
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
