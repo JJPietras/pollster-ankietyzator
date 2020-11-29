@@ -1,4 +1,4 @@
-﻿namespace Ankietyzator.Models.DataModel
+﻿namespace Ankietyzator.Models.DataModel.AccountModel
 {
     public enum UserType
     {

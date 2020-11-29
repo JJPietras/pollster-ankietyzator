@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Ankietyzator.Models.DataModel;
 using Ankietyzator.Services.Implementations;
 using Ankietyzator.Services.Interfaces;
 using AutoMapper;
@@ -35,7 +34,7 @@ namespace Ankietyzator.Models
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IRegisterService, RegisterService>();
 
-            services.AddDbContext<AnkietyzatorDBContext>(options =>
+            services.AddDbContext<AnkietyzatorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure")));
 
             services.AddAuthentication(options =>

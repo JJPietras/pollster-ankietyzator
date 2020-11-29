@@ -1,4 +1,4 @@
-﻿namespace Ankietyzator.Models.DTO.Account
+﻿namespace Ankietyzator.Models.DTO.AccountDTOs
 {
     public class UpdateAccountDto
     {

@@ -3,23 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
-using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.DTO.Account;
+using Ankietyzator.Models.DataModel.AccountModel;
+using Ankietyzator.Models.DTO.AccountDTOs;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Ankietyzator.Controllers
 {
     //[Route("api/[controller]")]
-    [ApiController]
     [Authorize]
+    [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly AnkietyzatorDBContext _context;
+        private readonly AnkietyzatorDbContext _context;
 
         private readonly IRegisterService _register;
 
-        public AccountsController(AnkietyzatorDBContext context, IRegisterService register)
+        public AccountsController(AnkietyzatorDbContext context, IRegisterService register)
         {
             _context = context;
             _register = register;
