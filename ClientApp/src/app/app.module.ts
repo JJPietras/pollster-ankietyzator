@@ -8,12 +8,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AppComponent } from './components/app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './components/home/home.component';
-import { CounterComponent } from './components/counter/counter.component';
-import { FetchDataComponent } from './components/fetch-data/fetch-data.component';
+
 import { LoginComponent } from './components/login/login.component'
-import { RegisterComponent } from './components/register/register.component'
 
 import { SettingsComponent } from './components/settings/settings.component'
+import { PollComponent } from './components/poll/poll.component'
+import { PollStatisticsComponent } from './components/poll-statistics/poll-statistics.component'
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
 
 import {MatNativeDateModule} from '@angular/material/core';
@@ -21,16 +21,21 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 //import { BootstrapTabDirective } from './directives/bootstrap-tab.directive'
 
+import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+import { CommonModule } from '@angular/common';
+import { PlotlyModule } from 'angular-plotly.js';
+PlotlyModule.plotlyjs = PlotlyJS;
+
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
+    PollComponent,
+    PollStatisticsComponent,
     SettingsComponent, UserInfoComponent,
     LoginComponent,
-    RegisterComponent,
+
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -40,13 +45,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatTabsModule,
     MatNativeDateModule,
     BrowserAnimationsModule,
+    CommonModule, PlotlyModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
       { path: 'user-login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
       { path: 'settings', component: SettingsComponent },
+      { path: 'poll', component: PollComponent },
+      { path: 'poll-statistics', component: PollStatisticsComponent },
     ])
   ],
   providers: [],
