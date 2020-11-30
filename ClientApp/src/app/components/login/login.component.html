@@ -1,67 +1,25 @@
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
-<div class="d-flex h-90">
-  <div class="login-container m-auto">
-    <div class="card boxshadow">
-      <div class="card-header bg-primary dark text-white clearfix">
-        <i class="fa fa-lock" aria-hidden="true"></i> Login
-        <button type="button" class="close float-right text-light" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<div class="card text-center">
+  <div class="card-header">
+    Zaloguj się
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Zaloguj się używając konta Google</h5>
+
+    <div class="google-btn" (click)="SignInWithGoogle()">
+      <div class="google-icon-wrapper">
+        <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
       </div>
-      <div class="card-body">
-        <div class="col-md-8 offset-md-2">
-          <form class="login" name="loginForm" #f="ngForm" novalidate>
-            <div class="form-group row">
-              <label class="col-form-label col-md-3" for="login-username">Username:</label>
-              <div class="col-md-9">
-                <input type="text" id="login-username" name="username" placeholder="Enter username" autocomplete="username" class="form-control" [ngClass]="{'is-valid': f.submitted && username.valid, 'is-invalid' : f.submitted && !username.valid}"
-                       [(ngModel)]="userLogin.userName" #username="ngModel" required />
-                <span class="invalid-feedback" *ngIf="f.submitted && !username.valid">
-                  Username is required
-                </span>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-form-label col-md-3" for="login-password">Password:</label>
-              <div class="col-md-9">
-                <input type="password" id="login-password" name="password" placeholder="Enter password" autocomplete="current-password" class="form-control" [ngClass]="{'is-valid': f.submitted && password.valid, 'is-invalid' : f.submitted && !password.valid}"
-                       [(ngModel)]="userLogin.password" #password="ngModel" required />
-                <span class="invalid-feedback" *ngIf="f.submitted && !password.valid">
-                  Password is required
-                </span>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="offset-md-3 col-md-9">
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="login-rememberme" name="rememberMe" [(ngModel)]="userLogin.rememberMe">
-                  <label class="form-check-label" for="login-rememberme">Remember me</label>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="offset-md-3 col-md-9">
-                <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-                  <i *ngIf="isLoading" class='fa fa-circle-o-notch fa-spin'></i> {{isLoading ? 'Logging in...' : 'Login'}}
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+      <p class="btn-text"><b>Zaloguj się</b></p>
+    </div>
+
+  </div>
+  <div class="card-footer text-muted">
+    <div class="google-btn" (click)="LogOutFromGoogle()">
+      <div class="google-icon-wrapper">
+        <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
       </div>
+      <p class="btn-text"><b>Wyloguj się</b></p>
     </div>
   </div>
-</div>
-<div class="google-btn" (click)="SignInWithGoogle()">
-  <div class="google-icon-wrapper">
-    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-  </div>
-  <p class="btn-text"><b>Sign in with google</b></p>
-</div>
-<div class="google-btn" (click)="LogOutFromGoogle()">
-  <div class="google-icon-wrapper">
-    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-  </div>
-  <p class="btn-text"><b>Log-out from google</b></p>
 </div>
