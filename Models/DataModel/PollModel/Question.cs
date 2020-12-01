@@ -8,7 +8,7 @@ namespace Ankietyzator.Models.DataModel.PollModel
     {
         [Key] public int QuestionId { get; set; }
 
-        [ForeignKey("PollId")] public int Poll { get; set; }
+        [ForeignKey("questions_poll_foreign_key")] public int Poll { get; set; }
 
         [Required] public uint Position { get; set; }
 
@@ -20,7 +20,7 @@ namespace Ankietyzator.Models.DataModel.PollModel
 
         [Required] public ushort MaxLength { get; set; }
 
-        [Required] public QuestionType Type { get; set; }
+        [Required] public int Type { get; set; }
     }
 
     public class QuestionDbContext : DbContext
