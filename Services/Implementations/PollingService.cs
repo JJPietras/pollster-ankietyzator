@@ -35,6 +35,11 @@ namespace Ankietyzator.Services.Implementations
             _mapper = mapper;
         }
 
+        public void InitializeServicesContext(AnkietyzatorDbContext context ){
+            _questionService.Context = context;
+            _statService.Context = context;
+        }
+
         public async Task<Response<GetPollFormDto>> GetPollForm(int pollId)
         {
             var response = new Response<GetPollFormDto>();
@@ -117,7 +122,7 @@ namespace Ankietyzator.Services.Implementations
             int topIndex = await Context.PollForms.CountAsync();
             foreach (CreateQuestionDto createQuestionDto in pollForm.Questions)
             {
-                await _questionService.CreateQuestion(createQuestionDto, topIndex);
+                await _questionService.CreateQuestion(createQuestionDto, dalForm.PollId);
             }
 
             var pollResponse = await _statService.CreatePollStats(dalForm.PollId);
