@@ -59,10 +59,9 @@ namespace Ankietyzator.Controllers
             if (updateAccountDto.EMail != GetUserEmail()) return Unauthorized(updateAccountDto);
             Response<Account> accountResponse = await _register.UpdateAccount(updateAccountDto, HttpContext);
             if (accountResponse.Data == null) return Conflict(accountResponse);
-            Console.WriteLine(HttpContext.User.Claims.LastOrDefault()?.Value);
+            Console.WriteLine("updated " + HttpContext.User.Claims.LastOrDefault()?.Value);
             return Ok(accountResponse);
         }
-
 
         private string GetUserEmail() => HttpContext.User.Claims.ToArray()[2].Value;
     }
