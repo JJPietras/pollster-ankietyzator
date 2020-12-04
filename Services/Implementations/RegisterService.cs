@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -93,12 +94,16 @@ namespace Ankietyzator.Services.Implementations
             if (key != null)
             {
                 account.UserType = key.UserType;
+                _context.UpgradeKeys.Remove(key);
+                await _context.SaveChangesAsync();
+                
                 ClaimsIdentity identity = context.User.Identity as ClaimsIdentity; 
                 RemoveUserClaims(identity);
                 identity.AddClaim(new Claim(ClaimTypes.Role, key.UserType.GetRole()));
+                context.User.AddIdentity(identity);
+                
                 await context.SignInAsync(context.User);
-                _context.UpgradeKeys.Remove(key);
-                await _context.SaveChangesAsync();
+                Console.WriteLine("UPGRADE: " + context.User.Claims.LastOrDefault()?.Value + " role " + key.UserType.GetRole());
             }
         }
 
