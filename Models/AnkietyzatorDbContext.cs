@@ -1,8 +1,6 @@
-﻿using Ankietyzator.Models.DataModel;
-using Ankietyzator.Models.DataModel.AccountModel;
+﻿using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DataModel.PollModel;
 using Ankietyzator.Models.DataModel.StatModel;
-using Ankietyzator.Models.DTO.PollDTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Models

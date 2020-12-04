@@ -61,6 +61,10 @@ CREATE TABLE [dbo].[UpgradeKeys]
     [EMail]    [nvarchar](200) NOT NULL,
     [UserType] [int]           NOT NULL,
 
+    CONSTRAINT [pollster_keys_primary_key]
+        PRIMARY KEY ([Key]),
+    CONSTRAINT [pollster_keys_key_format] 
+        CHECK (LEN([Key]) > 3),
     CONSTRAINT [pollster_keys_email_format]
         CHECK (LEN([EMail]) > 4 AND [EMail] LIKE '%@%.%' OR LEN([EMail]) = 0),
     CONSTRAINT [pollster_keys_user_non_standard]
@@ -89,8 +93,8 @@ CREATE TABLE [dbo].[PollForms]
     [AuthorId]     [int]                NOT NULL,
     [Tags]         [nvarchar](1000)     NOT NULL,
     [EMails]       [nvarchar](1000)     NOT NULL,
-    [NonAnonymous] [tinyint]            NOT NULL,
-    [Archived]     [tinyint]            NOT NULL,
+    [NonAnonymous] [bit]                NOT NULL,
+    [Archived]     [bit]                NOT NULL,
 
     CONSTRAINT [poll_forms_primary_key]
         PRIMARY KEY ([PollId]),
@@ -131,7 +135,7 @@ CREATE TABLE [dbo].[Questions]
     [Position]   [int]                NOT NULL,
     [Title]      [nvarchar](150)      NOT NULL,
     [Options]    [nvarchar](500)      NOT NULL,
-    [AllowEmpty] [tinyint]            NOT NULL,
+    [AllowEmpty] [bit]                NOT NULL,
     [MaxLength]  [smallint]           NOT NULL,
     [Type]       [int]                NOT NULL,
 

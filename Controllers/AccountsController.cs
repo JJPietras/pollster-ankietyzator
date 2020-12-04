@@ -16,51 +16,50 @@ namespace Ankietyzator.Controllers
     {
         private readonly IRegisterService _register;
 
-        public AccountsController(AnkietyzatorDbContext context, IRegisterService register)
+        public AccountsController(IRegisterService register)
         {
             _register = register;
-            _register.Context = context;
         }
 
         //===================== GET =======================//
 
         [HttpGet("get-account")]
-        public async Task<IActionResult> GetAccount(string mail)
+        public async Task<IActionResult> GetAccount()
         {
-            Response<Account> accountResponse = await _register.GetAccount(mail);
+            Response<Account> accountResponse = await _register.GetAccount(GetUserEmail());
+            if (accountResponse.Data != null) return Ok(accountResponse);
+            return NotFound(accountResponse);
+        }
+        
+        [HttpGet("get-account/{email}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetSpecificAccount(string email)
+        {
+            Response<Account> accountResponse = await _register.GetAccount(email);
             if (accountResponse.Data != null) return Ok(accountResponse);
             return NotFound(accountResponse);
         }
 
-        //TODO: test it later
         [HttpGet("get-accounts")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAccounts()
         {
-            //TODO: change
-            string mail = GetUserEmail();
-            Response<Account> accountResponse = await _register.GetAccount(mail);
-            if (accountResponse.Data == null) return NotFound(accountResponse);
-            UserType userType = accountResponse.Data.UserType;
-            
-            //TODO: authorisation
-            var response = await _register.GetAccounts(userType);
+            var response = await _register.GetAccounts();
             if (response.Data != null) return Ok(response);
             return Unauthorized(response);
-
         }
-        
+
         //===================== UPDATE =======================//
 
         [HttpPut("update-account")]
         public async Task<IActionResult> UpdateAccount(UpdateAccountDto updateAccountDto)
         {
-            //TODO: add authorisation
+            if (updateAccountDto.EMail != GetUserEmail()) return Unauthorized(updateAccountDto);
             Response<Account> accountResponse = await _register.UpdateAccount(updateAccountDto);
             if (accountResponse.Data == null) return Conflict(accountResponse);
-            return Ok(accountResponse); 
+            return Ok(accountResponse);
         }
-        
-        //TODO: create CreateAccount
+
 
         private string GetUserEmail() => HttpContext.User.Claims.ToArray()[2].Value;
     }

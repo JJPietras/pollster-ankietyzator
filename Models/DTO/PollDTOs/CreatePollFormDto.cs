@@ -9,7 +9,7 @@ namespace Ankietyzator.Models.DTO.PollDTOs
         
         public string Emails { get; set; }
         
-        public bool NonAnonymous { get; set; } = false;
+        public bool NonAnonymous { get; set; }
         
         public List<CreateQuestionDto> Questions { get; set; }
     }
