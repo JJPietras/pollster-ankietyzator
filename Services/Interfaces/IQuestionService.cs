@@ -5,7 +5,7 @@ using Ankietyzator.Models.DTO.QuestionDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IQuestionService : IDbContextService
+    public interface IQuestionService// : IDbContextService
     {
         Task<Response<List<GetQuestionDto>>> GetQuestions(int pollId);
 

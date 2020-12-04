@@ -6,7 +6,7 @@ using Ankietyzator.Models.DTO.KeyDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IKeyService : IDbContextService
+    public interface IKeyService// : IDbContextService
     {
         Task<Response<List<UpgradeKey>>> GetPollsterKeys();
         

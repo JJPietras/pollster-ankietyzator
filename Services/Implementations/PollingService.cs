@@ -20,32 +20,30 @@ namespace Ankietyzator.Services.Implementations
         private const string PollRemovedStr = "Poll form removed successfuly";
         private const string PollUpdatedStr = "Poll updated successfuly";
         private const string PollCreatedStr = "Poll created successfuly";
+
         private const string PrevPollNotFoundStr = "Could not find previous poll";
         //private const string NotCreatedStr = "Poll could not be created";
 
-        public AnkietyzatorDbContext Context { get; set; }
+        private readonly AnkietyzatorDbContext _context;
         private readonly IQuestionService _questionService;
         private readonly IStatService _statService;
         private readonly IMapper _mapper;
 
-        public PollingService(IMapper mapper, IQuestionService questionService, IStatService statService)
+        public PollingService(AnkietyzatorDbContext context, IMapper mapper, IQuestionService questionService,
+            IStatService statService)
         {
             _questionService = questionService;
             _statService = statService;
             _mapper = mapper;
-        }
-
-        public void InitializeServicesContext(AnkietyzatorDbContext context ){
-            _questionService.Context = context;
-            _statService.Context = context;
+            _context = context;
         }
 
         public async Task<Response<GetPollFormDto>> GetPollForm(int pollId)
         {
             var response = new Response<GetPollFormDto>();
-            var pollForm = await Context.PollForms.FindAsync(pollId);
+            var pollForm = await _context.PollForms.FindAsync(pollId);
             if (pollForm == null) return response.Failure(NoPollFormStr);
-            
+
             var pollFormDto = _mapper.Map<GetPollFormDto>(pollForm);
             var questionsResponse = await GetQuestionsDto(pollForm, response, null);
             return questionsResponse.Data == null
@@ -56,9 +54,9 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<List<GetPollFormDto>>> GetPollForms(int pollsterId)
         {
             var response = new Response<List<GetPollFormDto>>();
-            var pollForms = await Context.PollForms.Where(p => p.AuthorId == pollsterId).ToListAsync();
+            var pollForms = await _context.PollForms.Where(p => p.AuthorId == pollsterId).ToListAsync();
             if (pollForms == null) return response.Failure(NoPollFormsStr);
-            
+
             var pollFormsDto = new List<GetPollFormDto>();
             foreach (PollForm pollForm in pollForms)
             {
@@ -88,11 +86,11 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<GetPollFormDto>> RemovePollForm(int pollId)
         {
             var response = new Response<GetPollFormDto>();
-            var pollForm = await Context.PollForms.FindAsync(pollId);
+            var pollForm = await _context.PollForms.FindAsync(pollId);
             if (pollForm == null) return response.Failure(NoPollFormStr);
             await _questionService.RemoveQuestions(pollId);
-            Context.PollForms.Remove(pollForm);
-            await Context.SaveChangesAsync();
+            _context.PollForms.Remove(pollForm);
+            await _context.SaveChangesAsync();
             await _statService.RemovePollStats(pollId);
             await _statService.RemoveQuestionsStats(pollId);
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
@@ -101,7 +99,7 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, int accountId)
         {
             var response = new Response<GetPollFormDto>();
-            var previousForm = await Context.PollForms.FindAsync(pollForm.PreviousPollId);
+            var previousForm = await _context.PollForms.FindAsync(pollForm.PreviousPollId);
             if (previousForm == null) return response.Failure(PrevPollNotFoundStr);
             previousForm.Archived = true;
             var createPollFormDto = _mapper.Map<CreatePollFormDto>(pollForm);
@@ -113,13 +111,13 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, int accountId)
         {
             var response = new Response<GetPollFormDto>();
-            
+
             var dalForm = _mapper.Map<PollForm>(pollForm);
             dalForm.AuthorId = accountId;
-            await Context.PollForms.AddAsync(dalForm);
-            await Context.SaveChangesAsync();
-            
-            int topIndex = await Context.PollForms.CountAsync();
+            await _context.PollForms.AddAsync(dalForm);
+            await _context.SaveChangesAsync();
+
+            //int topIndex = await _context.PollForms.CountAsync(); HAŃBA
             foreach (CreateQuestionDto createQuestionDto in pollForm.Questions)
             {
                 await _questionService.CreateQuestion(createQuestionDto, dalForm.PollId);
@@ -127,13 +125,13 @@ namespace Ankietyzator.Services.Implementations
 
             var pollResponse = await _statService.CreatePollStats(dalForm.PollId);
             if (pollResponse.Data == null) return response.Failure(pollResponse.Message);
-            
+
             var getPollFormDto = _mapper.Map<GetPollFormDto>(dalForm);
             await _statService.CreateQuestionsStats(getPollFormDto.Questions);
 
             return response.Success(getPollFormDto, PollCreatedStr);
         }
-        
+
         private async Task<Response<T>> GetQuestionsDto<T>(
             PollForm updatePollFormDto,
             Response<T> response,

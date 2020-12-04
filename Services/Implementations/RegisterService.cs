@@ -14,66 +14,64 @@ namespace Ankietyzator.Services.Implementations
     {
         private const string NoUpdatesStr = "No updates were passed";
         private const string ManyUpdatesStr = "There can only be one update per request";
-        private const string InvalidIndexStr = "Provided no or invalid account index";
+        private const string InvalidIndexStr = "Provided no or invalid account Email";
         private const string SuccessfulUpdateStr = "Account updated successfuly";
 
         private const string NoAccountStr = "There is no registered account with this email";
         private const string AccountFoundStr = "Account fetched successfuly";
 
-        private const string UserNotAdminStr = "Could not fetch users data. User is not Admin";
         private const string InvalidKeyStr = "Provided polster key is invalid";
         private const string GetAccountsStr = "Successfuly queried registrations";
 
-        public AnkietyzatorDbContext Context { get; set; }
+        private readonly AnkietyzatorDbContext _context;
 
         private readonly IKeyService _keyService;
         private readonly IMapper _mapper;
 
-        public RegisterService(IMapper mapper, IKeyService keyService)
+        public RegisterService(AnkietyzatorDbContext context, IMapper mapper, IKeyService keyService)
         {
             _keyService = keyService;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<Response<Account>> GetAccount(string email)
         {
-            Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
             var response = new Response<Account>();
             return account == null ? response.Failure(NoAccountStr) : response.Success(account, AccountFoundStr);
         }
         
-        public async Task<Response<List<Account>>> GetAccounts(UserType userType)
+        public async Task<Response<List<Account>>> GetAccounts()
         {
             var response = new Response<List<Account>>();
-            if (userType != UserType.Admin) return response.Failure(UserNotAdminStr);
-            var accounts = await Context.Accounts.ToListAsync();
+            var accounts = await _context.Accounts.ToListAsync();
             return response.Success(accounts, GetAccountsStr);
         }
 
         public async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto)
         {
             var response = new Response<Account>();
-            (bool changedTags, bool changedPollsterKey) = GetConditions(updateAccountDto); 
+            (bool changedTags, bool changedKey) = GetConditions(updateAccountDto); 
 
-            int changes = new[]{changedTags, changedPollsterKey}.Count(b => b);
+            int changes = new[]{changedTags, changedKey}.Count(b => b);
             if (changes < 1) return response.Failure(NoUpdatesStr);
             if (changes > 1) return response.Failure(ManyUpdatesStr);
 
-            Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.AccountId == updateAccountDto.Id);
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == updateAccountDto.EMail);
             if (account == null) return response.Failure(InvalidIndexStr);
 
             var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.PollsterKey);
-            if (keyResponse.Data == null) return response.Failure(keyResponse.Message);
+            if (changedKey && keyResponse.Data == null) return response.Failure(keyResponse.Message);
             var key = keyResponse.Data;
             
             if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
             
             MakeAccountChanges(account, updateAccountDto);
-            await Context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             
             return response.Success(_mapper.Map<Account>(account), SuccessfulUpdateStr);
         }
-
 
         //======================================= UPDATE =======================================//
 

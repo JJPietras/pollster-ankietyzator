@@ -3,10 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Models.DataModel.AccountModel
 {
-    [Keyless]
     public class UpgradeKey
     {
-        [Required] [MaxLength(200)] public string Key { get; set; }
+        [Key] [MaxLength(200)] public string Key { get; set; }
 
         [Required] [MaxLength(200)] public string EMail { get; set; }
 

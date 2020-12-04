@@ -13,10 +13,9 @@ namespace Ankietyzator.Controllers
     {
         private readonly IStatService _stats;
                 
-        public StatsController(AnkietyzatorDbContext context, IStatService stats)
+        public StatsController(IStatService stats)
         {
             _stats = stats;
-            stats.Context = context;
         }
         
         //===================== GET =======================//

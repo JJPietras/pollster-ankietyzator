@@ -6,7 +6,7 @@ using Ankietyzator.Models.DTO.QuestionDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IStatService : IDbContextService
+    public interface IStatService// : IDbContextService
     {
         Task<Response<PollStat>> GetPollStat(int pollId);
 

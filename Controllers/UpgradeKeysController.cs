@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.KeyDTOs;
 using Ankietyzator.Services.Interfaces;
@@ -15,23 +14,23 @@ namespace Ankietyzator.Controllers
     {
         private readonly IKeyService _keyService;
 
-        public UpgradeKeysController(AnkietyzatorDbContext context, IKeyService keyService)
+        public UpgradeKeysController(IKeyService keyService)
         {
             _keyService = keyService;
-            _keyService.Context = context;
         }
         
         //===================== GET =======================//
         
-        [HttpGet("get-key")]
+        /*[HttpGet("get-key")]
         public async Task<IActionResult> GetUpgradeKey(string key)
         {
             var keysResponse = await _keyService.GetPollsterKey(key);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
-        }
+        }*/
         
         [HttpGet("get-keys")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUpgradeKeys()
         {
             var keysResponse = await _keyService.GetPollsterKeys();

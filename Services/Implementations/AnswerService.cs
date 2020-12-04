@@ -14,22 +14,23 @@ namespace Ankietyzator.Services.Implementations
     {
         private const string AnswersFetchedStr = "Answers fetched successfuly";
         private const string AnswersCreatedStr = "Answers created successfuly";
-        
-        public AnkietyzatorDbContext Context { get; set; }
+
+        private readonly AnkietyzatorDbContext _context;
         private readonly IMapper _mapper;
 
-        public AnswerService(IMapper mapper)
+        public AnswerService(AnkietyzatorDbContext context, IMapper mapper)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<Response<List<GetAnswerDto>>> GetAnswers(int userId, int pollId)
         {
-            var questions = await Context.Questions
+            var questions = await _context.Questions
                 .Where(q => q.Poll == pollId)
                 .Select(q => q.QuestionId)
                 .ToListAsync();
-            var answers = await Context.Answers
+            var answers = await _context.Answers
                 .Where(a => a.AccountId == userId && questions.Contains(a.QuestionId))
                 .Select(q => _mapper.Map<GetAnswerDto>(q))
                 .ToListAsync();
@@ -40,8 +41,8 @@ namespace Ankietyzator.Services.Implementations
         {
             var dalAnswers = answers.Select(a => _mapper.Map<Answer>(a)).ToList();
             foreach (Answer dalAnswer in dalAnswers) dalAnswer.AccountId = userId;
-            await Context.Answers.AddRangeAsync(dalAnswers);
-            await Context.SaveChangesAsync();
+            await _context.Answers.AddRangeAsync(dalAnswers);
+            await _context.SaveChangesAsync();
             var getAnswers = dalAnswers.Select(a => _mapper.Map<GetAnswerDto>(a)).ToList();
             return new Response<List<GetAnswerDto>>().Success(getAnswers, AnswersCreatedStr);
         }

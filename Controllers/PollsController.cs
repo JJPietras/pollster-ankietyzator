@@ -14,11 +14,9 @@ namespace Ankietyzator.Controllers
     {
         private readonly IPollingService _polling;
                 
-        public PollsController(AnkietyzatorDbContext context, IPollingService polling)
+        public PollsController(IPollingService polling)
         {
             _polling = polling;
-            polling.Context = context;
-            _polling.InitializeServicesContext(context);
         }
         
         //===================== GET =======================//
@@ -32,7 +30,7 @@ namespace Ankietyzator.Controllers
             return Ok(response);
         }
         
-        [HttpGet("get-poll")]
+        [HttpGet("get-poll/{pollId}")]
         public async Task<IActionResult> GetPollForm(int pollId)
         {
             //TODO: authorize
@@ -83,7 +81,7 @@ namespace Ankietyzator.Controllers
         public async Task<IActionResult> CreatePoll([FromBody] CreatePollRequest body)
         {
             //TODO: authorize
-            var response = await _polling.CreatePollForm(body.pollForm, body.accountId);
+            var response = await _polling.CreatePollForm(body.PollForm, body.AccountId);
             if (response.Data == null) return Conflict(response);
             return Ok(response);
         }

@@ -5,7 +5,7 @@ using Ankietyzator.Models.DTO.PollDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IPollingService : IDbContextService
+    public interface IPollingService// : IDbContextService
     {
         Task<Response<GetPollFormDto>> GetPollForm(int pollId);
 
@@ -20,7 +20,5 @@ namespace Ankietyzator.Services.Interfaces
         Task<Response<GetPollFormDto>> RemovePollForm(int pollId);
 
         Task<Response<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, int accountId);
-
-        void InitializeServicesContext(AnkietyzatorDbContext context );
     }
 }

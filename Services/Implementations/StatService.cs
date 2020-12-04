@@ -28,25 +28,30 @@ namespace Ankietyzator.Services.Implementations
         private const string NoQuestionsStr = "Could not find questions";
         private const string QuestionsStatsRemovedStr = "Questions stats removed successfuly";
 
-        public AnkietyzatorDbContext Context { get; set; }
+        private readonly AnkietyzatorDbContext _context;
 
+        public StatService(AnkietyzatorDbContext context)
+        {
+            _context = context;
+        }
+        
         public async Task<Response<PollStat>> GetPollStat(int pollId)
         {
             var response = new Response<PollStat>();
-            var stats = await Context.PollStats.FindAsync(pollId);
+            var stats = await _context.PollStats.FindAsync(pollId);
             return stats == null ? response.Failure(NoPollStatStr) : response.Success(stats, PollStatFetchedStr);
         }
 
         public async Task<Response<List<PollStat>>> GetPollsStats(int pollsterId)
         {
             var response = new Response<List<PollStat>>();
-            var polls = await Context.PollForms
+            var polls = await _context.PollForms
                 .Where(p => p.AuthorId == pollsterId)
                 .Select(p => p.PollId)
                 .ToListAsync();
 
             if (polls.Count == 0) return response.Failure(NoPollsStr);
-            var pollStats = await Context.PollStats
+            var pollStats = await _context.PollStats
                 .Where(p => polls.Contains(p.PollId))
                 .ToListAsync();
 
@@ -58,13 +63,13 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<List<QuestionStat>>> GetQuestionsStats(int pollId)
         {
             var response = new Response<List<QuestionStat>>();
-            var questions = await Context.Questions
+            var questions = await _context.Questions
                 .Where(q => q.Poll == pollId)
                 .Select(q => q.QuestionId)
                 .ToListAsync();
 
             if (questions.Count == 0) return response.Failure(PollNoQuestionsStr);
-            var questionStats = await Context.QuestionStats
+            var questionStats = await _context.QuestionStats
                 .Where(q => questions.Contains(q.QuestionId))
                 .ToListAsync();
 
@@ -76,15 +81,15 @@ namespace Ankietyzator.Services.Implementations
         public async Task<Response<PollStat>> CreatePollStats(int pollId)
         {
             var response = new Response<PollStat>();
-            if (await Context.PollForms.FindAsync(pollId) == null) return response.Failure(NoPollWithIdString);
+            if (await _context.PollForms.FindAsync(pollId) == null) return response.Failure(NoPollWithIdString);
             var stats = new PollStat
             {
                 PollId = pollId,
                 Completions = 0,
                 Percentage = 0f
             };
-            await Context.PollStats.AddAsync(stats);
-            await Context.SaveChangesAsync();
+            await _context.PollStats.AddAsync(stats);
+            await _context.SaveChangesAsync();
             return response.Success(stats, PollStatCreatedStr);
         }
 
@@ -94,36 +99,36 @@ namespace Ankietyzator.Services.Implementations
             var questionStats = questions
                 .Select(q => new QuestionStat {QuestionId = q.QuestionId, AnswerCounts = GetOptionsCount(q.Options)})
                 .ToList();
-            await Context.QuestionStats.AddRangeAsync(questionStats);
-            await Context.SaveChangesAsync();
+            await _context.QuestionStats.AddRangeAsync(questionStats);
+            await _context.SaveChangesAsync();
             return response.Success(questionStats, QuestionStatsCreatedStr);
         }
 
         public async Task<Response<object>> RemovePollStats(int pollId)
         {
             var response = new Response<object>();
-            var pollStat = await Context.PollStats.FindAsync(pollId);
+            var pollStat = await _context.PollStats.FindAsync(pollId);
             if (pollStat == null) return response.Failure(PollStatNotFoundStr);
-            Context.PollStats.Remove(pollStat);
-            await Context.SaveChangesAsync();
+            _context.PollStats.Remove(pollStat);
+            await _context.SaveChangesAsync();
             return response.Success(null, PollStatRemovedStr);
         }
 
         public async Task<Response<object>> RemoveQuestionsStats(int pollId)
         {
             var response = new Response<object>();
-            var questions = await Context.Questions
+            var questions = await _context.Questions
                 .Where(q => q.Poll == pollId)
                 .Select(q => q.QuestionId)
                 .ToListAsync();
 
             if (questions.Count == 0) return response.Failure(NoQuestionsStr);
-            var questionStats = await Context.QuestionStats
+            var questionStats = await _context.QuestionStats
                 .Where(q => questions.Contains(q.QuestionId))
                 .ToListAsync();
             
-            Context.QuestionStats.RemoveRange(questionStats);
-            await Context.SaveChangesAsync();
+            _context.QuestionStats.RemoveRange(questionStats);
+            await _context.SaveChangesAsync();
 
             return questionStats.Count == 0 || questionStats.Count != questions.Count
                 ? response.Failure(NoQuestionStatsStr)
