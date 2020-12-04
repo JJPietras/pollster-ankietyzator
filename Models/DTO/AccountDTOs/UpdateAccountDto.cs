@@ -4,6 +4,6 @@
     {
         public string EMail { get; set; }
         public string Tags { get; set; }
-        public string PollsterKey { get; set; }
+        public string Key { get; set; }
     }
 }
