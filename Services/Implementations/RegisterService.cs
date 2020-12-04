@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.AccountDTOs;
 using Ankietyzator.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Services.Implementations
@@ -49,25 +52,25 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(accounts, GetAccountsStr);
         }
 
-        public async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto)
+        public async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto, HttpContext context)
         {
             var response = new Response<Account>();
             (bool changedTags, bool changedKey) = GetConditions(updateAccountDto); 
 
             int changes = new[]{changedTags, changedKey}.Count(b => b);
             if (changes < 1) return response.Failure(NoUpdatesStr);
-            if (changes > 1) return response.Failure(ManyUpdatesStr);
+            //if (changes > 1) return response.Failure(ManyUpdatesStr);
 
             Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == updateAccountDto.EMail);
             if (account == null) return response.Failure(InvalidIndexStr);
 
-            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.PollsterKey);
+            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.Key);
             if (changedKey && keyResponse.Data == null) return response.Failure(keyResponse.Message);
             var key = keyResponse.Data;
             
             if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
             
-            MakeAccountChanges(account, updateAccountDto);
+            await MakeAccountChanges(account, updateAccountDto.Tags, key, context);
             await _context.SaveChangesAsync();
             
             return response.Success(_mapper.Map<Account>(account), SuccessfulUpdateStr);
@@ -77,17 +80,33 @@ namespace Ankietyzator.Services.Implementations
 
         private static bool InvalidPollsterKey(UpdateAccountDto createAccountDto, UpgradeKey key, string eMail)
         {
-            string dtoKey = createAccountDto.PollsterKey;
+            string dtoKey = createAccountDto.Key;
             if (dtoKey == null) return false;
             return key == null || key.EMail != eMail && key.EMail.Length > 0;
         }
 
-        private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.PollsterKey != null);
+        private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.Key != null);
 
-        private static void MakeAccountChanges(Account account, UpdateAccountDto dto)
+        private async Task MakeAccountChanges(Account account, string tags, UpgradeKey key, HttpContext context)
         {
-            if (dto.Tags != null) account.Tags = dto.Tags;
-            if (dto.PollsterKey != null) account.UserType = UserType.Pollster;
+            if (tags != null) account.Tags = tags;
+            if (key != null)
+            {
+                account.UserType = key.UserType;
+                ClaimsIdentity identity = context.User.Identity as ClaimsIdentity; 
+                RemoveUserClaims(identity);
+                identity.AddClaim(new Claim(ClaimTypes.Role, key.UserType.GetRole()));
+                await context.SignInAsync(context.User);
+                _context.UpgradeKeys.Remove(key);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private void RemoveUserClaims(ClaimsIdentity identity)
+        {
+            string[] userTypes = {"user", "pollster", "admin"};
+            Claim[] claims = identity.Claims.Where(c => userTypes.Contains(c.Value)).ToArray();
+            foreach (Claim claim in claims) identity.RemoveClaim(claim);
         }
     }
 }

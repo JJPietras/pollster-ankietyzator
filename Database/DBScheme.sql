@@ -66,12 +66,12 @@ CREATE TABLE [dbo].[UpgradeKeys]
     CONSTRAINT [pollster_keys_key_format] 
         CHECK (LEN([Key]) > 3),
     CONSTRAINT [pollster_keys_email_format]
-        CHECK (LEN([EMail]) > 4 AND [EMail] LIKE '%@%.%' OR LEN([EMail]) = 0),
+        CHECK ((LEN([EMail]) > 4 AND [EMail] LIKE '%@%.%') OR LEN([EMail]) = 0),
     CONSTRAINT [pollster_keys_user_non_standard]
         CHECK ([UserType] < 3 AND [UserType] > 0)
 ) ON [PRIMARY]
 GO
-
+INSERT INTO [dbo].[UpgradeKeys] VALUES ('abhfd', '', 2)
 
 /* Wzorzec ankiety - tworzy go Pollster. Posiada 
    unikalny identyfikator, klucz obcy stanowiący

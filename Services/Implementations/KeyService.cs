@@ -71,7 +71,7 @@ namespace Ankietyzator.Services.Implementations
             var response = new Response<UpgradeKey>();
             if (upgradeKey.Key.Length < 4) return response.Failure(KeyLengthStr);
             var existingKey = await _context.UpgradeKeys.FirstOrDefaultAsync(
-                u => u.Key == upgradeKey.Key || u.EMail == upgradeKey.EMail
+                u => u.Key == upgradeKey.Key || (u.EMail == upgradeKey.EMail && u.EMail != "")
             );
             if (existingKey != null) return response.Failure(KeyExistsStr);
             await _context.UpgradeKeys.AddAsync(upgradeKey);

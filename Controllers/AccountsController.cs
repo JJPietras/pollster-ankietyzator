@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -54,9 +55,11 @@ namespace Ankietyzator.Controllers
         [HttpPut("update-account")]
         public async Task<IActionResult> UpdateAccount(UpdateAccountDto updateAccountDto)
         {
+            Console.WriteLine(HttpContext.User.Claims.LastOrDefault()?.Value);
             if (updateAccountDto.EMail != GetUserEmail()) return Unauthorized(updateAccountDto);
-            Response<Account> accountResponse = await _register.UpdateAccount(updateAccountDto);
+            Response<Account> accountResponse = await _register.UpdateAccount(updateAccountDto, HttpContext);
             if (accountResponse.Data == null) return Conflict(accountResponse);
+            Console.WriteLine(HttpContext.User.Claims.LastOrDefault()?.Value);
             return Ok(accountResponse);
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.KeyDTOs;
 using Ankietyzator.Services.Interfaces;
