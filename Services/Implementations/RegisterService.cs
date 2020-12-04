@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -45,7 +44,7 @@ namespace Ankietyzator.Services.Implementations
             var response = new Response<Account>();
             return account == null ? response.Failure(NoAccountStr) : response.Success(account, AccountFoundStr);
         }
-        
+
         public async Task<Response<List<Account>>> GetAccounts()
         {
             var response = new Response<List<Account>>();
@@ -53,28 +52,17 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(accounts, GetAccountsStr);
         }
 
-        public async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto, HttpContext context)
+        public async Task<Response<Account>> UpdateMyAccount(UpdateAccountDto updateAccountDto, HttpContext context)
         {
-            var response = new Response<Account>();
-            (bool changedTags, bool changedKey) = GetConditions(updateAccountDto); 
+            var response = await UpdateAccount(updateAccountDto);
+            await UpdateCurrentIdentity(context, response.Data);
+            return response.Success(_mapper.Map<Account>(response.Data), SuccessfulUpdateStr);
+        }
 
-            int changes = new[]{changedTags, changedKey}.Count(b => b);
-            if (changes < 1) return response.Failure(NoUpdatesStr);
-            //if (changes > 1) return response.Failure(ManyUpdatesStr);
-
-            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == updateAccountDto.EMail);
-            if (account == null) return response.Failure(InvalidIndexStr);
-
-            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.Key);
-            if (changedKey && keyResponse.Data == null) return response.Failure(keyResponse.Message);
-            var key = keyResponse.Data;
-            
-            if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
-            
-            await MakeAccountChanges(account, updateAccountDto.Tags, key, context);
-            await _context.SaveChangesAsync();
-            
-            return response.Success(_mapper.Map<Account>(account), SuccessfulUpdateStr);
+        public async Task<Response<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
+        {
+            var response = await UpdateAccount(updateAccountDto);
+            return response.Success(_mapper.Map<Account>(response.Data), SuccessfulUpdateStr);
         }
 
         //======================================= UPDATE =======================================//
@@ -87,8 +75,29 @@ namespace Ankietyzator.Services.Implementations
         }
 
         private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.Key != null);
+        
+        private async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto)
+        {
+            var response = new Response<Account>();
+            (bool changedTags, bool changedKey) = GetConditions(updateAccountDto);
 
-        private async Task MakeAccountChanges(Account account, string tags, UpgradeKey key, HttpContext context)
+            int changes = new[] {changedTags, changedKey}.Count(b => b);
+            if (changes < 1) return response.Failure(NoUpdatesStr);
+
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == updateAccountDto.EMail);
+            if (account == null) return response.Failure(InvalidIndexStr);
+
+            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.Key);
+            if (changedKey && keyResponse.Data == null) return response.Failure(keyResponse.Message);
+            var key = keyResponse.Data;
+
+            if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
+            await MakeAccountChanges(account, updateAccountDto.Tags, key);
+            await _context.SaveChangesAsync();
+            return response;
+        }
+
+        private async Task MakeAccountChanges(Account account, string tags, UpgradeKey key)
         {
             if (tags != null) account.Tags = tags;
             if (key != null)
@@ -96,15 +105,16 @@ namespace Ankietyzator.Services.Implementations
                 account.UserType = key.UserType;
                 _context.UpgradeKeys.Remove(key);
                 await _context.SaveChangesAsync();
-                
-                ClaimsIdentity identity = context.User.Identity as ClaimsIdentity; 
-                RemoveUserClaims(identity);
-                identity.AddClaim(new Claim(ClaimTypes.Role, key.UserType.GetRole()));
-                context.User.AddIdentity(identity);
-                
-                await context.SignInAsync(context.User);
-                Console.WriteLine("UPGRADE: " + context.User.Claims.LastOrDefault()?.Value + " role " + key.UserType.GetRole());
             }
+        }
+
+        private async Task UpdateCurrentIdentity(HttpContext context, Account account)
+        {
+            ClaimsIdentity identity = context.User.Identity as ClaimsIdentity;
+            RemoveUserClaims(identity);
+            identity.AddClaim(new Claim(ClaimTypes.Role, account.UserType.GetRole()));
+            context.User.AddIdentity(identity);
+            await context.SignInAsync(context.User);
         }
 
         private void RemoveUserClaims(ClaimsIdentity identity)

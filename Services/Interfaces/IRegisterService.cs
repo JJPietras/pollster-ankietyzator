@@ -11,6 +11,7 @@ namespace Ankietyzator.Services.Interfaces
     {
         Task<Response<List<Account>>> GetAccounts();
         Task<Response<Account>> GetAccount(string email);
-        Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto, HttpContext context);
+        Task<Response<Account>> UpdateMyAccount(UpdateAccountDto updateAccountDto, HttpContext context);
+        Task<Response<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto);
     }
 }
