@@ -7,7 +7,7 @@ namespace Ankietyzator.Services.Interfaces
 {
     public interface IAnswerService// : IDbContextService
     {
-        Task<Response<List<GetAnswerDto>>> GetAnswers(int userId, int pollId);
-        Task<Response<List<GetAnswerDto>>> CreateAnswers(List<CreateAnswerDto> answers, int userId);
+        Task<Response<List<GetAnswerDto>>> GetAnswers(string email, int pollId, string authorMail);
+        Task<Response<List<GetAnswerDto>>> AddAnswers(List<CreateAnswerDto> answers, string email);
     }
 }

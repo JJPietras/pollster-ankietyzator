@@ -23,18 +23,18 @@ namespace Ankietyzator.Controllers
 
         //#### USER ####//
 
-        [HttpGet("get-user-un-archived")]
-        [Authorize(Roles = "user")]
-        public async Task<IActionResult> GetUserUnArchivedPollForms()
+        [HttpGet("get-user-un-filled")]
+        [Authorize(Roles = "user, admin")]
+        public async Task<IActionResult> GetUserUnFilledPollForms()
         {
             var response = await _polling.GetUserPollForms(GetUserEmail(), false);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
 
-        [HttpGet("get-user-archived")]
-        [Authorize(Roles = "user")]
-        public async Task<IActionResult> GetUserArchivedPollForms()
+        [HttpGet("get-user-filled")]
+        [Authorize(Roles = "user, admin")] //TODO: remove admin from both
+        public async Task<IActionResult> GetUserFilledPollForms()
         {
             var response = await _polling.GetUserPollForms(GetUserEmail(), true);
             if (response.Data == null) return NotFound(response);
@@ -81,9 +81,9 @@ namespace Ankietyzator.Controllers
             return Ok(response);
         }
 
-        //===================== POST =======================//
+        //===================== PUT =======================//
 
-        [HttpPost("update-poll")]
+        [HttpPut("update-poll")]
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> UpdatePoll(UpdatePollFormDto updatePollFormDto)
         {
@@ -91,15 +91,8 @@ namespace Ankietyzator.Controllers
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
-
-        [HttpPost("remove-poll/{pollId}")]
-        [Authorize(Roles = "pollster, admin")]
-        public async Task<IActionResult> RemovePoll(int pollId)
-        {
-            var response = await _polling.RemovePollForm(pollId, GetUserEmail());
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
-        }
+        
+        //===================== POST =======================//
 
         [HttpPost("create-poll")]
         [Authorize(Roles = "pollster, admin")]
@@ -109,6 +102,19 @@ namespace Ankietyzator.Controllers
             if (response.Data == null) return Conflict(response);
             return Ok(response);
         }
+        
+        //===================== DELETE =======================//
+        
+        [HttpDelete("remove-poll/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> RemovePoll(int pollId)
+        {
+            var response = await _polling.RemovePollForm(pollId, GetUserEmail());
+            if (response.Data == null) return NotFound(response);
+            return Ok(response);
+        }
+        
+        //===================== UTILITY =======================//
 
         private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }

@@ -23,7 +23,6 @@
  *                                  *
  ************************************/
 
-
 CREATE TABLE [dbo].[Accounts]
 (
     [AccountId] [int] IDENTITY (1,1) NOT NULL,
@@ -258,6 +257,10 @@ inner join Questions q ON p.PollId = q.Poll
 inner join Answers A on q.QuestionId = A.QuestionId
 */
 
-delete from PollForms where PollId = 29 
+/*delete from PollForms where PollId = 29 
 select * from PollForms
-delete from Questions
+delete from Questions*/
+delete from Accounts where EMail = 'jacubeus@gmail.com'
+update Accounts set UserType = 2 where EMail = 'jacubeus@gmail.com'
+select * from PollForms
+select * from questions
