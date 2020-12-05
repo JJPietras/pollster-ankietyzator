@@ -264,3 +264,5 @@ delete from Accounts where EMail = 'jacubeus@gmail.com'
 update Accounts set UserType = 2 where EMail = 'jacubeus@gmail.com'
 select * from PollForms
 select * from questions
+select * from QuestionStats
+select * from PollStats

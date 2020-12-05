@@ -181,8 +181,8 @@ namespace Ankietyzator.Services.Implementations
             await _questionService.RemoveQuestions(pollId);
             _context.PollForms.Remove(pollForm);
             await _context.SaveChangesAsync();
-            await _statService.RemovePollStats(pollId);
-            await _statService.RemoveQuestionsStats(pollId);
+            //await _statService.RemovePollStats(pollId);
+            //await _statService.RemoveQuestionsStats(pollId);
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
 

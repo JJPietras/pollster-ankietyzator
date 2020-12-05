@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Ankietyzator.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,31 +20,42 @@ namespace Ankietyzator.Controllers
         
         //===================== GET =======================//
         
-        [HttpGet("get-poll-stats")]
+        [HttpGet("get-poll-stats/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetPollStats(int pollId)
         {
-            //TODO: authorize
             var response = await _stats.GetPollStat(pollId);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
         
-        [HttpGet("get-polls-stats")]
-        public async Task<IActionResult> GetPollsStats(int pollsterId)
+        [HttpGet("get-polls-stats/{pollsterEmail}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetPollsStats(string pollsterEmail)
         {
-            //TODO: authorize
-            var response = await _stats.GetPollsStats(pollsterId);
+            var response = await _stats.GetPollsStats(pollsterEmail);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
         
-        [HttpGet("get-questions-stats")]
+        [HttpGet("get-polls-stats")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetPollsStats()
+        {
+            var response = await _stats.GetPollsStats(GetUserEmail());
+            if (response.Data == null) return NotFound(response);
+            return Ok(response);
+        }
+        
+        [HttpGet("get-questions-stats/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetQuestionsStats(int pollId)
         {
-            //TODO: authorize
             var response = await _stats.GetQuestionsStats(pollId);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
+        
+        private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }
 }
