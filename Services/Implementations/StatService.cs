@@ -12,6 +12,7 @@ namespace Ankietyzator.Services.Implementations
 {
     public class StatService : IStatService
     {
+        private const string NoAccountStr = "Could not find specified account for provided Email";
         private const string NoPollStatStr = "Could not find specified poll stat for provided poll ID";
         private const string PollStatFetchedStr = "Poll stats fetched successfully";
         private const string NoPollsStr = "User has no polls";
@@ -23,10 +24,10 @@ namespace Ankietyzator.Services.Implementations
         private const string NoPollWithIdString = "Poll with provided poll ID does not exists";
         private const string PollStatCreatedStr = "Poll stats created successfully";
         private const string QuestionStatsCreatedStr = "Question stats created successfully";
-        private const string PollStatNotFoundStr = "Could not found poll stat for provided ID";
+        /*private const string PollStatNotFoundStr = "Could not found poll stat for provided ID";
         private const string PollStatRemovedStr = "Poll stats removed successfully";
         private const string NoQuestionsStr = "Could not find questions";
-        private const string QuestionsStatsRemovedStr = "Questions stats removed successfully";
+        private const string QuestionsStatsRemovedStr = "Questions stats removed successfully";*/
 
         private readonly AnkietyzatorDbContext _context;
 
@@ -42,11 +43,14 @@ namespace Ankietyzator.Services.Implementations
             return stats == null ? response.Failure(NoPollStatStr) : response.Success(stats, PollStatFetchedStr);
         }
 
-        public async Task<Response<List<PollStat>>> GetPollsStats(int pollsterId)
+        public async Task<Response<List<PollStat>>> GetPollsStats(string pollsterEmail)
         {
             var response = new Response<List<PollStat>>();
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == pollsterEmail);
+            if (account == null) return response.Failure(NoAccountStr);
+            
             var polls = await _context.PollForms
-                .Where(p => p.AuthorId == pollsterId)
+                .Where(p => p.AuthorId == account.AccountId)
                 .Select(p => p.PollId)
                 .ToListAsync();
 
@@ -104,7 +108,7 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(questionStats, QuestionStatsCreatedStr);
         }
 
-        public async Task<Response<object>> RemovePollStats(int pollId)
+        /*public async Task<Response<object>> RemovePollStats(int pollId)
         {
             var response = new Response<object>();
             var pollStat = await _context.PollStats.FindAsync(pollId);
@@ -133,7 +137,7 @@ namespace Ankietyzator.Services.Implementations
             return questionStats.Count == 0 || questionStats.Count != questions.Count
                 ? response.Failure(NoQuestionStatsStr)
                 : response.Success(null, QuestionsStatsRemovedStr);
-        }
+        }*/
 
         private static string GetOptionsCount(string options)
         {

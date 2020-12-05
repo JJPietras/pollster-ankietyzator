@@ -10,7 +10,7 @@ namespace Ankietyzator.Models.DataModel.StatModel
 
         [Required] public int Completions { get; set; }
 
-        [Required] public float Percentage { get; set; }
+        [Required] public double Percentage { get; set; }
     }
 
     public class PollStatDbContext : DbContext

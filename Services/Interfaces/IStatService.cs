@@ -10,7 +10,7 @@ namespace Ankietyzator.Services.Interfaces
     {
         Task<Response<PollStat>> GetPollStat(int pollId);
 
-        Task<Response<List<PollStat>>> GetPollsStats(int pollsterId);
+        Task<Response<List<PollStat>>> GetPollsStats(string pollsterEmail);
 
         Task<Response<List<QuestionStat>>> GetQuestionsStats(int pollId);
 
@@ -18,8 +18,8 @@ namespace Ankietyzator.Services.Interfaces
 
         Task<Response<List<QuestionStat>>> CreateQuestionsStats(List<GetQuestionDto> questions);
 
-        Task<Response<object>> RemovePollStats(int pollId);
+        /*Task<Response<object>> RemovePollStats(int pollId);
 
-        Task<Response<object>> RemoveQuestionsStats(int pollId);
+        Task<Response<object>> RemoveQuestionsStats(int pollId);*/
     }
 }
