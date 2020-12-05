@@ -10,7 +10,7 @@ namespace Ankietyzator.Models.DataModel.PollModel
 
         [ForeignKey("questions_poll_foreign_key")] public int Poll { get; set; }
 
-        [Required] public uint Position { get; set; }
+        [Required] public int Position { get; set; }
 
         [Required] [MaxLength(150)] public string Title { get; set; }
 
@@ -18,7 +18,7 @@ namespace Ankietyzator.Models.DataModel.PollModel
 
         [Required] public bool AllowEmpty { get; set; }
 
-        [Required] public ushort MaxLength { get; set; }
+        [Required] public short MaxLength { get; set; }
 
         [Required] public int Type { get; set; }
     }

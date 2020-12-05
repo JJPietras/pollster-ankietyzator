@@ -12,8 +12,8 @@ namespace Ankietyzator.Services.Implementations
 {
     public class AnswerService : IAnswerService
     {
-        private const string AnswersFetchedStr = "Answers fetched successfuly";
-        private const string AnswersCreatedStr = "Answers created successfuly";
+        private const string AnswersFetchedStr = "Answers fetched successfully";
+        private const string AnswersCreatedStr = "Answers created successfully";
 
         private readonly AnkietyzatorDbContext _context;
         private readonly IMapper _mapper;

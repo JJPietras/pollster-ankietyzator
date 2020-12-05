@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.KeyDTOs;
 using Ankietyzator.Services.Interfaces;
@@ -34,7 +33,7 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUpgradeKeys()
         {
-            var keysResponse = await _keyService.GetPollsterKeys();
+            var keysResponse = await _keyService.GetUpgradeKeys();
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
         }
@@ -42,27 +41,30 @@ namespace Ankietyzator.Controllers
         //===================== PUT ========================//
         
         [HttpPut("update-key")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey)
         {
-            var keysResponse = await _keyService.UpdatePollsterKey(upgradeKey);
+            var keysResponse = await _keyService.UpdateUpgradeKey(upgradeKey);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
         }
         
         //===================== POST =======================//
         
-        [HttpPost("remove-key")]
+        [HttpPost("remove-key/{key}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveUpgradeKey(string key)
         {
-            var keysResponse = await _keyService.RemovePollsterKey(key);
+            var keysResponse = await _keyService.RemoveUpgradeKey(key);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
         }
         
         [HttpPost("add-key")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddUpgradeKey(UpgradeKey upgradeKey)
         {
-            var keysResponse = await _keyService.AddPollsterKey(upgradeKey);
+            var keysResponse = await _keyService.AddUpgradeKey(upgradeKey);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return Conflict(keysResponse);
         }

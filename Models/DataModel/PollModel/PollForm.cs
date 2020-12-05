@@ -17,7 +17,7 @@ namespace Ankietyzator.Models.DataModel.PollModel
 
         [Required] public bool NonAnonymous { get; set; }
 
-        [Required] public bool Archived { get; set; } = false;
+        [Required] public bool Archived { get; set; }
     }
 
     public class PollFormDbContext : DbContext

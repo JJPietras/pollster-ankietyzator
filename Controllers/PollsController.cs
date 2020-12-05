@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Ankietyzator.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -13,77 +13,103 @@ namespace Ankietyzator.Controllers
     public class PollsController : ControllerBase
     {
         private readonly IPollingService _polling;
-                
+
         public PollsController(IPollingService polling)
         {
             _polling = polling;
         }
-        
+
         //===================== GET =======================//
-        
-        [HttpGet("get-polls")]
-        public async Task<IActionResult> GetPollForms(int pollsterId)
+
+        //#### USER ####//
+
+        [HttpGet("get-user-un-archived")]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> GetUserUnArchivedPollForms()
         {
-            //TODO: authorize
-            var response = await _polling.GetPollForms(pollsterId);
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
-        }
-        
-        [HttpGet("get-poll/{pollId}")]
-        public async Task<IActionResult> GetPollForm(int pollId)
-        {
-            //TODO: authorize
-            var response = await _polling.GetPollForm(pollId);
+            var response = await _polling.GetUserPollForms(GetUserEmail(), false);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
 
-        [HttpGet("get-archived-polls")]
-        public async Task<IActionResult> GetArchivedPolls(int pollsterId)
+        [HttpGet("get-user-archived")]
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> GetUserArchivedPollForms()
         {
-            //TODO: authorize
-            var response = await _polling.GetArchivedPollForms(pollsterId);
+            var response = await _polling.GetUserPollForms(GetUserEmail(), true);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
-        
-        [HttpGet("get-not-archived-polls")]
-        public async Task<IActionResult> GetNotArchivedPolls(int pollsterId)
+
+        //#### ADMIN ####//
+
+        [HttpGet("get-un-archived")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetUnArchivedPollForms()
         {
-            //TODO: authorize
-            var response = await _polling.GetNotArchivedPollForms(pollsterId);
+            var response = await _polling.GetAllPollForms(false);
+            if (response.Data == null) return NotFound(response);
+            return Ok(response);
+        }
+
+        [HttpGet("get-archived")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetArchivedPollForms()
+        {
+            var response = await _polling.GetAllPollForms(true);
+            if (response.Data == null) return NotFound(response);
+            return Ok(response);
+        }
+
+        //#### POLLSTER ####//
+
+        [HttpGet("get-pollster-un-archived")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetNotArchivedPolls()
+        {
+            var response = await _polling.GetPollsterPollForms(GetUserEmail(), false);
+            if (response.Data == null) return NotFound(response);
+            return Ok(response);
+        }
+
+        [HttpGet("get-pollster-archived")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetArchivedPolls()
+        {
+            var response = await _polling.GetPollsterPollForms(GetUserEmail(), true);
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
 
         //===================== POST =======================//
-        
+
         [HttpPost("update-poll")]
-        public async Task<IActionResult> UpdatePoll(UpdatePollFormDto updatePollFormDto, int accountId)
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> UpdatePoll(UpdatePollFormDto updatePollFormDto)
         {
-            //TODO: authorize
-            var response = await _polling.UpdatePollForm(updatePollFormDto, accountId);
+            var response = await _polling.UpdatePollForm(updatePollFormDto, GetUserEmail());
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
-        
-        [HttpPost("remove-poll")]
+
+        [HttpPost("remove-poll/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> RemovePoll(int pollId)
         {
-            //TODO: authorize
-            var response = await _polling.RemovePollForm(pollId);
+            var response = await _polling.RemovePollForm(pollId, GetUserEmail());
             if (response.Data == null) return NotFound(response);
             return Ok(response);
         }
-        
+
         [HttpPost("create-poll")]
-        public async Task<IActionResult> CreatePoll([FromBody] CreatePollRequest body)
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> CreatePoll(CreatePollFormDto createPollFormDto)
         {
-            //TODO: authorize
-            var response = await _polling.CreatePollForm(body.PollForm, body.AccountId);
+            var response = await _polling.CreatePollForm(createPollFormDto, GetUserEmail());
             if (response.Data == null) return Conflict(response);
             return Ok(response);
         }
+
+        private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }
 }

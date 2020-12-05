@@ -5,7 +5,8 @@ namespace Ankietyzator.Models.DataModel.AccountModel
 {
     public class UpgradeKey
     {
-        [Key] [MaxLength(200)] public string Key { get; set; }
+        [Key] public int KeyId { get; set; }
+        [Required] [MaxLength(200)] public string Key { get; set; }
 
         [Required(AllowEmptyStrings = true)] [MaxLength(200)] public string EMail { get; set; }
 

@@ -8,15 +8,15 @@ namespace Ankietyzator.Services.Interfaces
 {
     public interface IKeyService// : IDbContextService
     {
-        Task<Response<List<UpgradeKey>>> GetPollsterKeys();
+        Task<Response<List<UpgradeKey>>> GetUpgradeKeys();
         
-        Task<Response<UpgradeKey>> GetPollsterKey(string key);
+        Task<Response<UpgradeKey>> GetUpgradeKey(string key);
         
-        Task<Response<UpgradeKey>> UpdatePollsterKey(UpdateUpgradeKeyDto upgradeKey);
+        Task<Response<UpgradeKey>> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey);
         
-        Task<Response<UpgradeKey>> RemovePollsterKey(string key);
+        Task<Response<UpgradeKey>> RemoveUpgradeKey(string key);
 
-        Task<Response<UpgradeKey>> AddPollsterKey(UpgradeKey upgradeKey);
+        Task<Response<UpgradeKey>> AddUpgradeKey(UpgradeKey upgradeKey);
         
     }
 }

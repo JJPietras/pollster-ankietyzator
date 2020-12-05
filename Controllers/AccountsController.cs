@@ -23,6 +23,13 @@ namespace Ankietyzator.Controllers
 
         //===================== GET =======================//
 
+        [HttpGet("get-claims")]
+        public async Task<IActionResult> GetClaims()
+        {
+            var claims = HttpContext.User.Claims.Select(c => c.Type + " " + c.Value).ToList();
+            return Ok(claims);
+        }
+        
         [HttpGet("get-account")]
         public async Task<IActionResult> GetAccount()
         {
@@ -70,6 +77,6 @@ namespace Ankietyzator.Controllers
             return Ok(accountResponse);
         }
 
-        private string GetUserEmail() => HttpContext.User.Claims.ToArray()[2].Value;
+        private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }
 }
