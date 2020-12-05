@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
@@ -17,6 +16,7 @@ namespace Ankietyzator.Services.Implementations
     {
         private const string AccountNotFoundStr = "Account not found. That should not happen";
         private const string NoPollFormStr = "Could not find form with the specified ID";
+        private const string InvalidIndexStr = "Questions must have distinct indexes";
 
         private const string NoQuestionsStr = "Poll has no questions";
 
@@ -69,7 +69,6 @@ namespace Ankietyzator.Services.Implementations
             {
                 var questionsResponse = await _questionService.GetQuestions(getPollFormDto.PollId);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse.Message);
-                Console.WriteLine(questionsResponse.Data[0].Title);
                 getPollFormDto.Questions = questionsResponse.Data;
             }
             return response.Success(dtoPolls, PollFormsSuccessStr);
@@ -77,15 +76,12 @@ namespace Ankietyzator.Services.Implementations
 
         public async Task<Response<List<GetPollFormDto>>> GetUserPollForms(string email, bool filled)
         {
-            Console.WriteLine(1);
             var response = new Response<List<GetPollFormDto>>();
             var responseAll = await GetAllUserPollForms(email);
             if (responseAll.Data == null) return response.Failure(responseAll.Message);
             var polls = responseAll.Data;
-            Console.WriteLine(2);
             
             var accountId = (await GetAccount(email)).Data.AccountId;
-            Console.WriteLine(3);
             
             var filledPolls = (
                 from poll in polls
@@ -94,12 +90,9 @@ namespace Ankietyzator.Services.Implementations
                 where answer.AccountId == accountId
                 select poll
             ).ToList();
-            Console.WriteLine(4);
 
             responseAll.Data = filled ? filledPolls : polls.Except(filledPolls).ToList();
-            Console.WriteLine(5);
             var dtoPolls = responseAll.Data.Select(p => _mapper.Map<GetPollFormDto>(p)).ToList();
-            Console.WriteLine(6);
 
             foreach (GetPollFormDto getPollFormDto in dtoPolls)
             {
@@ -107,7 +100,6 @@ namespace Ankietyzator.Services.Implementations
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse.Message);
                 getPollFormDto.Questions = questionsResponse.Data;
             }
-            Console.WriteLine(7);
 
             return response.Success(dtoPolls, PollFormsSuccessStr);
         }
@@ -203,8 +195,8 @@ namespace Ankietyzator.Services.Implementations
             var pollsterResponse = await GetAccount(email);
             if (pollsterResponse.Data == null) return response.Failure(pollsterResponse.Message);
             var account = pollsterResponse.Data;
-            var condition = previousForm.AuthorId != account.AccountId && account.UserType != UserType.Admin;
-            if (condition) return response.Failure(AccountMismatchStr);
+            bool fail = previousForm.AuthorId != account.AccountId && account.UserType != UserType.Admin;
+            if (fail) return response.Failure(AccountMismatchStr);
 
             previousForm.Archived = true;
             var createPollFormDto = _mapper.Map<CreatePollFormDto>(pollForm);
@@ -223,6 +215,9 @@ namespace Ankietyzator.Services.Implementations
 
             var noQuestions = pollForm.Questions == null || pollForm.Questions.Count == 0;
             if (noQuestions) return response.Failure(NoQuestionsStr);
+
+            if (pollForm.Questions.Count != pollForm.Questions.Select(q => q.Position).Distinct().Count())
+                return response.Failure(InvalidIndexStr);
 
             var dalForm = _mapper.Map<PollForm>(pollForm);
             dalForm.AuthorId = pollsterResponse.Data.AccountId;
@@ -269,8 +264,7 @@ namespace Ankietyzator.Services.Implementations
         {
             var response = new Response<Account>();
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
-            if (account == null) return response.Failure(AccountNotFoundStr);
-            return response.Success(account, "");
+            return account == null ? response.Failure(AccountNotFoundStr) : response.Success(account, "");
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Ankietyzator.Controllers
             AuthenticateResult result = await HttpContext.AuthenticateAsync(cookieScheme);
             
             (bool registered, Account account) = await Register(result.Principal.Claims.ToArray());
-            string role = await AddAccountTypeRole(result, account);
+            string role = await AddAccountTypeRole(result, registered ? account.UserType.GetRole() : "user");
 
             string message = registered ? "User signed-up: " : "Registered new user: ";
             Console.WriteLine(message + account.EMail + " " + account.Name + " role: " + role);
@@ -68,14 +68,14 @@ namespace Ankietyzator.Controllers
             Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
             if (account == null)
             {
-                Account newAccount = new Account
+                account = new Account
                 {
                     EMail = email,
                     Name = resultClaims[Name].Value,
                     Tags = "",
                     UserType = UserType.User
                 };
-                await _context.Accounts.AddAsync(newAccount);
+                await _context.Accounts.AddAsync(account);
                 await _context.SaveChangesAsync();
             }
             else registered = true;
@@ -83,10 +83,9 @@ namespace Ankietyzator.Controllers
             return (registered, account);
         }
 
-        private async Task<string> AddAccountTypeRole(AuthenticateResult result, Account account)
+        private async Task<string> AddAccountTypeRole(AuthenticateResult result, string role)
         {
             var claim = new ClaimsIdentity();
-            string role = account.UserType.GetRole();
             claim.AddClaim(new Claim(ClaimTypes.Role, role));
             result.Principal.AddIdentity(claim);
             await HttpContext.SignInAsync(result.Principal, result.Properties);

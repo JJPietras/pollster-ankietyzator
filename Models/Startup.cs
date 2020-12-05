@@ -1,3 +1,4 @@
+using System;
 using System.Security.Claims;
 using Ankietyzator.Services.Implementations;
 using Ankietyzator.Services.Interfaces;
@@ -43,7 +44,11 @@ namespace Ankietyzator.Models
             services.AddScoped<IStatService, StatService>();
 
             services.AddDbContext<AnkietyzatorDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure"),
+                        sqlOptions => sqlOptions.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null));
+                }
+            );
 
             services.AddAuthentication(options =>
             {
@@ -65,14 +70,14 @@ namespace Ankietyzator.Models
                 options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 options.ReturnUrlParameter = "https://localhost:5001";
             });
-            
+
             /*services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
             });*/
-            
+
             services.AddControllers(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()

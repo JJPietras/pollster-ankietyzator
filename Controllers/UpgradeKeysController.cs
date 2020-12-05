@@ -30,7 +30,7 @@ namespace Ankietyzator.Controllers
         }*/
         
         [HttpGet("get-keys")]
-        [Authorize(Roles = "admin")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUpgradeKeys()
         {
             var keysResponse = await _keyService.GetUpgradeKeys();
@@ -41,7 +41,7 @@ namespace Ankietyzator.Controllers
         //===================== PUT ========================//
         
         [HttpPut("update-key")]
-        [Authorize(Roles = "admin")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey)
         {
             var keysResponse = await _keyService.UpdateUpgradeKey(upgradeKey);
@@ -51,22 +51,24 @@ namespace Ankietyzator.Controllers
         
         //===================== POST =======================//
         
-        [HttpPost("remove-key/{key}")]
+        [HttpPost("add-key")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AddUpgradeKey(UpgradeKey upgradeKey)
+        {
+            var keysResponse = await _keyService.AddUpgradeKey(upgradeKey);
+            if (keysResponse.Data != null) return Ok(keysResponse);
+            return Conflict(keysResponse);
+        }
+        
+        //===================== DELETE =======================//
+        
+        [HttpDelete("remove-key/{key}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveUpgradeKey(string key)
         {
             var keysResponse = await _keyService.RemoveUpgradeKey(key);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
-        }
-        
-        [HttpPost("add-key")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AddUpgradeKey(UpgradeKey upgradeKey)
-        {
-            var keysResponse = await _keyService.AddUpgradeKey(upgradeKey);
-            if (keysResponse.Data != null) return Ok(keysResponse);
-            return Conflict(keysResponse);
         }
     }
 }
