@@ -5,7 +5,7 @@ namespace Ankietyzator.Models.DTO.PollDTOs
 {
     public class GetPollFormDto
     {
-        public int? PollId { get; set; }
+        public int PollId { get; set; }
         
         public int AuthorId { get; set; }
         

@@ -57,21 +57,22 @@ GO
 */
 CREATE TABLE [dbo].[UpgradeKeys]
 (
-    [Key]      [nvarchar](200) NOT NULL,
-    [EMail]    [nvarchar](200) NOT NULL,
-    [UserType] [int]           NOT NULL,
+    [KeyId]    [int] IDENTITY (1,1) NOT NULL,
+    [Key]      [nvarchar](200)      NOT NULL,
+    [EMail]    [nvarchar](200)      NOT NULL,
+    [UserType] [int]                NOT NULL,
 
     CONSTRAINT [pollster_keys_primary_key]
-        PRIMARY KEY ([Key]),
-    CONSTRAINT [pollster_keys_key_format] 
+        PRIMARY KEY ([KeyId]),
+    CONSTRAINT [pollster_keys_key_format]
         CHECK (LEN([Key]) > 3),
     CONSTRAINT [pollster_keys_email_format]
         CHECK ((LEN([EMail]) > 4 AND [EMail] LIKE '%@%.%') OR LEN([EMail]) = 0),
     CONSTRAINT [pollster_keys_user_non_standard]
-        CHECK ([UserType] < 3 AND [UserType] > 0)
+        CHECK ([UserType] < 3 AND [UserType] > -1)
 ) ON [PRIMARY]
 GO
-INSERT INTO [dbo].[UpgradeKeys] VALUES ('abhfd', '', 2)
+
 
 /* Wzorzec ankiety - tworzy go Pollster. Posiada 
    unikalny identyfikator, klucz obcy stanowiący
@@ -99,7 +100,7 @@ CREATE TABLE [dbo].[PollForms]
     CONSTRAINT [poll_forms_primary_key]
         PRIMARY KEY ([PollId]),
     CONSTRAINT [poll_forms_author_id_foreign_key]
-        FOREIGN KEY ([AuthorId]) REFERENCES [dbo].[Accounts] ([AccountId])
+        FOREIGN KEY ([AuthorId]) REFERENCES [dbo].[Accounts] ([AccountId]) ON DELETE CASCADE 
 ) ON [PRIMARY]
 GO
 
@@ -142,17 +143,18 @@ CREATE TABLE [dbo].[Questions]
     CONSTRAINT [questions_primary_key]
         PRIMARY KEY ([QuestionId]),
     CONSTRAINT [questions_poll_foreign_key]
-        FOREIGN KEY ([Poll]) REFERENCES [dbo].[PollForms] ([PollId]),
+        FOREIGN KEY ([Poll]) REFERENCES [dbo].[PollForms] ([PollId]) ON DELETE CASCADE,
     CONSTRAINT [questions_poll_max_length]
         CHECK ([MaxLength] > -1 AND [MaxLength] < 2001),
     CONSTRAINT [questions_type_non_standard]
-        CHECK ([Type] > 0 AND [Type] < 6),
+        CHECK ([Type] > -1 AND [Type] < 5),
     CONSTRAINT [questions_position_positive]
         CHECK ([Position] > -1)
 ) ON [PRIMARY]
 GO
 
-
+select * from Accounts
+select * from PollForms
 /* Odpowiedź na dane pytanie pewnej ankiety 
    jest identyfikowane przez identyfikator
    konta użytkownika wypełniającego ankietę,
@@ -201,7 +203,7 @@ CREATE TABLE [dbo].[QuestionStats]
     CONSTRAINT [question_stats_primary_key]
         PRIMARY KEY ([QuestionID]),
     CONSTRAINT [question_stats_foreign_key]
-        FOREIGN KEY ([QuestionID]) REFERENCES [dbo].[Questions] ([QuestionId])
+        FOREIGN KEY ([QuestionID]) REFERENCES [dbo].[Questions] ([QuestionId]) ON DELETE CASCADE
 )
 GO
 
@@ -230,7 +232,7 @@ CREATE TABLE [dbo].[PollStats]
     CONSTRAINT [poll_stats_primary_key]
         PRIMARY KEY ([PollId]),
     CONSTRAINT [poll_stats_foreign_key]
-        FOREIGN KEY ([PollId]) REFERENCES [dbo].[PollForms] ([PollId]),
+        FOREIGN KEY ([PollId]) REFERENCES [dbo].[PollForms] ([PollId]) ON DELETE CASCADE,
     CONSTRAINT [poll_stats_completions]
         CHECK ([Completions] > -1),
     CONSTRAINT [poll_stats_percentage]
@@ -249,3 +251,13 @@ WHERE EMail = 'jacubeus@gmail.com'*/
 /*DELETE
 FROM Accounts
 WHERE EMail = 'jacubeus@gmail.com'*/
+
+/*SELECT * 
+FROM PollForms p
+inner join Questions q ON p.PollId = q.Poll
+inner join Answers A on q.QuestionId = A.QuestionId
+*/
+
+delete from PollForms where PollId = 29 
+select * from PollForms
+delete from Questions

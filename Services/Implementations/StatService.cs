@@ -13,20 +13,20 @@ namespace Ankietyzator.Services.Implementations
     public class StatService : IStatService
     {
         private const string NoPollStatStr = "Could not find specified poll stat for provided poll ID";
-        private const string PollStatFetchedStr = "Poll stats fetched successfuly";
+        private const string PollStatFetchedStr = "Poll stats fetched successfully";
         private const string NoPollsStr = "User has no polls";
         private const string NoPollStatsStr = "Could not find (all) stats";
-        private const string PollStatsFetchedStr = "Polls stats fetched successfuly";
+        private const string PollStatsFetchedStr = "Polls stats fetched successfully";
         private const string PollNoQuestionsStr = "Poll does not have any questions";
-        private const string QuestionStatsFetchedStr = "Question stats fetched successfuly";
+        private const string QuestionStatsFetchedStr = "Question stats fetched successfully";
         private const string NoQuestionStatsStr = "Could not find (all) question stats";
         private const string NoPollWithIdString = "Poll with provided poll ID does not exists";
-        private const string PollStatCreatedStr = "Poll stats created successfuly";
-        private const string QuestionStatsCreatedStr = "Question stats created successfuly";
+        private const string PollStatCreatedStr = "Poll stats created successfully";
+        private const string QuestionStatsCreatedStr = "Question stats created successfully";
         private const string PollStatNotFoundStr = "Could not found poll stat for provided ID";
-        private const string PollStatRemovedStr = "Poll stats removed successfuly";
+        private const string PollStatRemovedStr = "Poll stats removed successfully";
         private const string NoQuestionsStr = "Could not find questions";
-        private const string QuestionsStatsRemovedStr = "Questions stats removed successfuly";
+        private const string QuestionsStatsRemovedStr = "Questions stats removed successfully";
 
         private readonly AnkietyzatorDbContext _context;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
@@ -13,9 +14,9 @@ namespace Ankietyzator.Services.Implementations
     public class QuestionService : IQuestionService
     {
         private const string NoQuestionsStr = "There are no questions for the selected poll in the database";
-        private const string QuestionsSuccessStr = "Questions fetched successfuly";
-        private const string QuestionsRemovedStr = "Questions removed successfuly";
-        private const string QuestionCreatedStr = " Question created successfuly";
+        private const string QuestionsSuccessStr = "Questions fetched successfully";
+        private const string QuestionsRemovedStr = "Questions removed successfully";
+        private const string QuestionCreatedStr = " Question created successfully";
 
         private readonly AnkietyzatorDbContext _context;
         private readonly IMapper _mapper;
