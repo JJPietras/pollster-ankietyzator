@@ -6,7 +6,7 @@ namespace Ankietyzator.Models.DataModel.StatModel
 {
     public class PollStat
     {
-        [Key] [ForeignKey("PollId")] public int PollId { get; set; }
+        [Key] [ForeignKey("poll_forms_primary_key")] public int PollId { get; set; }
 
         [Required] public int Completions { get; set; }
 
