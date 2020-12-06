@@ -9,16 +9,16 @@ namespace Ankietyzator.Services.Interfaces
     {
         //Task<Response<GetPollFormDto>> GetPollForm(int pollId);
         
-        Task<Response<List<GetPollFormDto>>> GetAllPollForms(bool archived);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetAllPollForms(bool archived);
 
-        Task<Response<List<GetPollFormDto>>> GetUserPollForms(string email, bool filled);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetUserPollForms(string email, bool filled);
         
-        Task<Response<List<GetPollFormDto>>> GetPollsterPollForms(string email, bool archived);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetPollsterPollForms(string email, bool archived);
 
-        Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, string email);
+        Task<ServiceResponse<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, string email);
         
-        Task<Response<GetPollFormDto>> RemovePollForm(int pollId, string email);
+        Task<ServiceResponse<GetPollFormDto>> RemovePollForm(int pollId, string email);
 
-        Task<Response<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, string email);
+        Task<ServiceResponse<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, string email);
     }
 }

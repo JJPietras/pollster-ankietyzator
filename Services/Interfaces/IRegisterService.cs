@@ -9,9 +9,9 @@ namespace Ankietyzator.Services.Interfaces
 {
     public interface IRegisterService// : IDbContextService
     {
-        Task<Response<List<Account>>> GetAccounts();
-        Task<Response<Account>> GetAccount(string email);
-        Task<Response<Account>> UpdateMyAccount(UpdateAccountDto updateAccountDto, HttpContext context);
-        Task<Response<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto);
+        Task<ServiceResponse<List<Account>>> GetAccounts();
+        Task<ServiceResponse<Account>> GetAccount(string email);
+        Task<ServiceResponse<Account>> UpdateMyAccount(UpdateAccountDto updateAccountDto, HttpContext context);
+        Task<ServiceResponse<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto);
     }
 }
