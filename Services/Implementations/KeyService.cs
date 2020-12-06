@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
@@ -10,67 +12,92 @@ namespace Ankietyzator.Services.Implementations
 {
     public class KeyService : IKeyService
     {
+        private const string KeyTypeFailStr = "User type must be between 0 and 2 inclusive";
+        private const string KeyMailInvalidStr = "EMail can be empty but must not be null";
         private const string KeyExistsStr = "Key with key string or email already exists";
-        private const string KeysFetchedStr = "Keys fetched successfuly";
-        private const string KeyFetchedStr = "Key fetched successfuly";
-        private const string KeyRemovedStr = "Key removed successfuly";
-        private const string KeyUpdatedStr = "Key updated successfuly";
-        private const string KeyAddedStr = "Key added successfuly";
+        private const string KeyLengthStr = "Key must have more than 3 characters";
+        private const string KeysFetchedStr = "Keys fetched successfully";
+        private const string KeyFetchedStr = "Key fetched successfully";
+        private const string KeyRemovedStr = "Key removed successfully";
+        private const string KeyUpdatedStr = "Key updated successfully";
+        private const string KeyAddedStr = "Key added successfully";
         private const string NoKeyStr = "Key not found";
 
-        public AnkietyzatorDbContext Context { get; set; }
+        private readonly AnkietyzatorDbContext _context;
 
-        public async Task<Response<List<UpgradeKey>>> GetPollsterKeys()
+        public KeyService(AnkietyzatorDbContext context)
         {
-            var response = new Response<List<UpgradeKey>>();
-            return response.Success(await Context.UpgradeKeys.ToListAsync(), KeysFetchedStr);
+            _context = context;
         }
 
-        public async Task<Response<UpgradeKey>> GetPollsterKey(string key)
+        public async Task<ServiceResponse<List<UpgradeKey>>> GetUpgradeKeys()
         {
-            var response = new Response<UpgradeKey>();
-            var dalKey = await Context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == key);
-            return dalKey == null ? response.Failure(NoKeyStr) : response.Success(dalKey, KeyFetchedStr);
+            var response = new ServiceResponse<List<UpgradeKey>>();
+            return response.Success(await _context.UpgradeKeys.ToListAsync(), KeysFetchedStr);
         }
 
-        public async Task<Response<UpgradeKey>> RemovePollsterKey(string key)
+        public async Task<ServiceResponse<UpgradeKey>> GetUpgradeKey(string key)
         {
-            var response = new Response<UpgradeKey>();
-            var dalKey = await Context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == key);
-            if (dalKey == null) return response.Failure(NoKeyStr);
-            Context.UpgradeKeys.Remove(dalKey);
-            await Context.SaveChangesAsync();
+            var response = new ServiceResponse<UpgradeKey>();
+            var dalKey = await _context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == key);
+            return dalKey == null
+                ? response.Failure(NoKeyStr, HttpStatusCode.NotFound)
+                : response.Success(dalKey, KeyFetchedStr);
+        }
+
+        public async Task<ServiceResponse<UpgradeKey>> RemoveUpgradeKey(string key)
+        {
+            var response = new ServiceResponse<UpgradeKey>();
+            var dalKey = await _context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == key);
+            if (dalKey == null) return response.Failure(NoKeyStr, HttpStatusCode.NotFound);
+            _context.UpgradeKeys.Remove(dalKey);
+            await _context.SaveChangesAsync();
             return response.Success(dalKey, KeyRemovedStr);
         }
 
-        public async Task<Response<UpgradeKey>> UpdatePollsterKey(UpdateUpgradeKeyDto upgradeKey)
+        public async Task<ServiceResponse<UpgradeKey>> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey)
         {
-            var response = new Response<UpgradeKey>();
-            UpgradeKey dalKey = await Context.UpgradeKeys.FirstOrDefaultAsync(k => k.EMail == upgradeKey.EMail);
-            if (dalKey != null) dalKey.Key = upgradeKey.Key;
-            else
-            {
-                dalKey = await Context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == upgradeKey.Key);
-                if (dalKey == null) return response.Failure(NoKeyStr);
-                dalKey.EMail = upgradeKey.EMail;
-            }
+            var response = new ServiceResponse<UpgradeKey>();
+            const HttpStatusCode code = HttpStatusCode.UnprocessableEntity;
+            if (!Enum.IsDefined(typeof(UserType), upgradeKey.UserType)) return response.Failure(KeyTypeFailStr, code);
+            if (upgradeKey.Key == null || upgradeKey.Key.Length < 4) return response.Failure(KeyLengthStr, code);
+            if (upgradeKey.EMail == null) return response.Failure(KeyMailInvalidStr, code);
 
-            if (dalKey.UserType != upgradeKey.UserType) dalKey.UserType = upgradeKey.UserType;
-
-            await Context.SaveChangesAsync();
-            return response.Success(dalKey, KeyUpdatedStr);
+            return await UpdateSecureKey(upgradeKey);
         }
 
-        public async Task<Response<UpgradeKey>> AddPollsterKey(UpgradeKey upgradeKey)
+        public async Task<ServiceResponse<UpgradeKey>> AddUpgradeKey(UpgradeKey upgradeKey)
         {
-            var response = new Response<UpgradeKey>();
-            var existingKey = await Context.UpgradeKeys.FirstOrDefaultAsync(
-                u => u.Key == upgradeKey.Key || u.EMail == upgradeKey.EMail
+            var response = new ServiceResponse<UpgradeKey>();
+            if (upgradeKey.Key.Length < 4) return response.Failure(KeyLengthStr, HttpStatusCode.UnprocessableEntity);
+            var existingKey = await _context.UpgradeKeys.FirstOrDefaultAsync(
+                u => u.Key == upgradeKey.Key || u.EMail == upgradeKey.EMail && u.EMail != ""
             );
-            if (existingKey != null) return response.Failure(KeyExistsStr);
-            await Context.UpgradeKeys.AddAsync(upgradeKey);
-            await Context.SaveChangesAsync();
-            return response.Success(null, KeyAddedStr);
+            if (existingKey != null) return response.Failure(KeyExistsStr, HttpStatusCode.Conflict);
+            await _context.UpgradeKeys.AddAsync(upgradeKey);
+            await _context.SaveChangesAsync();
+            return response.Success(upgradeKey, KeyAddedStr);
+        }
+
+        //===================================== HELPER METHODS =====================================// 
+
+        private async Task<ServiceResponse<UpgradeKey>> UpdateSecureKey(UpdateUpgradeKeyDto keyDto)
+        {
+            var response = new ServiceResponse<UpgradeKey>();
+            UpgradeKey dalKey = await _context.UpgradeKeys.FirstOrDefaultAsync(k => k.EMail == keyDto.EMail);
+
+            if (dalKey != null) dalKey.Key = keyDto.Key;
+            else
+            {
+                dalKey = await _context.UpgradeKeys.FirstOrDefaultAsync(k => k.Key == keyDto.Key);
+                if (dalKey == null) return response.Failure(NoKeyStr, HttpStatusCode.NotFound);
+                dalKey.EMail = keyDto.EMail;
+            }
+
+            dalKey.UserType = keyDto.UserType;
+
+            await _context.SaveChangesAsync();
+            return response.Success(dalKey, KeyUpdatedStr);
         }
     }
 }

@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.AccountDTOs;
 using Ankietyzator.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Services.Implementations
@@ -14,82 +19,116 @@ namespace Ankietyzator.Services.Implementations
     {
         private const string NoUpdatesStr = "No updates were passed";
         private const string ManyUpdatesStr = "There can only be one update per request";
-        private const string InvalidIndexStr = "Provided no or invalid account index";
-        private const string SuccessfulUpdateStr = "Account updated successfuly";
+        private const string InvalidIndexStr = "Provided no or invalid account Email";
+        private const string SuccessfulUpdateStr = "Account updated successfully";
 
         private const string NoAccountStr = "There is no registered account with this email";
-        private const string AccountFoundStr = "Account fetched successfuly";
+        private const string AccountFoundStr = "Account fetched successfully";
 
-        private const string UserNotAdminStr = "Could not fetch users data. User is not Admin";
         private const string InvalidKeyStr = "Provided polster key is invalid";
-        private const string GetAccountsStr = "Successfuly queried registrations";
+        private const string GetAccountsStr = "Successfully queried registrations";
 
-        public AnkietyzatorDbContext Context { get; set; }
+        private readonly AnkietyzatorDbContext _context;
 
         private readonly IKeyService _keyService;
         private readonly IMapper _mapper;
 
-        public RegisterService(IMapper mapper, IKeyService keyService)
+        public RegisterService(AnkietyzatorDbContext context, IMapper mapper, IKeyService keyService)
         {
             _keyService = keyService;
             _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<Response<Account>> GetAccount(string email)
+        public async Task<ServiceResponse<Account>> GetAccount(string email)
         {
-            Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
-            var response = new Response<Account>();
-            return account == null ? response.Failure(NoAccountStr) : response.Success(account, AccountFoundStr);
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
+            var response = new ServiceResponse<Account>();
+            return account == null
+                ? response.Failure(NoAccountStr, HttpStatusCode.NotFound)
+                : response.Success(account, AccountFoundStr);
         }
-        
-        public async Task<Response<List<Account>>> GetAccounts(UserType userType)
+
+        public async Task<ServiceResponse<List<Account>>> GetAccounts()
         {
-            var response = new Response<List<Account>>();
-            if (userType != UserType.Admin) return response.Failure(UserNotAdminStr);
-            var accounts = await Context.Accounts.ToListAsync();
+            var response = new ServiceResponse<List<Account>>();
+            var accounts = await _context.Accounts.ToListAsync();
             return response.Success(accounts, GetAccountsStr);
         }
 
-        public async Task<Response<Account>> UpdateAccount(UpdateAccountDto updateAccountDto)
+        public async Task<ServiceResponse<Account>> UpdateMyAccount(UpdateAccountDto updateAccountDto,
+            HttpContext context)
         {
-            var response = new Response<Account>();
-            (bool changedTags, bool changedPollsterKey) = GetConditions(updateAccountDto); 
-
-            int changes = new[]{changedTags, changedPollsterKey}.Count(b => b);
-            if (changes < 1) return response.Failure(NoUpdatesStr);
-            if (changes > 1) return response.Failure(ManyUpdatesStr);
-
-            Account account = await Context.Accounts.FirstOrDefaultAsync(a => a.AccountId == updateAccountDto.Id);
-            if (account == null) return response.Failure(InvalidIndexStr);
-
-            var keyResponse = await _keyService.GetPollsterKey(updateAccountDto.PollsterKey);
-            if (keyResponse.Data == null) return response.Failure(keyResponse.Message);
-            var key = keyResponse.Data;
-            
-            if (InvalidPollsterKey(updateAccountDto, key, account.EMail)) return response.Failure(InvalidKeyStr);
-            
-            MakeAccountChanges(account, updateAccountDto);
-            await Context.SaveChangesAsync();
-            
-            return response.Success(_mapper.Map<Account>(account), SuccessfulUpdateStr);
+            var response = await UpdateAccount(updateAccountDto);
+            if (response.Data == null) return response;
+            await UpdateCurrentIdentity(context, response.Data);
+            return response.Success(_mapper.Map<Account>(response.Data), SuccessfulUpdateStr);
         }
 
+        public async Task<ServiceResponse<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
+        {
+            var response = await UpdateAccount(updateAccountDto);
+            return response.Data == null
+                ? response
+                : response.Success(_mapper.Map<Account>(response.Data), SuccessfulUpdateStr);
+        }
 
         //======================================= UPDATE =======================================//
 
         private static bool InvalidPollsterKey(UpdateAccountDto createAccountDto, UpgradeKey key, string eMail)
         {
-            string dtoKey = createAccountDto.PollsterKey;
+            string dtoKey = createAccountDto.Key;
             if (dtoKey == null) return false;
             return key == null || key.EMail != eMail && key.EMail.Length > 0;
         }
 
-        private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.PollsterKey != null);
+        private static (bool, bool) GetConditions(UpdateAccountDto dto) => (dto.Tags != null, dto.Key != null);
 
-        private static void MakeAccountChanges(Account account, UpdateAccountDto dto)
+        private async Task<ServiceResponse<Account>> UpdateAccount(UpdateAccountDto updateAccountDto)
         {
-            if (dto.Tags != null) account.Tags = dto.Tags;
-            if (dto.PollsterKey != null) account.UserType = UserType.Pollster;
+            var response = new ServiceResponse<Account>();
+            const HttpStatusCode code = HttpStatusCode.UnprocessableEntity;
+            (bool changedTags, bool changedKey) = GetConditions(updateAccountDto);
+            int changes = new[] {changedTags, changedKey}.Count(b => b);
+            if (changes < 1) return response.Failure(NoUpdatesStr, code);
+
+            Account account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == updateAccountDto.EMail);
+            if (account == null) return response.Failure(InvalidIndexStr, code);
+
+            var keyResponse = await _keyService.GetUpgradeKey(updateAccountDto.Key);
+            if (changedKey && keyResponse.Data == null) return response.Failure(keyResponse);
+            var key = keyResponse.Data;
+
+            if (InvalidPollsterKey(updateAccountDto, key, account.EMail))
+                return response.Failure(InvalidKeyStr, code);
+
+            await MakeAccountChanges(account, updateAccountDto.Tags, key);
+            await _context.SaveChangesAsync();
+            return response.Success(account, SuccessfulUpdateStr);
+        }
+
+        private async Task MakeAccountChanges(Account account, string tags, UpgradeKey key)
+        {
+            if (tags != null) account.Tags = tags;
+            if (key != null)
+            {
+                account.UserType = key.UserType;
+                _context.UpgradeKeys.Remove(key);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task UpdateCurrentIdentity(HttpContext context, Account account)
+        {
+            var identities = context.User.Identities;
+            var newId = new ClaimsPrincipal();
+
+            newId.AddIdentity(identities.ElementAt(0));
+            newId.AddIdentity(new ClaimsIdentity(new[] {new Claim(ClaimTypes.Role, account.UserType.GetRole())}));
+
+            context.User = newId;
+            await context.SignOutAsync();
+            await context.SignInAsync(newId);
         }
     }
 }
