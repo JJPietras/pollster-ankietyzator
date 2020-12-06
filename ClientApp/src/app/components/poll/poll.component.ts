@@ -2,7 +2,7 @@
 import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-poll',
@@ -12,10 +12,14 @@ import {Router} from '@angular/router';
 
 export class PollComponent{
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute) {
 
   }
 
+  ngOnInit() {
+    const heroId = this.route.snapshot.paramMap.get('id');
 
+    console.log(heroId);
+  }
 
 }
