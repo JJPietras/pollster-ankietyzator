@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
@@ -23,6 +24,7 @@ namespace Ankietyzator.Services.Implementations
         private const string NoQuestionStatsStr = "Could not find (all) question stats";
         private const string NoPollWithIdString = "Poll with provided poll ID does not exists";
         private const string PollStatCreatedStr = "Poll stats created successfully";
+
         private const string QuestionStatsCreatedStr = "Question stats created successfully";
         /*private const string PollStatNotFoundStr = "Could not found poll stat for provided ID";
         private const string PollStatRemovedStr = "Poll stats removed successfully";
@@ -35,57 +37,61 @@ namespace Ankietyzator.Services.Implementations
         {
             _context = context;
         }
-        
-        public async Task<Response<PollStat>> GetPollStat(int pollId)
+
+        public async Task<ServiceResponse<PollStat>> GetPollStat(int pollId)
         {
-            var response = new Response<PollStat>();
+            var response = new ServiceResponse<PollStat>();
             var stats = await _context.PollStats.FindAsync(pollId);
-            return stats == null ? response.Failure(NoPollStatStr) : response.Success(stats, PollStatFetchedStr);
+            return stats == null
+                ? response.Failure(NoPollStatStr, HttpStatusCode.NotFound)
+                : response.Success(stats, PollStatFetchedStr);
         }
 
-        public async Task<Response<List<PollStat>>> GetPollsStats(string pollsterEmail)
+        public async Task<ServiceResponse<List<PollStat>>> GetPollsStats(string pollsterEmail)
         {
-            var response = new Response<List<PollStat>>();
+            var response = new ServiceResponse<List<PollStat>>();
+            const HttpStatusCode code = HttpStatusCode.NotFound;
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == pollsterEmail);
-            if (account == null) return response.Failure(NoAccountStr);
-            
+            if (account == null) return response.Failure(NoAccountStr, code);
+
             var polls = await _context.PollForms
                 .Where(p => p.AuthorId == account.AccountId)
                 .Select(p => p.PollId)
                 .ToListAsync();
 
-            if (polls.Count == 0) return response.Failure(NoPollsStr);
+            if (polls.Count == 0) return response.Failure(NoPollsStr, code);
             var pollStats = await _context.PollStats
                 .Where(p => polls.Contains(p.PollId))
                 .ToListAsync();
 
             return pollStats.Count == 0 || pollStats.Count != polls.Count
-                ? response.Failure(NoPollStatsStr)
+                ? response.Failure(NoPollStatsStr, code)
                 : response.Success(pollStats, PollStatsFetchedStr);
         }
 
-        public async Task<Response<List<QuestionStat>>> GetQuestionsStats(int pollId)
+        public async Task<ServiceResponse<List<QuestionStat>>> GetQuestionsStats(int pollId)
         {
-            var response = new Response<List<QuestionStat>>();
+            var response = new ServiceResponse<List<QuestionStat>>();
             var questions = await _context.Questions
                 .Where(q => q.Poll == pollId)
                 .Select(q => q.QuestionId)
                 .ToListAsync();
 
-            if (questions.Count == 0) return response.Failure(PollNoQuestionsStr);
+            if (questions.Count == 0) return response.Failure(PollNoQuestionsStr, HttpStatusCode.Conflict);
             var questionStats = await _context.QuestionStats
                 .Where(q => questions.Contains(q.QuestionId))
                 .ToListAsync();
 
             return questionStats.Count == 0 || questionStats.Count != questions.Count
-                ? response.Failure(NoQuestionStatsStr)
+                ? response.Failure(NoQuestionStatsStr, HttpStatusCode.NotFound)
                 : response.Success(questionStats, QuestionStatsFetchedStr);
         }
 
-        public async Task<Response<PollStat>> CreatePollStats(int pollId)
+        public async Task<ServiceResponse<PollStat>> CreatePollStats(int pollId)
         {
-            var response = new Response<PollStat>();
-            if (await _context.PollForms.FindAsync(pollId) == null) return response.Failure(NoPollWithIdString);
+            var response = new ServiceResponse<PollStat>();
+            if (await _context.PollForms.FindAsync(pollId) == null) 
+                return response.Failure(NoPollWithIdString, HttpStatusCode.NotFound);
             var stats = new PollStat
             {
                 PollId = pollId,
@@ -97,9 +103,9 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(stats, PollStatCreatedStr);
         }
 
-        public async Task<Response<List<QuestionStat>>> CreateQuestionsStats(List<GetQuestionDto> questions)
+        public async Task<ServiceResponse<List<QuestionStat>>> CreateQuestionsStats(List<GetQuestionDto> questions)
         {
-            var response = new Response<List<QuestionStat>>();
+            var response = new ServiceResponse<List<QuestionStat>>();
             var questionStats = questions
                 .Select(q => new QuestionStat {QuestionId = q.QuestionId, AnswerCounts = GetOptionsCount(q.Options)})
                 .ToList();

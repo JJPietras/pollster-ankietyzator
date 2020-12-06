@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Ankietyzator.Models;
 using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -27,8 +30,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "user, admin")]
         public async Task<IActionResult> GetUserUnFilledPollForms()
         {
-            var response = await _polling.GetUserPollForms(GetUserEmail(), false);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetUserPollForms(GetUserEmail(), false);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -36,8 +40,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "user, admin")] //TODO: remove admin from both
         public async Task<IActionResult> GetUserFilledPollForms()
         {
-            var response = await _polling.GetUserPollForms(GetUserEmail(), true);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetUserPollForms(GetUserEmail(), true);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -47,8 +52,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUnArchivedPollForms()
         {
-            var response = await _polling.GetAllPollForms(false);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetAllPollForms(false);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -56,8 +62,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetArchivedPollForms()
         {
-            var response = await _polling.GetAllPollForms(true);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetAllPollForms(true);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -67,8 +74,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetNotArchivedPolls()
         {
-            var response = await _polling.GetPollsterPollForms(GetUserEmail(), false);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetPollsterPollForms(GetUserEmail(), false);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -76,8 +84,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetArchivedPolls()
         {
-            var response = await _polling.GetPollsterPollForms(GetUserEmail(), true);
-            if (response.Data == null) return NotFound(response);
+            var pollsResponse = await _polling.GetPollsterPollForms(GetUserEmail(), true);
+            var response = new Response<List<GetPollFormDto>>(pollsResponse);
+            if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
 
@@ -87,9 +96,14 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> UpdatePoll(UpdatePollFormDto updatePollFormDto)
         {
-            var response = await _polling.UpdatePollForm(updatePollFormDto, GetUserEmail());
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
+            var pollsResponse = await _polling.UpdatePollForm(updatePollFormDto, GetUserEmail());
+            var response = new Response<GetPollFormDto>(pollsResponse);
+            return pollsResponse.Code switch
+            {
+                HttpStatusCode.NotFound => NotFound(response),
+                HttpStatusCode.Unauthorized => Unauthorized(response),
+                _ => Ok(response)
+            };
         }
         
         //===================== POST =======================//
@@ -98,9 +112,14 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> CreatePoll(CreatePollFormDto createPollFormDto)
         {
-            var response = await _polling.CreatePollForm(createPollFormDto, GetUserEmail());
-            if (response.Data == null) return Conflict(response);
-            return Ok(response);
+            var pollsResponse = await _polling.CreatePollForm(createPollFormDto, GetUserEmail());
+            var response = new Response<GetPollFormDto>(pollsResponse);
+            return pollsResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
         }
         
         //===================== DELETE =======================//
@@ -109,9 +128,14 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> RemovePoll(int pollId)
         {
-            var response = await _polling.RemovePollForm(pollId, GetUserEmail());
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
+            var pollsResponse = await _polling.RemovePollForm(pollId, GetUserEmail());
+            var response = new Response<GetPollFormDto>(pollsResponse);
+            return pollsResponse.Code switch
+            {
+                HttpStatusCode.NotFound => NotFound(response),
+                HttpStatusCode.Unauthorized => Unauthorized(response),
+                _ => Ok(response)
+            };
         }
         
         //===================== UTILITY =======================//

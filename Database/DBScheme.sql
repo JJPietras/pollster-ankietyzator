@@ -267,3 +267,4 @@ select * from PollForms
 select * from questions
 select * from QuestionStats
 select * from PollStats*/
+select * from Answers

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.PollModel;
@@ -27,30 +28,30 @@ namespace Ankietyzator.Services.Implementations
             _context = context;
         }
         
-        public async Task<Response<List<GetQuestionDto>>> GetQuestions(int pollId)
+        public async Task<ServiceResponse<List<GetQuestionDto>>> GetQuestions(int pollId)
         {
-            var response = new Response<List<GetQuestionDto>>();
+            var response = new ServiceResponse<List<GetQuestionDto>>();
             var questions = await _context.Questions.Where(q => q.Poll == pollId).ToListAsync();
-            if (questions.Count == 0) return response.Failure(NoQuestionsStr);
+            if (questions.Count == 0) return response.Failure(NoQuestionsStr, HttpStatusCode.NotFound);
             var questionsDto = questions.Select(q => _mapper.Map<GetQuestionDto>(q)).ToList();
             return response.Success(questionsDto, QuestionsSuccessStr);
         }
 
-        public async Task<Response<GetQuestionDto>> CreateQuestion(CreateQuestionDto question, int pollId)
+        public async Task<ServiceResponse<GetQuestionDto>> CreateQuestion(CreateQuestionDto question, int pollId)
         {
             var dalQuestion = _mapper.Map<Question>(question);
             dalQuestion.Poll = pollId;
             await _context.Questions.AddAsync(dalQuestion);
             await _context.SaveChangesAsync();
             var getQuestionDto = _mapper.Map<GetQuestionDto>(dalQuestion);
-            return new Response<GetQuestionDto>().Success(getQuestionDto, QuestionCreatedStr);
+            return new ServiceResponse<GetQuestionDto>().Success(getQuestionDto, QuestionCreatedStr);
         }
 
-        public async Task<Response<object>> RemoveQuestions(int pollId)
+        public async Task<ServiceResponse<object>> RemoveQuestions(int pollId)
         {
-            var response = new Response<object>();
+            var response = new ServiceResponse<object>();
             var questions = await _context.Questions.Where(q => q.Poll == pollId).ToListAsync();
-            if (questions.Count == 0) return response.Failure(NoQuestionsStr);
+            if (questions.Count == 0) return response.Failure(NoQuestionsStr, HttpStatusCode.NotFound);
             _context.Questions.RemoveRange(questions);
             await _context.SaveChangesAsync();
             return response.Success(null, QuestionsRemovedStr);

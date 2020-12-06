@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +26,7 @@ namespace Ankietyzator.Controllers
         //===================== GET =======================//
 
         [HttpGet("get-claims")]
-        public async Task<IActionResult> GetClaims()
+        public IActionResult GetClaims()
         {
             var claims = HttpContext.User.Claims.Select(c => c.Type + " " + c.Value).ToList();
             return Ok(claims);
@@ -33,27 +35,28 @@ namespace Ankietyzator.Controllers
         [HttpGet("get-account")]
         public async Task<IActionResult> GetAccount()
         {
-            Response<Account> accountResponse = await _register.GetAccount(GetUserEmail());
-            if (accountResponse.Data != null) return Ok(accountResponse);
-            return NotFound(accountResponse);
+            var accountResponse = await _register.GetAccount(GetUserEmail());
+            var response = new Response<Account>(accountResponse);
+            if (accountResponse.Code == HttpStatusCode.NotFound) NotFound(response);
+            return Ok(response);
         }
         
         [HttpGet("get-account/{email}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetSpecificAccount(string email)
         {
-            Response<Account> accountResponse = await _register.GetAccount(email);
-            if (accountResponse.Data != null) return Ok(accountResponse);
-            return NotFound(accountResponse);
+            var accountResponse = await _register.GetAccount(email);
+            var response = new Response<Account>(accountResponse);
+            if (accountResponse.Code == HttpStatusCode.NotFound) NotFound(response);
+            return Ok(response);
         }
 
         [HttpGet("get-accounts")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAccounts()
         {
-            var response = await _register.GetAccounts();
-            if (response.Data != null) return Ok(response);
-            return Unauthorized(response);
+            var accountsResponse = await _register.GetAccounts();
+            return Ok(new Response<List<Account>>(accountsResponse));
         }
 
         //===================== UPDATE =======================//
@@ -62,19 +65,28 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
         {
-            //if (updateAccountDto.EMail != GetUserEmail()) return Unauthorized(updateAccountDto);
-            Response<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
-            if (accountResponse.Data == null) return Conflict(accountResponse);
-            return Ok(accountResponse);
+            ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
+            var response = new Response<Account>(accountResponse);
+            return accountResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
         }
         
         [HttpPut("update-my-account")]
         public async Task<IActionResult> UpdateMyAccount(UpdateAccountDto updateAccountDto)
         {
             updateAccountDto.EMail = GetUserEmail();
-            Response<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
-            if (accountResponse.Data == null) return Conflict(accountResponse);
-            return Ok(accountResponse);
+            ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
+            var response = new Response<Account>(accountResponse);
+            return accountResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
         }
 
         private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;

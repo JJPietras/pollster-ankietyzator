@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Ankietyzator.Models;
+using Ankietyzator.Models.DataModel.AccountModel;
+using Ankietyzator.Models.DataModel.PollModel;
 using Ankietyzator.Models.DTO.AnswerDTOs;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -27,8 +31,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "user, admin")] //TODO: remove admin
         public async Task<IActionResult> GetMyAnswers(int pollId)
         {
-            var response = await _answer.GetAnswers(GetUserEmail(), pollId, null);
-            if (response.Data == null) return NotFound(response);
+            var answersResponse = await _answer.GetAnswers(GetUserEmail(), pollId, null);
+            var response = new Response<List<GetAnswerDto>>(answersResponse);
+            if (answersResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
         
@@ -36,9 +41,9 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetUserAnswers(int pollId, string userMail)
         {
-            Console.WriteLine("here");
-            var response = await _answer.GetAnswers(userMail, pollId, GetUserEmail());
-            if (response.Data == null) return NotFound(response);
+            var answersResponse = await _answer.GetAnswers(userMail, pollId, GetUserEmail());
+            var response = new Response<List<GetAnswerDto>>(answersResponse);
+            if (answersResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
         
@@ -48,10 +53,15 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> AddAnswers(List<CreateAnswerDto> answerDtos)
         {
-            Console.WriteLine("here");
-            var response = await _answer.AddAnswers(answerDtos, GetUserEmail());
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
+            var answersResponse = await _answer.AddAnswers(answerDtos, GetUserEmail());
+            var response = new Response<List<GetAnswerDto>>(answersResponse);
+            return answersResponse.Code switch
+            {
+                HttpStatusCode.NotFound => NotFound(response),
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.Conflict => Conflict(response),
+                _ => Ok(response)
+            };
         }
         
         //===================== UTILITY =======================//
