@@ -7,9 +7,9 @@ namespace Ankietyzator.Models.DataModel.PollModel
 {
     public class Answer
     {
-        [ForeignKey("AccountId")] public int AccountId { get; set; }
+        [ForeignKey("account_user_primary_key")] public int AccountId { get; set; }
 
-        [ForeignKey("QuestionId")] public int QuestionId { get; set; }
+        [ForeignKey("questions_primary_key")] public int QuestionId { get; set; }
 
         [Required] [MaxLength(2000)] public string Content { get; set; }
     }

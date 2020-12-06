@@ -6,7 +6,7 @@ namespace Ankietyzator.Models.DataModel.StatModel
 {
     public class QuestionStat
     {
-        [Key] [ForeignKey("QuestionId")] public int QuestionId { get; set; }
+        [Key] [ForeignKey("questions_primary_key")] public int QuestionId { get; set; }
 
         [Required] [MaxLength(500)] public string AnswerCounts { get; set; }
     }

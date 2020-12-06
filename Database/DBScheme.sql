@@ -260,9 +260,10 @@ inner join Answers A on q.QuestionId = A.QuestionId
 /*delete from PollForms where PollId = 29 
 select * from PollForms
 delete from Questions*/
-delete from Accounts where EMail = 'jacubeus@gmail.com'
+
+/*delete from Accounts where EMail = 'jacubeus@gmail.com'
 update Accounts set UserType = 2 where EMail = 'jacubeus@gmail.com'
 select * from PollForms
 select * from questions
 select * from QuestionStats
-select * from PollStats
+select * from PollStats*/
