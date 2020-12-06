@@ -6,7 +6,7 @@ namespace Ankietyzator.Models.DTO.QuestionDTOs
     {
         public int QuestionId { get; set; }
         
-        public uint Position { get; set; }
+        public int Position { get; set; }
         
         public string Title { get; set; }
         
@@ -14,7 +14,7 @@ namespace Ankietyzator.Models.DTO.QuestionDTOs
         
         public bool AllowEmpty { get; set; }
         
-        public ushort MaxLength { get; set; }
+        public short MaxLength { get; set; }
         
         public QuestionType Type { get; set; }
     }

@@ -5,9 +5,9 @@ using Ankietyzator.Models.DTO.AnswerDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IAnswerService : IDbContextService
+    public interface IAnswerService
     {
-        Task<Response<List<GetAnswerDto>>> GetAnswers(int userId, int pollId);
-        Task<Response<List<GetAnswerDto>>> CreateAnswers(List<CreateAnswerDto> answers, int userId);
+        Task<ServiceResponse<List<GetAnswerDto>>> GetAnswers(string email, int pollId, string authorMail);
+        Task<ServiceResponse<List<GetAnswerDto>>> AddAnswers(List<CreateAnswerDto> answers, string email);
     }
 }

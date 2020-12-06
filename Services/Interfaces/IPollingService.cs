@@ -5,22 +5,20 @@ using Ankietyzator.Models.DTO.PollDTOs;
 
 namespace Ankietyzator.Services.Interfaces
 {
-    public interface IPollingService : IDbContextService
+    public interface IPollingService
     {
-        Task<Response<GetPollFormDto>> GetPollForm(int pollId);
-
-        Task<Response<List<GetPollFormDto>>> GetPollForms(int pollsterId);
-
-        Task<Response<List<GetPollFormDto>>> GetArchivedPollForms(int pollsterId);
+        //Task<Response<GetPollFormDto>> GetPollForm(int pollId);
         
-        Task<Response<List<GetPollFormDto>>> GetNotArchivedPollForms(int pollsterId);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetAllPollForms(bool archived);
 
-        Task<Response<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, int accountId);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetUserPollForms(string email, bool filled);
         
-        Task<Response<GetPollFormDto>> RemovePollForm(int pollId);
+        Task<ServiceResponse<List<GetPollFormDto>>> GetPollsterPollForms(string email, bool archived);
 
-        Task<Response<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, int accountId);
+        Task<ServiceResponse<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, string email);
+        
+        Task<ServiceResponse<GetPollFormDto>> RemovePollForm(int pollId, string email);
 
-        void InitializeServicesContext(AnkietyzatorDbContext context );
+        Task<ServiceResponse<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, string email);
     }
 }

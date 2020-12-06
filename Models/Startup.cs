@@ -1,12 +1,16 @@
+using System;
 using System.Security.Claims;
 using Ankietyzator.Services.Implementations;
 using Ankietyzator.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +44,11 @@ namespace Ankietyzator.Models
             services.AddScoped<IStatService, StatService>();
 
             services.AddDbContext<AnkietyzatorDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure")));
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("AnkietyzatorDBContextAzure"),
+                        sqlOptions => sqlOptions.EnableRetryOnFailure(10, TimeSpan.FromSeconds(10), null));
+                }
+            );
 
             services.AddAuthentication(options =>
             {
@@ -59,12 +67,23 @@ namespace Ankietyzator.Models
                 options.ClaimActions.Clear();
                 options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
                 options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-                //options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
-                //options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
                 options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 options.ReturnUrlParameter = "https://localhost:5001";
-                //options.ClaimActions.MapJsonKey("urn:google:profile", "link");
-                //options.ClaimActions.MapJsonKey("picture", "picture");
+            });
+
+            /*services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });*/
+
+            services.AddControllers(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
             });
         }
 

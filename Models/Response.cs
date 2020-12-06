@@ -2,20 +2,13 @@
 {
     public class Response<T>
     {
-        public T Data { get; set; }
-        public string Message { get; set; }
+        public T Data { get; }
+        public string Message { get; }
         
-        public Response<T> Failure(string message)
+        public Response(ServiceResponse<T> serviceResponse)
         {
-            Message = message;
-            return this;
-        }
-
-        public Response<T> Success(T data, string message)
-        {
-            Data = data;
-            Message = message;
-            return this;
+            Data = serviceResponse.Data;
+            Message = serviceResponse.Message;
         }
     }
 }

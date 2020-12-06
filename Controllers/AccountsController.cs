@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,52 +18,77 @@ namespace Ankietyzator.Controllers
     {
         private readonly IRegisterService _register;
 
-        public AccountsController(AnkietyzatorDbContext context, IRegisterService register)
+        public AccountsController(IRegisterService register)
         {
             _register = register;
-            _register.Context = context;
         }
 
         //===================== GET =======================//
 
-        [HttpGet("get-account")]
-        public async Task<IActionResult> GetAccount(string mail)
+        [HttpGet("get-claims")]
+        public IActionResult GetClaims()
         {
-            Response<Account> accountResponse = await _register.GetAccount(mail);
-            if (accountResponse.Data != null) return Ok(accountResponse);
-            return NotFound(accountResponse);
+            var claims = HttpContext.User.Claims.Select(c => c.Type + " " + c.Value).ToList();
+            return Ok(claims);
+        }
+        
+        [HttpGet("get-account")]
+        public async Task<IActionResult> GetAccount()
+        {
+            var accountResponse = await _register.GetAccount(GetUserEmail());
+            var response = new Response<Account>(accountResponse);
+            if (accountResponse.Code == HttpStatusCode.NotFound) NotFound(response);
+            return Ok(response);
+        }
+        
+        [HttpGet("get-account/{email}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetSpecificAccount(string email)
+        {
+            var accountResponse = await _register.GetAccount(email);
+            var response = new Response<Account>(accountResponse);
+            if (accountResponse.Code == HttpStatusCode.NotFound) NotFound(response);
+            return Ok(response);
         }
 
-        //TODO: test it later
         [HttpGet("get-accounts")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAccounts()
         {
-            //TODO: change
-            string mail = GetUserEmail();
-            Response<Account> accountResponse = await _register.GetAccount(mail);
-            if (accountResponse.Data == null) return NotFound(accountResponse);
-            UserType userType = accountResponse.Data.UserType;
-            
-            //TODO: authorisation
-            var response = await _register.GetAccounts(userType);
-            if (response.Data != null) return Ok(response);
-            return Unauthorized(response);
-
+            var accountsResponse = await _register.GetAccounts();
+            return Ok(new Response<List<Account>>(accountsResponse));
         }
-        
+
         //===================== UPDATE =======================//
 
-        [HttpPut("update-account")]
-        public async Task<IActionResult> UpdateAccount(UpdateAccountDto updateAccountDto)
+        [HttpPut("update-other-account")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
         {
-            //TODO: add authorisation
-            Response<Account> accountResponse = await _register.UpdateAccount(updateAccountDto);
-            if (accountResponse.Data == null) return Conflict(accountResponse);
-            return Ok(accountResponse); 
+            ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
+            var response = new Response<Account>(accountResponse);
+            return accountResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
         }
         
-        //TODO: create CreateAccount
+        [HttpPut("update-my-account")]
+        public async Task<IActionResult> UpdateMyAccount(UpdateAccountDto updateAccountDto)
+        {
+            updateAccountDto.EMail = GetUserEmail();
+            ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
+            var response = new Response<Account>(accountResponse);
+            return accountResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
+        }
 
-        private string GetUserEmail() => HttpContext.User.Claims.ToArray()[2].Value;
+        private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }
 }

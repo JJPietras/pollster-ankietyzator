@@ -1,5 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Ankietyzator.Models;
+using Ankietyzator.Models.DataModel.StatModel;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,39 +17,57 @@ namespace Ankietyzator.Controllers
     {
         private readonly IStatService _stats;
                 
-        public StatsController(AnkietyzatorDbContext context, IStatService stats)
+        public StatsController(IStatService stats)
         {
             _stats = stats;
-            stats.Context = context;
         }
         
         //===================== GET =======================//
         
-        [HttpGet("get-poll-stats")]
+        [HttpGet("get-poll-stats/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetPollStats(int pollId)
         {
-            //TODO: authorize
-            var response = await _stats.GetPollStat(pollId);
-            if (response.Data == null) return NotFound(response);
+            var statsResponse = await _stats.GetPollStat(pollId);
+            var response = new Response<PollStat>(statsResponse);
+            if (statsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
+            return Ok(response);
+        }
+        
+        [HttpGet("get-polls-stats/{pollsterEmail}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetPollsStats(string pollsterEmail)
+        {
+            var statsResponse = await _stats.GetPollsStats(pollsterEmail);
+            var response = new Response<List<PollStat>>(statsResponse);
+            if (statsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
         
         [HttpGet("get-polls-stats")]
-        public async Task<IActionResult> GetPollsStats(int pollsterId)
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetPollsStats()
         {
-            //TODO: authorize
-            var response = await _stats.GetPollsStats(pollsterId);
-            if (response.Data == null) return NotFound(response);
+            var statsResponse = await _stats.GetPollsStats(GetUserEmail());
+            var response = new Response<List<PollStat>>(statsResponse);
+            if (statsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
         }
         
-        [HttpGet("get-questions-stats")]
+        [HttpGet("get-questions-stats/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
         public async Task<IActionResult> GetQuestionsStats(int pollId)
         {
-            //TODO: authorize
-            var response = await _stats.GetQuestionsStats(pollId);
-            if (response.Data == null) return NotFound(response);
-            return Ok(response);
+            var statsResponse = await _stats.GetQuestionsStats(pollId);
+            var response = new Response<List<QuestionStat>>(statsResponse);
+            return statsResponse.Code switch
+            {
+                HttpStatusCode.Conflict => Conflict(response),
+                HttpStatusCode.NotFound => NotFound(response),
+                _ => Ok(response)
+            };
         }
+        
+        private string GetUserEmail() => HttpContext.User.Claims.ElementAt(2).Value;
     }
 }

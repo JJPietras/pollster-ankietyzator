@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.KeyDTOs;
@@ -15,56 +17,67 @@ namespace Ankietyzator.Controllers
     {
         private readonly IKeyService _keyService;
 
-        public UpgradeKeysController(AnkietyzatorDbContext context, IKeyService keyService)
+        public UpgradeKeysController(IKeyService keyService)
         {
             _keyService = keyService;
-            _keyService.Context = context;
         }
         
         //===================== GET =======================//
         
-        [HttpGet("get-key")]
+        /*[HttpGet("get-key")]
         public async Task<IActionResult> GetUpgradeKey(string key)
         {
             var keysResponse = await _keyService.GetPollsterKey(key);
             if (keysResponse.Data != null) return Ok(keysResponse);
             return NotFound(keysResponse);
-        }
+        }*/
         
         [HttpGet("get-keys")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUpgradeKeys()
         {
-            var keysResponse = await _keyService.GetPollsterKeys();
-            if (keysResponse.Data != null) return Ok(keysResponse);
-            return NotFound(keysResponse);
+            var keysResponse = await _keyService.GetUpgradeKeys();
+            return Ok(new Response<List<UpgradeKey>>(keysResponse));
         }
         
         //===================== PUT ========================//
         
         [HttpPut("update-key")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey)
         {
-            var keysResponse = await _keyService.UpdatePollsterKey(upgradeKey);
-            if (keysResponse.Data != null) return Ok(keysResponse);
-            return NotFound(keysResponse);
+            var keysResponse = await _keyService.UpdateUpgradeKey(upgradeKey);
+            var response = new Response<UpgradeKey>(keysResponse);
+            if (keysResponse.Code == HttpStatusCode.UnprocessableEntity) return UnprocessableEntity(response);
+            return Ok(response);
         }
         
         //===================== POST =======================//
         
-        [HttpPost("remove-key")]
-        public async Task<IActionResult> RemoveUpgradeKey(string key)
-        {
-            var keysResponse = await _keyService.RemovePollsterKey(key);
-            if (keysResponse.Data != null) return Ok(keysResponse);
-            return NotFound(keysResponse);
-        }
-        
         [HttpPost("add-key")]
+        //TODO: uncomment [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddUpgradeKey(UpgradeKey upgradeKey)
         {
-            var keysResponse = await _keyService.AddPollsterKey(upgradeKey);
-            if (keysResponse.Data != null) return Ok(keysResponse);
-            return Conflict(keysResponse);
+            var keysResponse = await _keyService.AddUpgradeKey(upgradeKey);
+            var response = new Response<UpgradeKey>(keysResponse);
+            return keysResponse.Code switch
+            {
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                HttpStatusCode.Conflict => Conflict(response),
+                _ => Conflict(response)
+            };
+        }
+        
+        //===================== DELETE =======================//
+        
+        [HttpDelete("remove-key/{key}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> RemoveUpgradeKey(string key)
+        {
+            var keysResponse = await _keyService.RemoveUpgradeKey(key);
+            var response = new Response<UpgradeKey>(keysResponse);
+            if (keysResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
+            return Ok(response);
         }
     }
 }
