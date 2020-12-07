@@ -6,24 +6,28 @@ import {Router, ActivatedRoute} from '@angular/router';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-poll',
-  templateUrl: './poll.component.html',
-  styleUrls: ['./poll.component.scss']
+  selector: 'app-select-poll',
+  templateUrl: './select-poll.component.html',
+  styleUrls: ['./select-poll.component.scss']
 })
 
-export class PollComponent{
+export class SelectPollComponent{
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute) {
 
   }
 
   private pollId: number;
-  private poll: Poll;
+  polls: Poll[];
 
   ngOnInit() {
     this.pollId = Number(this.route.snapshot.paramMap.get('id'));
     console.log(this.pollId);
 
+    this.http.get<Request>(this.baseUrl + 'polls/get-user-un-filled').subscribe(result => {
+      this.polls = result.data;
+      console.log(this.polls)
+    }, error => console.error(error));
   }
 
 }

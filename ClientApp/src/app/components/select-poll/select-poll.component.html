@@ -1,0 +1,26 @@
+
+<div class="container">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Tags</th>
+        <th scope="col">E-Mails</th>
+        <th scope="col">authorId</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let poll of polls">
+        <th scope="row">{{poll.pollId}}</th>
+        <td>{{poll.tags}}</td>
+        <td>{{poll.emails}}</td>
+        <td>{{poll.authorId}}</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>
+
+
