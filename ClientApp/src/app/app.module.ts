@@ -13,6 +13,7 @@ import { LoginComponent } from './components/login/login.component'
 
 import { SettingsComponent } from './components/settings/settings.component'
 import { PollComponent } from './components/poll/poll.component'
+import { SelectPollComponent } from './components/select-poll/select-poll.component'
 import { PollStatisticsComponent } from './components/poll-statistics/poll-statistics.component'
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
 
@@ -32,6 +33,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
     NavMenuComponent,
     HomeComponent,
     PollComponent,
+    SelectPollComponent,
     PollStatisticsComponent,
     SettingsComponent, UserInfoComponent,
     LoginComponent,
@@ -51,6 +53,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: 'user-login', component: LoginComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'poll/:id', component: PollComponent },
+      { path: 'select-poll', component: SelectPollComponent },
       { path: 'poll-statistics', component: PollStatisticsComponent },
     ])
   ],
