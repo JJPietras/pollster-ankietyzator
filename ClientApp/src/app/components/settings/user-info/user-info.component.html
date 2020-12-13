@@ -1,3 +1,57 @@
-<div>
- <h1>User Info panel</h1>
-</div>
+<div class="container">
+    <h1>Panel użytkownika</h1>
+       
+      
+       <div class="mt-5 mb-5 form-group">
+           <h2>Klucz zmiany uprawnień</h2>
+           <form class="form-inline pt-1">
+                   <div >
+                       <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange">
+                   </div>
+                   <div>
+                       <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
+                   </div>
+               
+           </form>
+       </div>  
+   
+       <div class="mt-5">
+           <h2>Modyfikowanie Tagów</h2>
+           <form class="form-inline pt-1 mt-3">
+               <div>
+                   <div class="mt-3">
+                       <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
+                   <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
+                      <option value="">Wybierz Tag:</option>
+                       <option *ngFor="let item of slowka"  [value]="item"> 
+                           {{item}} 
+                       </option>
+                       <br>
+                       
+                   </select> 
+                   
+               </div>
+             
+                     
+                     <div class="mt-5">
+                        <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
+                       <div>
+                        <button class="btn btn-primary" (click) ="addTag()">
+                            Dodaj
+                        </button>
+                        <button class="btn btn-primary" (click) ="changeTag()">
+                            Zamień
+                        </button>
+                        <button class="btn btn-primary" (click)="removeTag()">
+                            Usuń
+                        </button>
+                    </div>
+                     </div>  
+
+               </div>
+           </form>
+       </div>
+   </div>
+
+
+    

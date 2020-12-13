@@ -2,6 +2,6 @@ interface User {
   accountId: string;
   name: string;
   eMail: string;
-  tags: number;
+  tags: string;
   userType: string;
   }
