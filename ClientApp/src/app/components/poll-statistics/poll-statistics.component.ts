@@ -2,7 +2,7 @@
 import {Component, OnInit, OnDestroy, Input, Inject, ViewChild, ElementRef } from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -12,13 +12,19 @@ import { Router } from '@angular/router';
 })
 
 export class PollStatisticsComponent implements OnInit {
+  private pollId: number;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) {
-
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute) {
+    this.pollId = Number(this.route.snapshot.paramMap.get('id'));
   }
 
-  ngOnInit() {
+  stats: PollStats[];
 
+  ngOnInit() {
+    this.http.get<Request>(this.baseUrl + 'stats/get-question-stats').subscribe(result => {
+      this.stats = result.data;
+      console.log(this.stats)
+    }, error => console.error(error));
   }
 
   public graph = {
@@ -39,5 +45,7 @@ public graphPie = {
     title: 'Pie chart'
   }
 };
+
+
 
 }
