@@ -1,55 +1,55 @@
 <header>
-  <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
-  >
+  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
       <a class="navbar-brand" [routerLink]="['/']">Ankietyzator</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target=".navbar-collapse"
-        aria-label="Toggle navigation"
-        [attr.aria-expanded]="isExpanded"
-        (click)="toggle()"
-      >
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+        aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div
-        class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-        [ngClass]="{ show: isExpanded }"
-      >
+
+      <div *ngIf="authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+        [ngClass]="{ show: isExpanded }">
         <ul class="navbar-nav flex-grow">
-          <li
-            class="nav-item"
-            [routerLinkActive]="['link-active']"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll/20']"
-              >Ankieta</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/poll/20']">Ankieta</a>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/select-poll']"
-              >Ankiety</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/select-poll']">Ankiety</a>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll-statistics']"
-              >Statystyki</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/poll-statistics']">Statystyki</a>
+
+
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/user-login']"
-              >Login</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/settings']">Ustawienia</a>
           </li>
 
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/settings']"
-              >Settings</a
-            >
+            <a style="cursor: pointer;" class="nav-link text-dark" (click)="authenticationService.LogOutFromGoogle()">Wyloguj</a>
           </li>
+
+        </ul>
+      </div>
+
+      <div *ngIf="!authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+        [ngClass]="{ show: isExpanded }">
+        <ul class="navbar-nav flex-grow">
+          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
+          </li>
+
+          <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/user-login']">Zaloguj</a>
+          </li>
+
+          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" (click)="authenticationService.SignInWithGoogle()">Zaloguj</a>
+          </li> -->
+
+          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" (click)="authenticationService.loginViaGoogle()">Login service</a>
+          </li> -->
         </ul>
       </div>
     </div>

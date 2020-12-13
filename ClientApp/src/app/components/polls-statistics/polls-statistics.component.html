@@ -1,0 +1,30 @@
+<div class="container">
+
+
+  <div *ngIf="!stats"> <h1>Wczytywanie</h1> </div>
+
+  <div *ngIf="stats">
+
+    <h3>Twoje ankiety</h3>
+    <plotly-plot [data]="graphPie.data" [layout]="graphPie.layout"></plotly-plot>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Completions</th>
+          <th scope="col">Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stat of stats" (click)="selectPoll(stat.pollId)" style="cursor: pointer;">
+          <th scope="row">{{stat.pollId}}</th>
+          <td>{{stat.completions}}</td>
+          <td>{{stat.percentage}}%</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

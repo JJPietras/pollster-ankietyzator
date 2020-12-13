@@ -1,8 +1,9 @@
 
-import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
+import {Component} from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
-import {Router} from '@angular/router';
+
+import { AuthenticationService } from "../../services/authorisation.service";
 
 @Component({
   selector: 'app-user-login',
@@ -18,16 +19,7 @@ export class LoginComponent{
   http: HttpClient;
   baseUrl: string;
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router) {
-    this.http = http;
-    this.baseUrl=baseUrl
+  constructor(public authenticationService: AuthenticationService) {
   }
 
-  public SignInWithGoogle() {
-    document.location.href = (this.baseUrl + 'google/google-login')
-  }
-
-  public LogOutFromGoogle() {
-    document.location.href = (this.baseUrl + 'google/google-logout')
-  }
 }

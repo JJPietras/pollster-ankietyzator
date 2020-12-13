@@ -54,6 +54,7 @@ namespace Ankietyzator.Controllers
         public async Task<RedirectResult> Logout()
         {
             await HttpContext.SignOutAsync();
+            //return Redirect("https://localhost:5001");
             string baseString = "https://www.google.com/accounts/Logout?continue=";
             string appEngine = "https://appengine.google.com/_ah/logout?continue="; 
             return Redirect(baseString + appEngine + "https://localhost:5001");

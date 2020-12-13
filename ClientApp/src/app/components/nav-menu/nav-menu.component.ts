@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthenticationService } from "../../services/authorisation.service";
+
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +9,10 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
+
+  constructor(public authenticationService: AuthenticationService) {
+
+  }
 
   collapse() {
     this.isExpanded = false;
