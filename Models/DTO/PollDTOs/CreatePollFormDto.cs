@@ -5,6 +5,8 @@ namespace Ankietyzator.Models.DTO.PollDTOs
 {
     public class CreatePollFormDto
     {
+        public string Title { get; set; }
+        
         public string Tags { get; set; }
         
         public string Emails { get; set; }
