@@ -77,6 +77,8 @@ GO
    unikalny identyfikator, klucz obcy stanowiący
    referencję do użytkownika-autora ankiety.
    
+   Tytuł - samowytłumaczalne
+   
    Tagi - można ich określić wiele. Określają
    grupy docelowe np: PracownicyHaliZ38/Pł_A/Uł3
    
@@ -91,6 +93,7 @@ CREATE TABLE [dbo].[PollForms]
 (
     [PollId]       [int] IDENTITY (1,1) NOT NULL,
     [AuthorId]     [int]                NOT NULL,
+    [Title]        [nvarchar](200)      NOT NULL,
     [Tags]         [nvarchar](1000)     NOT NULL,
     [EMails]       [nvarchar](1000)     NOT NULL,
     [NonAnonymous] [bit]                NOT NULL,
@@ -99,7 +102,7 @@ CREATE TABLE [dbo].[PollForms]
     CONSTRAINT [poll_forms_primary_key]
         PRIMARY KEY ([PollId]),
     CONSTRAINT [poll_forms_author_id_foreign_key]
-        FOREIGN KEY ([AuthorId]) REFERENCES [dbo].[Accounts] ([AccountId]) ON DELETE CASCADE 
+        FOREIGN KEY ([AuthorId]) REFERENCES [dbo].[Accounts] ([AccountId]) ON DELETE CASCADE
 ) ON [PRIMARY]
 GO
 
@@ -152,8 +155,10 @@ CREATE TABLE [dbo].[Questions]
 ) ON [PRIMARY]
 GO
 
-select * from Accounts
-select * from PollForms
+select *
+from Accounts
+select *
+from PollForms
 /* Odpowiedź na dane pytanie pewnej ankiety 
    jest identyfikowane przez identyfikator
    konta użytkownika wypełniającego ankietę,
@@ -262,9 +267,8 @@ select * from PollForms
 delete from Questions*/
 
 /*delete from Accounts where EMail = 'jacubeus@gmail.com'
-update Accounts set UserType = 2 where EMail = 'jacubeus@gmail.com'
-select * from PollForms
+update Accounts set UserType = 2 where EMail = 'jacubeus@gmail.com'*/
+/*select * from PollForms
 select * from questions
 select * from QuestionStats
 select * from PollStats*/
-select * from Answers
