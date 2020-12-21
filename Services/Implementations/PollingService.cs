@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -70,11 +71,12 @@ namespace Ankietyzator.Services.Implementations
             {
                 var subResponse = await _questionService.GetQuestions(getPollFormDto.PollId);
                 if (subResponse.Data == null) return response.Failure(subResponse);
-                getPollFormDto.Questions = subResponse.Data;
+                await PrepareGetDto(getPollFormDto, subResponse.Data);
             }
 
             return response.Success(dtoPolls, PollFormsSuccessStr);
         }
+
 
         public async Task<ServiceResponse<List<GetPollFormDto>>> GetUserPollForms(string email, bool filled)
         {
@@ -100,7 +102,7 @@ namespace Ankietyzator.Services.Implementations
             {
                 var questionsResponse = await _questionService.GetQuestions(getPollFormDto.PollId);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse);
-                getPollFormDto.Questions = questionsResponse.Data;
+                await PrepareGetDto(getPollFormDto, questionsResponse.Data);
             }
 
             return response.Success(dtoPolls, PollFormsSuccessStr);
@@ -138,7 +140,7 @@ namespace Ankietyzator.Services.Implementations
             {
                 var questionsResponse = await _questionService.GetQuestions(getPollFormDto.PollId);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse);
-                getPollFormDto.Questions = questionsResponse.Data;
+                await PrepareGetDto(getPollFormDto, questionsResponse.Data);
             }
 
             response.Data = polls;
@@ -151,16 +153,23 @@ namespace Ankietyzator.Services.Implementations
             var pollsterResponse = await GetAccount(email);
             if (pollsterResponse.Data == null) return response.Failure(pollsterResponse);
 
-            var pollsterId = pollsterResponse.Data.AccountId;
-
-            var pollForms = await _context.PollForms.Where(p => p.AuthorId == pollsterId).ToListAsync();
+            var pollster = pollsterResponse.Data;
+            
+            var pollForms = await _context.PollForms.Where(p => p.AuthorId == pollster.AccountId).ToListAsync();
             if (pollForms == null) return response.Success(null, PollFormsSuccessStr);
+            
 
             var pollFormsDto = new List<GetPollFormDto>();
             foreach (PollForm pollForm in pollForms)
             {
                 var questionsResponse = await GetQuestionsDto(pollForm, response, pollFormsDto);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse);
+            }
+            
+            foreach (GetPollFormDto formDto in pollFormsDto)
+            {
+                formDto.AuthorEmail = pollster.EMail;
+                formDto.AuthorName = pollster.Name;
             }
 
             return response.Success(pollFormsDto, PollFormsSuccessStr);
@@ -215,7 +224,7 @@ namespace Ankietyzator.Services.Implementations
             var pollsterResponse = await GetAccount(email);
             if (pollsterResponse.Data == null) return response.Failure(pollsterResponse);
 
-            var noQuestions = pollForm.Questions == null || pollForm.Questions.Count == 0;
+            bool noQuestions = pollForm.Questions == null || pollForm.Questions.Count == 0;
             if (noQuestions) return response.Failure(NoQuestionsStr, HttpStatusCode.UnprocessableEntity);
 
             if (pollForm.Questions.Count != pollForm.Questions.Select(q => q.Position).Distinct().Count())
@@ -269,6 +278,14 @@ namespace Ankietyzator.Services.Implementations
             return account == null
                 ? response.Failure(AccountNotFoundStr, HttpStatusCode.NotFound)
                 : response.Success(account, "");
+        }
+        
+        private async Task PrepareGetDto(GetPollFormDto getPollFormDto, List<GetQuestionDto> questions)
+        {
+            var author = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountId == getPollFormDto.AuthorId);
+            getPollFormDto.Questions = questions;
+            getPollFormDto.AuthorEmail = author.EMail;
+            getPollFormDto.AuthorName = author.Name;
         }
     }
 }
