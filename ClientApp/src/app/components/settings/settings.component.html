@@ -1,16 +1,18 @@
 <div>
-  <h1>Settings</h1>
+  <h1>Ustawienia</h1>
   <mat-tab-group mat-align-tabs="start" dynamicHeight>
-    <mat-tab label="Short tab">
+    <mat-tab label="Użytkownik">
       <div class="example-small-box mat-elevation-z4">
         <app-user-info></app-user-info>
       </div>
     </mat-tab>
-    <mat-tab label="Long tab">
-      <div class="example-large-box mat-elevation-z4">
-        Large content
+    
+    <mat-tab *ngIf="authenticationService.user.value.userType == 2"  label="Administrator">
+      <div >
+        <app-admin-info ></app-admin-info>
       </div>
     </mat-tab>
+    <mat-tab *ngIf="authenticationService.user.value.userType != 2" label="nie jestes admine o,o"><div></div></mat-tab>
   </mat-tab-group>
 
 

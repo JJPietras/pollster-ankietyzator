@@ -17,6 +17,8 @@ import { SelectPollComponent } from './components/select-poll/select-poll.compon
 import { PollStatisticsComponent } from './components/poll-statistics/poll-statistics.component'
 import { PollsStatisticsComponent } from './components/polls-statistics/polls-statistics.component'
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
+import { AdminInfoComponent } from './components/settings/admin-info/admin-info.component'
+
 
 import {MatNativeDateModule} from '@angular/material/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
@@ -26,6 +28,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { CommonModule } from '@angular/common';
 import { PlotlyModule } from 'angular-plotly.js';
+
 PlotlyModule.plotlyjs = PlotlyJS;
 
 @NgModule({
@@ -38,6 +41,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
     PollStatisticsComponent, PollsStatisticsComponent,
     SettingsComponent, UserInfoComponent,
     LoginComponent,
+    AdminInfoComponent
 
   ],
   imports: [
