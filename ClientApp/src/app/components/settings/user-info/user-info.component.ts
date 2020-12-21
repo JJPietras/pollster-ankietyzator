@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import {  BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from '../../app.component';
 import { AuthenticationService } from "../../../services/authorisation.service";
-//import { UpdateAccountDto } from '../../../models/updateDTO.model';
+import { UpdateAccountDto } from '../../../models/updateDTO.model';
+import { throwToolbarMixedModesError } from '@angular/material';
 
 
 @Component({
@@ -29,14 +30,14 @@ import { AuthenticationService } from "../../../services/authorisation.service";
 
 export class UserInfoComponent implements OnInit {
 
-  http : HttpClient;
+  //http : HttpClient;
   baseUrl : string;
   
 
 
   //konwersja z stringa na tablice
-  items: string = "to/nie/to/pwowinno/sie/wyswietlic";
-  slowka: string[] = new Array<string>();
+  tags: string = "to/nie/to/pwowinno/sie/wyswietlic";
+  tagsArray: string[] = new Array<string>();
   //index tagu ktory zostal wybrany
    currentIndex: number;
   //modyfikowany
@@ -44,27 +45,32 @@ export class UserInfoComponent implements OnInit {
   //
   keyChange: string;
   
-  //updateDTO : UpdateAccountDto;
+  updateDTO : UpdateAccountDto = {
+    EMail: '',
+    Tags: 'w',
+    Key: ''
+  };
  
   
   
 // pobranie uzytkownika i dodanie tagow
 
 
-  constructor(public authenticationService: AuthenticationService, httpclient: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router ) {
-    this.http = httpclient;
+  constructor(public authenticationService: AuthenticationService,public httpclient: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router ) {
+    //this.http = httpclient;
     this.baseUrl = baseUrl;
    
-    this.items =  this.authenticationService.user.value.tags.toString();
+    this.tags =  this.authenticationService.user.value.tags.toString();
    
   }
 
   ngOnInit(){
 
-    this.items =  this.authenticationService.user.value.tags.toString();
+    this.tags =  this.authenticationService.user.value.tags.toString();
     //console.log(this.items);
     console.log(this.authenticationService.user.value.tags);
-    this.slowka = (this.items.split('/')); 
+    this.tagsArray = (this.tags.split('/')); 
+    
     
   }
 
@@ -73,13 +79,13 @@ export class UserInfoComponent implements OnInit {
   //ADD TAG
   public addTag(){
     
-     this.items = this.items + '/'+ this.modifiedtext;
-     this.slowka.push(this.modifiedtext);
+     this.tags = this.tags + '/'+ this.modifiedtext;
+     this.tagsArray.push(this.modifiedtext);
      this.modifiedtext = "";
 
-    this.items ="";
-     this.slowka.forEach(slowo => {
-        this.items = this.items +  "/" + slowo.toString(); 
+    this.tags ="";
+     this.tagsArray.forEach(slowo => {
+        this.tags = this.tags +  "/" + slowo.toString(); 
      })
     
   }
@@ -87,16 +93,27 @@ export class UserInfoComponent implements OnInit {
   //CHANGE TAG
   public changeTag(){
     
+    /*if(this.modifiedtext.length === 0){
+      return 
+    }*/
+
     if (this.currentIndex !== -1) {
-        this.slowka[this.currentIndex] = this.modifiedtext;
+        this.tagsArray[this.currentIndex] = this.modifiedtext;
     }  
     this.modifiedtext = "";
 
-    this.resetStringItems(this.slowka);
+    this.resetStringItems(this.tagsArray);
       
-    this.authenticationService.user.value.tags = this.items;
-    this.http.put<User>(this.baseUrl + "accounts/update-my-account", this.authenticationService.user);
-    this.authenticationService.getUser();
+
+    this.updateDTO.EMail = this.authenticationService.user.value.eMail;
+    this.updateDTO.Tags = this.tags;
+    this.updateDTO.Key = this.authenticationService.user.value.userType;
+    console.log(this.updateDTO.Tags);
+
+    this.authenticationService.user.value.tags = this.tags;
+    this.authenticationService.updateUser(this.updateDTO);
+   // this.httpclient.put<Request>(this.baseUrl + 'accounts/update-my-account', this.updateDTO).pipe();
+    //this.authenticationService.getUser();
   }
 
 
@@ -107,11 +124,11 @@ export class UserInfoComponent implements OnInit {
       
    
     if (this.currentIndex !== -1) {
-        this.slowka.splice(this.currentIndex, 1);
+        this.tagsArray.splice(this.currentIndex, 1);
     }  
     this.modifiedtext = "";
 
-    this.resetStringItems(this.slowka);
+    this.resetStringItems(this.tagsArray);
     
  }
 
@@ -119,7 +136,7 @@ export class UserInfoComponent implements OnInit {
    onItemSelected(val: any){
     
     this.modifiedtext = String(val);
-    this.currentIndex  = this.slowka.indexOf(this.modifiedtext);
+    this.currentIndex  = this.tagsArray.indexOf(this.modifiedtext);
     
   }
 
@@ -129,17 +146,23 @@ export class UserInfoComponent implements OnInit {
   //METHOD TO USE RESET STRING
   public resetStringItems(val: string[]){
 
-    this.items ="";
+    this.tags ="";
     val.forEach(slowo => {
-        this.items = this.items + slowo.toString() + "/" ; 
+        this.tags = this.tags + slowo.toString() + "/" ; 
      })
-     this.items = this.items.slice(0,-1);
+     this.tags = this.tags.slice(0,-1);
 
   }
 
   //SEND KEY
   public sendKey(){
     console.log(this.keyChange);
+
+    if(this.keyChange.length < 4){
+      console.log('Podany klucz jest za krótki')
+    }
+    this.keyChange = '';
+    //this.httpclient.put(this.baseUrl +  , this.keyChange);
   }
 
 

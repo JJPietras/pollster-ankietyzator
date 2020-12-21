@@ -1,6 +1,7 @@
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from "../../services/authorisation.service";
 
 @Component({
   selector: 'app-settings',
@@ -8,5 +9,7 @@ import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent {
+  constructor(public authenticationService: AuthenticationService){
 
+  }
 }
