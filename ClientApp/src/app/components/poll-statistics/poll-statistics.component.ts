@@ -18,32 +18,31 @@ export class PollStatisticsComponent implements OnInit {
     this.pollId = Number(this.route.snapshot.paramMap.get('id'));
   }
 
-  stats: PollStats[];
+  stats: QuestionStats[];
+  graphs: any;
+
 
   ngOnInit() {
     this.http.get<Request>(this.baseUrl + 'stats/get-questions-stats/' + this.pollId).subscribe(result => {
       this.stats = result.data;
+      this.graphs = [];
+      this.stats.forEach(stat => {
+        
+        this.graphs.push({
+          data: [{
+            values: stat.answerCounts.split("/"),
+            labels: stat.answerCounts.split("/"),
+            type: 'pie' //(a < b) ? 'pie' : 'bar'
+          }],
+          layout: {
+            title: stat.questionId
+          }
+        })
+
+      });
+
       console.log(this.stats)
     }, error => console.error(error));
   }
-
-  public graph = {
-    data: [
-        { x: [1, 2, 3], y: [2, 6, 3], type: 'scatter', mode: 'lines+points', marker: {color: 'red'} },
-        { x: [1, 2, 3], y: [2, 5, 3], type: 'bar' },
-    ],
-    layout: { title: 'Bar chart'}
-};
-
-public graphPie = {
-  data: [{
-    values: [19, 26, 55],
-    labels: ['Residential', 'Non-Residential', 'Utility'],
-    type: 'pie'
-  }],
-  layout: {
-    title: 'Pie chart'
-  }
-};
 
 }
