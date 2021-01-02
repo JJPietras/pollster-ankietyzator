@@ -1,12 +1,9 @@
 import { Component, Inject, Pipe, NgModule, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Router } from '@angular/router'
-import { FormsModule } from '@angular/forms';
-import {  BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from '../../app.component';
 import { AuthenticationService } from "../../../services/authorisation.service";
-import { BehaviorSubject, Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-info',
@@ -17,7 +14,7 @@ export class AdminInfoComponent implements OnInit {
 
   //private userSource:BehaviorSubject<User>;
   //currentUsers:Observable<User>;
-  rows: Number = 1; 
+  rows: Number = 10; 
   namesAccounts: string[] = [];
   UsersAccounts: User[];
   filteredUsersAccounts: User[];
@@ -29,12 +26,9 @@ export class AdminInfoComponent implements OnInit {
   popup: boolean;
 
   dataSource;
+  objectProperty2: any[];
 
- // Users: Observable<User[]>;
-  //private usersSource: BehaviorSubject<User[]>;
-  
 
- // constructor() { }
 
   constructor(public authenticationService: AuthenticationService, public httpclient: HttpClient, @Inject('BASE_URL') public baseUrl: string, private router: Router) {
 
@@ -54,61 +48,119 @@ export class AdminInfoComponent implements OnInit {
   }*/
 
   public onItemSelected(val: any){
+
     this.currentModifyUser  = Number(val);
-    console.log(val);
-    this.oneUser = this.UsersAccounts[String(this.currentModifyUser)];
+    this.oneUser = val;
+    this.objectProperty = [];
+
     this.objectProperty = Object.keys(this.oneUser);
- 
-    //usuwanie z listy accountId oraz eMail
-    this.objectProperty.forEach(value =>{
-      if(value.toString() === "accountId" || value.toString() ==="eMail" )
-        this.objectProperty.splice(this.objectProperty.indexOf(value),1);
-    })
+    this.objectProperty2 = Object.values(this.oneUser);
     
-    //console.log(this.currentModifyUser);
+    this.objectProperty.forEach(value =>{
+      if(value.toString() === "accountId" || value.toString() ==="eMail"){
+        this.objectProperty2.splice(this.objectProperty.indexOf(value),1);
+        this.objectProperty.splice(this.objectProperty.indexOf(value),1);
+        
+      }
+      this.contentProperty = "";
+     
+    })
+
   }
 
 
   public onItemSelectedProperty(val: any){
 
-
-    console.log(this.objectCurrentProperty);
-    this.objectCurrentProperty = this.objectProperty[val];
-    //this.contentProperty = this.oneUser[val].value.toString();
+    this.objectCurrentProperty = this.objectProperty2[val];
+    this.contentProperty = this.objectProperty2[val];
     
-    console.log(this.contentProperty);
-    //console.log(this.currentModifyUser);
+    console.log("tu prpoperty: " + this.objectProperty2[val]);
+   
   }
 
 
 
   public filterEmail(val :any){
-    //this.UsersAccounts = val.trim().toLowerCase();
-    //this.dataSource.filter = val.trim().toLowerCase();
-    this.filteredUsersAccounts = undefined;
+    
+    this.filteredUsersAccounts = [];
     this.UsersAccounts.filter(user =>{
   
       if(user.eMail.includes(val) && (val.length != 0)){
-     
+        
+        console.log(user);
         this.filteredUsersAccounts.push(user);
         
       }
     })
 
-  
-    if(val.length === 0 || val.trim() != ""){
+    if(val.length === 0 || val.trim() == ""){
+      console.log(val.trim() != "")
       this.filteredUsersAccounts = this.UsersAccounts;
     }
  }
 
+ public filterTypeUser(val: any){
+  this.filteredUsersAccounts = [];
+  this.UsersAccounts.filter(user =>{
+      console.log(val);
+      if(val == 0){
+        console.log(val);
+        this.filteredUsersAccounts.push(user);
+      }
+      else if(val == 1){
+        this.filteredUsersAccounts.push(user);
+      }
+      else if(val == 2){
+        this.filteredUsersAccounts.push(user);
+      }
+  })
 
+  /*if(val.length === 0 || val.trim() == ""){
+    console.log(val.trim() != "")
+    this.filteredUsersAccounts = this.UsersAccounts;
+  }*/
 
-  public removeAccount(index){
-    
-    this.UsersAccounts.splice(index, 1);
-    this.popup=false;
+ }
+
+  public removeAccount(val:any){
+    let timerInterval;
+
+    Swal.fire({
+      showDenyButton: true,
+      title: `czy napewno chcesz usunąć konto ? `,
+      confirmButtonText: `Tak`,
+      denyButtonText: `Nie`,
+    })
+    .then(
+      (result) => {
+        if (result.isConfirmed) {
+          this.UsersAccounts.splice(this.UsersAccounts.indexOf(val),1);
+          this.filteredUsersAccounts = this.UsersAccounts;
+          //Swal.fire('Usunięto');
+          
+            Swal.fire({
+              title: 'Usunięto',
+              timer: 800,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+                timerInterval = setInterval(()=>{}, 100) 
+               
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            }).then((result) => {
+              if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer')
+              }
+            })
+        } 
+      }
+    );
   }
 
 
 
 }
+

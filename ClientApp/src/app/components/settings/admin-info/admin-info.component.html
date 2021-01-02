@@ -1,33 +1,32 @@
 <div class="container">
     
 
-    <!--POPUP WINDOW-->
-    <div class="overlay" *ngIf="popup">
-        <div class="popup">
-            <h2>Usuwanie konta</h2>
-            <a class="close" (click)="popup = false">&times;</a>
-            <div class="content">
-            Czy napewno chcesz usunąć konto ? 
-            <div class="d-flex justify-content-center mt-4">
-                <!-- change popup=false  in removeAccount() method -->
-                <button class=" btn-overlay btn btn-primary" (click)="  removeAccount()">Tak</button> 
-                <button class="btn-overlay btn btn-primary ml-5" (click)="popup=false">Nie</button>
-            </div>
-            
-            </div>
-        </div>
-    </div>
-
     <!--INPUT FILTER TABLE -->
     <div class="mt-5 mb-2">
         <h2>Filtruj</h2>
         <div class="col-4">
-            <input class="form-control" (change)="filterEmail($event.target.value)" placeholder="Wyszkuaj po email">
+            <label>Email</label>
+            <input class="form-control" (change)="filterEmail($event.target.value)" placeholder="Email">
+        </div>
+        <div class="col-4 mt-4">
+            <!--(change)=" this.onItemSelectedProperty($event.target.value)"    -->
+            <label>Typ użytkonwika </label>
+            <select class="form-control"   (change)="filterTypeUser($event.target.value)" aria-placeholder="wybierz konto">  
+                           <!-- <option *ngFor="let item of oneUser; let i = index" [value]="i" >
+                                <span *ngIf="item.userType == 0">Użytkownik</span>
+                                <span *ngIf="item.userType == 1">Ankieter</span>
+                                <span *ngIf="item.userType == 2">Administrator</span>
+                            </option>-->
+                            <option [value]="0">Użytkownik</option>
+                            <option [value]="1">Ankieter</option>
+                            <option [value]="2">Administrator</option>
+            </select>
+
         </div>
     </div>
 
     
-    <!-- TABLE USERS-->
+    <!-- (change)="filterEmail($event.target.value)"   TABLE USERS-->
     <h2 class="mt-5 mb-2">Lista Użytkowników</h2>
     <div class="d-flex justify-content-center mt-2">
         
@@ -40,7 +39,7 @@
                 </tr>
                 </thead>
                 <tbody >
-                    <tr *ngFor="let item of filteredUsersAccounts | slice:0:rows">
+                    <tr *ngFor="let item of filteredUsersAccounts | slice:0:rows ; "  >
                     <td> {{item.eMail}} </td>
                     <td>
                             <span *ngIf="item.userType == 0">Użytkownik</span>
@@ -49,8 +48,8 @@
                     </td>
                     <td>
                         <div class="d-flex justify-content-center mt-2">
-                            <button class="btn btn-primary" (click)=" popup = true">Usuń</button>
-                            <button class="btn btn-primary" (click)="this.onItemSelected($event.target.value)">Wybierz</button>
+                            <button class="btn btn-primary" (click)="removeAccount(item)">Usuń</button>
+                            <button class="btn btn-primary" (click)="this.onItemSelected(item)">Wybierz</button>
                         </div>
                     </td>
                     </tr>
@@ -60,15 +59,15 @@
         
     </div>
     <button class="btn btn-primary" (click)="rows=rows+5">Rozwiń</button>
-
+    
+    
     <!--MODIFY ACCOUNT-->
-    <div class="form-group mt-5">
+    <div class="form-group mt-5 mb-5">
         <h2>Modyfikowanie wybranego konta</h2>
            <form>
                  
                   <div class="form-group">
                    
-                    
                     <div class="ng-form2" ng-show="form1.$valid">
                     
                         <label>Wybierz pole do modyfikacji</label>
@@ -112,3 +111,6 @@
                             </option>
                         </select>
                     </div> -->
+
+
+     
