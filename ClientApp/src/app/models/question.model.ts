@@ -5,5 +5,6 @@ interface Question {
   options: string;
   allowEmpty: boolean;
   maxLength: number;
-  type: boolean;
+  type: number;
+  answer: any;
 }

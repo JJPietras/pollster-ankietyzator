@@ -1,7 +1,7 @@
 interface User {
-  accountId: string;
+  accountId: number;
   name: string;
   eMail: string;
   tags: string;
-  userType: string;
+  userType: number;
   }

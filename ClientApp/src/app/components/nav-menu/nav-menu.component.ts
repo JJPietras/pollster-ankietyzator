@@ -11,7 +11,6 @@ export class NavMenuComponent {
   isExpanded = false;
 
   constructor(public authenticationService: AuthenticationService) {
-
   }
 
   collapse() {
