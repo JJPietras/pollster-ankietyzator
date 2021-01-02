@@ -79,6 +79,8 @@ GO
    
    Tytuł - samowytłumaczalne
    
+   Opis - jak wyżej
+   
    Tagi - można ich określić wiele. Określają
    grupy docelowe np: PracownicyHaliZ38/Pł_A/Uł3
    
@@ -94,6 +96,7 @@ CREATE TABLE [dbo].[PollForms]
     [PollId]       [int] IDENTITY (1,1) NOT NULL,
     [AuthorId]     [int]                NOT NULL,
     [Title]        [nvarchar](200)      NOT NULL,
+    [Description]  [nvarchar](400)      NOT NULL,
     [Tags]         [nvarchar](1000)     NOT NULL,
     [EMails]       [nvarchar](1000)     NOT NULL,
     [NonAnonymous] [bit]                NOT NULL,

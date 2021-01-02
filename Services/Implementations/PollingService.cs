@@ -93,7 +93,7 @@ namespace Ankietyzator.Services.Implementations
                 join answer in _context.Answers on question.QuestionId equals answer.QuestionId
                 where answer.AccountId == accountId
                 select poll
-            ).ToList();
+            ).Distinct().ToList();
 
             responseAll.Data = filled ? filledPolls : polls.Except(filledPolls).ToList();
             var dtoPolls = responseAll.Data.Select(p => _mapper.Map<GetPollFormDto>(p)).ToList();

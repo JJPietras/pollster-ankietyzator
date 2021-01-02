@@ -12,6 +12,8 @@ namespace Ankietyzator.Models.DataModel.PollModel
         [ForeignKey("account_user_primary_key")] public int AuthorId { get; set; }
         
         [Required] [MaxLength(200)] public string Title { get; set; }
+        
+        [Required] [MaxLength(400)] public string Description { get; set; }
 
         [Required] [MaxLength(1000)] public string Tags { get; set; }
 
