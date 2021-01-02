@@ -35,7 +35,6 @@ export class PollsStatisticsComponent implements OnInit {
           title: 'Udział wypełnionych ankiet'
         }
       };
-      //console.log(this.graphPie);
     }, error => console.error(error));
   }
 
