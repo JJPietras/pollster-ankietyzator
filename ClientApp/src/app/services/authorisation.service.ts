@@ -1,11 +1,7 @@
 import { Injectable, OnInit, Inject } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { UpdateAccountDto } from "../models/updateDTO.model";
-import { catchError } from 'rxjs/operators';
 
-//import { AngularFireAuth } from '@angular/fire/auth';
-//import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: "root",
@@ -58,17 +54,6 @@ export class AuthenticationService{
    
   }
 
-  /*const httpOptions = {
-    headers: new HttpHeaders({
-       'Content-Type': 'application/xml,application/xhtml+xml,text/html'
-    })
-  };*/
-
-  public updateUser(val :UpdateAccountDto) {
-    return this.http.put<UpdateAccountDto>(this.baseUrl + 'accounts/update-my-account', val);/*pipe(
-      catchError (val)
-    );*/
-  }
 
 
   public SignInWithGoogle() {
