@@ -13,7 +13,6 @@ import Swal from "sweetalert2";
 })
 export class AuthenticationService{ś
   private windowHandle: Window;
-
   private userSource:BehaviorSubject<User>;
   private usersSource: BehaviorSubject<User[]>;
   currentUser:Observable<User>;

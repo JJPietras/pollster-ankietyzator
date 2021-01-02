@@ -1,67 +1,54 @@
-
 <div class="container">
-  <div class="card">
-    <form class="form">
-    <div class="panel-heading">
-      <h3>Tytuł</h3>
-      <p>Opis ankiety</p>
-    </div>
-
     <div class="card">
-      <p>Pytanie typu tak/nie</p>
+        <form class="form">
+            <div class="panel-heading">
+                <h3>Tytuł</h3>
+                <p>Opis ankiety</p>
+            </div>
 
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="yes" value="yes">
-        <label class="form-check-label" for="yes">Tak</label>
-      </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="no" value="no">
-        <label class="form-check-label" for="no">Nie</label>
-      </div>
+            <div *ngFor="let question of poll.questions">
+                <div class="card" *ngIf="question.type==1">
+                    <p>{{question.title}}</p>
+
+                    <div class="form-check form-check-inline" *ngFor="let option of question.options.split('/'); let in=index">
+                        <input class="form-check-input" type="radio" name={{question.position}} value={{in}} [(ngModel)]="question.answer">
+                        <label class="form-check-label" for="yes">{{option}}</label>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="question.type==2">
+                    <p>{{question.title}}</p>
+
+                    <div class="form-check" *ngFor="let option of question.options.split('/'); let in=index;">
+                        <input class="form-check-input" type="checkbox" value={{in}} name={{question.position}} [(ngModel)]="question.answer[in]">
+                        <label class="form-check-label" for={{question.questionId}}>{{option}}</label>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="question.type==3">
+                    <label>{{question.title}}</label>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" placeholder={{question.options}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}"></textarea>
+                    </div>
+                </div>
+
+                <div class="card" *ngIf="question.type==4">
+                    <label>{{question.title}}</label>
+                    <input type="range" class="custom-range" min="{{question.options.split('/')[0]}}" max="{{question.options.split('/')[1]}}" step="{{question.options.split('/')[2]}}" value="{{question.options.split('/')[3]}}" id={{question.questionId}} [(ngModel)]="question.answer"
+                        [ngModelOptions]="{standalone: true}">
+                </div>
+
+                <div class="card" *ngIf="question.type==5">
+                    <label>{{question.title}}</label>
+                    <input type="number" class="form-control text-center" min="{{question.options.split('/')[0]}}" max="{{question.options.split('/')[1]}}" id={{question.questionId}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}">
+                </div>
+            </div>
+
+            <div class="">
+                <button type="button" class="btn btn-danger btn-sm buttons">Anuluj</button>
+                <button type="button" class="btn btn-success btn-sm btn-right buttons" (click)="submitPoll()">Submit</button>
+            </div>
+
+        </form>
+
     </div>
-
-    <div class="card">
-      <p>Pytanie typu wybór</p>
-
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-        <label class="form-check-label" for="defaultCheck1">
-          Default checkbox
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
-        <label class="form-check-label" for="defaultCheck2">
-          Disabled checkbox
-        </label>
-      </div>
-
-    </div>
-
-    <div class="card">
-      <label>Pytanie typu tekst</label>
-      <div class="form-group">
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-      </div>
-    </div>
-
-    <div class="card">
-      <label>Pytanie typu slider</label>
-      <input type="range" class="custom-range" min="0" max="5" step="0.5" id="customRange2">
-    </div>
-
-    <div class="card">
-      <label >Pytanie typu number</label>
-      <input type="number" class="form-control text-center" min="0" max="99" value="1">
-    </div>
-
-    <div class="">
-      <button type="button" class="btn btn-danger btn-sm buttons">Anuluj</button>
-      <button type="button" class="btn btn-success btn-sm btn-right buttons">Submit</button>
-    </div>
-
- </form>
-
-  </div>
-
-

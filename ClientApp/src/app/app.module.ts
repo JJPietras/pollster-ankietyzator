@@ -57,7 +57,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user-login', component: LoginComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'poll/:id', component: PollComponent },
+      { path: 'poll', component: PollComponent },
       { path: 'select-poll', component: SelectPollComponent },
       { path: 'poll-statistics', component: PollsStatisticsComponent },
       { path: 'poll-statistics/:id', component: PollStatisticsComponent },

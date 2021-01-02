@@ -21,7 +21,7 @@ export class PollStatisticsComponent implements OnInit {
   stats: PollStats[];
 
   ngOnInit() {
-    this.http.get<Request>(this.baseUrl + 'stats/get-question-stats').subscribe(result => {
+    this.http.get<Request>(this.baseUrl + 'stats/get-questions-stats/' + this.pollId).subscribe(result => {
       this.stats = result.data;
       console.log(this.stats)
     }, error => console.error(error));
@@ -45,7 +45,5 @@ public graphPie = {
     title: 'Pie chart'
   }
 };
-
-
 
 }

@@ -1,5 +1,5 @@
 <div class="container">
-  <div *ngIf="!stats"> <h1>Nie posiadasz żadnych ankiet</h1> </div>
+  <div *ngIf="!stats"> <h1>Brak odpowiedzi do ankiety</h1> </div>
 
   <div *ngIf="stats">
     <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
