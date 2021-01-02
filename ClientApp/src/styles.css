@@ -1,27 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
+
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
 /* Provide sufficient contrast against white background */
+
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 code {
-  color: #e01a76;
+    color: #e01a76;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .center {
-  margin: auto;
-  width: 50%;
+    margin: auto;
+    width: 50%;
 }
 
 .side-by-side {
-  overflow: auto;
-  float: left;
-  position: relative;
+    overflow: auto;
+    float: left;
+    position: relative;
+}
+
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.fill-page {
+    height: 80%;
 }
