@@ -3,12 +3,10 @@
         <h1>Brak odpowiedzi do ankiety</h1>
     </div>
 
-    <div *ngFor="let graph of graphs">
-        <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+    <div *ngIf="stats">
+        <div *ngFor="let graph of graphs">
+            <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+        </div>
     </div>
 
-    <!-- <div *ngIf="stats">
-    <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
-    <plotly-plot [data]="graphPie.data" [layout]="graphPie.layout"></plotly-plot>
-  </div> -->
 </div>
