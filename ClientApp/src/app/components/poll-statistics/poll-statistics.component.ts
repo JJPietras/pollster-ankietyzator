@@ -31,11 +31,11 @@ export class PollStatisticsComponent implements OnInit {
         this.graphs.push({
           data: [{
             values: stat.answerCounts.split("/"),
-            labels: stat.answerCounts.split("/"),
-            type: 'pie' //(a < b) ? 'pie' : 'bar'
+            labels: stat.options.split("/"),
+            type: (stat.type <= 3) ? 'pie' : 'bar'
           }],
           layout: {
-            title: stat.questionId
+            title: "(" + stat.questionId + ") " + stat.title
           }
         })
 
