@@ -16,6 +16,7 @@ namespace Ankietyzator
             CreateMap<CreateAnswerDto, Answer>();
             CreateMap<CreateQuestionDto, Question>();
             CreateMap<Question, GetQuestionDto>();
+            CreateMap<GetQuestionDto, Question>();
             CreateMap<PollForm, GetPollFormDto>();
             CreateMap<PollForm, CreatePollFormDto>();
             CreateMap<CreatePollFormDto, PollForm>();
