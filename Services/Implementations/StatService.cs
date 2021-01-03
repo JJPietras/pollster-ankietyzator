@@ -73,7 +73,7 @@ namespace Ankietyzator.Services.Implementations
 
             var pollsId = polls.Select(p => p.PollId).ToList();
 
-            if (polls.Count == 0) return response.Failure(NoPollsStr, code);
+            if (polls.Count == 0) return response.Success(new List<GetPollStatsDto>(), PollStatsFetchedStr);
             var pollStats = await _context.PollStats
                 .Where(p => pollsId.Contains(p.PollId))
                 .ToListAsync();
