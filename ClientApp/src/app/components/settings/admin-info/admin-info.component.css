@@ -1,0 +1,12 @@
+h1{
+    text-align: left;
+    margin-left: 10x;
+    margin-top: 20px;
+}
+
+.table-thead{
+   /* background-color: #aaa ;*/
+    color: #fff;
+    text-shadow: 1px 1px #111;
+    font-size: 20px;
+}
