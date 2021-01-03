@@ -14,6 +14,10 @@
             <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
           </li>
 
+          <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="nav-link text-dark" [routerLink]="['/poll-creator']">Utwórz Ankietę</a>
+          </li>
+
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/select-poll']">Ankiety</a>
           </li>

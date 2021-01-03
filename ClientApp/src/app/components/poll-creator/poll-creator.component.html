@@ -1,0 +1,165 @@
+
+<div class="container">
+    <div>
+      <h3>{{pollTitle}}</h3>
+      <input class="form-control" [(ngModel)]="pollTitle" placeholder="ustaw tytuł" [(ngModel)]="newPoll.title"/>
+    </div>
+  
+    <div class="mt-4">
+      <span>{{pollDescription}}</span>
+      <input class="form-control"  [(ngModel)]="pollDescription" placeholder="ustaw opis" />
+    </div>
+    
+    <div class="mt-3 mb-3">
+        <label>Podaj maksymalną ilość znaków z których ma zostać utworzone pytanie (wpisanie 0 oznacza brak ograniczeń ):</label>
+        <input class="form-control" [(ngModel)]="charsMaxNumber" (ngModelChange)="changedCharMaxNumber()"/>
+    </div>
+  
+    <div class="mt-3">
+      <h2 class="mt-5">Tworzenie pytań</h2>
+      <div class="mt-2 mb-1 border">
+        
+        <div *ngFor="let item of dataSource; let inx=index" class="mt-5"  >
+          <button class="btn btn-danger btn-sm float-sm-right" (click)="removeDiv(inx)">X</button>
+          <h3>Pytanie nr {{inx+1}}</h3>
+           <div *ngIf="item.type == null"> 
+            
+            <button class="btn btn-primary mr-1" (click)="setType(1,inx)">Jeden wybór</button>
+            <button class="btn btn-primary mr-1" (click)="setType(2,inx)">Wielokrotnego wyboru </button>
+            <button class="btn btn-primary mr-1" (click)="setType(3,inx)">Suwak</button>
+            <button class="btn btn-primary mr-1 "(click)="setType(4,inx)">Tekstowy</button>
+            <button class="btn btn-primary mr-1" (click)="setType(5,inx)">Liczbowy</button>
+            <!--rezerwowe <button class="btn btn-primary mr-1" (click)="number = true; hideDiv = false">Liczbowy</button> -->
+          </div>
+        
+  
+         
+          <div *ngIf="item.type == 1">
+            <div>
+                <label>Wpisz pytanie:</label>
+                <input class="form-control" placeholder="pytanie" [(ngModel)]="dataSource[inx].title" maxlength="charsMaxNumber" />
+            </div>
+            <div>
+                <label>Wpisz odpowiedzi kolejno odzielając je znakiem "/"</label>
+                <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="dataSource[inx].options"/>
+            </div>
+            <div class="form-check mt-2">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="dataSource[inx].allowEmpty">
+                <label class="form-check-label" for="exampleCheck1" >Nie wymaga odpowiedzi</label>
+            </div>
+          </div>
+
+
+          <div *ngIf="item.type == 2"  class="card">
+            <h5>Wybrano typ pytania: Wielokrotnego wyboru</h5>
+            <div>
+                <label>Wpisz pytanie:</label>
+                <input class="form-control" placeholder="pytanie" [(ngModel)]="dataSource[inx].title" maxlength="charsMaxNumber" />
+            </div>
+            <div>
+                <label>Wpisz odpowiedzi kolejno odzielając je znakiem "/"</label>
+                <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="dataSource[inx].options"/>
+            </div>
+            <div class="form-check mt-2">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="dataSource[inx].allowEmpty">
+                <label class="form-check-label" for="exampleCheck1" >Nie wymaga odpowiedzi</label>
+            </div>
+          </div>
+            
+  
+  
+            <div *ngIf="item.type == 3 " class="card" >
+                <h5>Wybrano typ pytania: suwak</h5>
+                <div>
+                    <label>Wpisz pytanie:</label>
+                    <input class="form-control" placeholder="pytanie" [(ngModel)]="dataSource[inx].title" maxlength="charsMaxNumber" />
+                </div>
+                <div>
+                    <label>Wartości:</label>
+                    <input class="form-control" placeholder="Podaj minimum"/> <!--minimum-->
+                    <input class="form-control" placeholder="Podaj maksimum"/> <!--maksimum-->
+                    <input class="form-control" placeholder="Podaj skok wartości"/>
+                </div>
+
+                <div class="form-check mt-2">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="dataSource[inx].allowEmpty">
+                    <label class="form-check-label" for="exampleCheck1" >Nie wymaga odpowiedzi</label>
+                </div>
+            </div>
+            
+
+
+            <div *ngIf="item.type == 4" class="card">
+                <h5>Wybrano typ pytania: tekstowy</h5>
+             <div>
+                 <label>Wpisz pytanie:</label>
+                 <input class="form-control" placeholder="pytanie" [(ngModel)]="dataSource[inx].title" maxlength="charsMaxNumber" />
+             </div>
+
+             <div class="form-check mt-2">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="dataSource[inx].allowEmpty">
+                <label class="form-check-label" for="exampleCheck1" >Nie wymaga odpowiedzi</label>
+              </div>
+            </div>
+  
+  
+  
+            <div  *ngIf="item.type == 5" class="card">
+                <h5>Wybrano typ pytania: liczbowy</h5>
+                <div>
+                    <label>Wpisz pytanie:</label>
+                    <input class="form-control" placeholder="pytanie" [(ngModel)]="dataSource[inx].title" maxlength="charsMaxNumber" />
+                </div>
+                <div class="mt-3">
+                <label>Wartości:</label>
+                    <input class="form-control" type="number" min=0 max=99  maxlength="10" placeholder="Podaj minimum" /> <!--minimum-->
+                    <input class="form-control" type="number" min=0 max=99 maxlength="10" placeholder="Podaj maksimum"/> <!--maksimum-->
+                    <!--<input class="form-control" type="number"  maxlength="10" placeholder="Podaj skok wartości"/> <!--wartosc skokwa ??-->
+                </div>
+                <div class="form-check mt-2">
+                    <input type="checkbox" class="form-check-input" id="i" [(ngModel)]="dataSource[inx].allowEmpty">
+                    <label class="form-check-label" for="i" >Nie wymaga odpowiedzi</label>
+                  </div>
+              <!--<input type="number" class="form-control text-center" min="0" max="99" value="1">-->
+            </div>
+
+
+         </div>
+  
+
+  
+          <div class="mt-1">
+            <button class="btn btn-primary mr-1 " (click)="addQuery()">Dodaj pytanie</button>
+            <!--<button class="btn btn-primary mr-1 " (click)="this.removeQuery($event)">Usuń pytanie</button>-->
+          </div>
+      </div>
+    </div>
+  
+    <div class="mt-5">
+        <div>
+            <h5>Przypisz użytkowników - Email:</h5>
+            <div class="form-group">
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" [(ngModel)]="pollEmailsUsers"></textarea>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5>Ustal tagi dla ankiety: </h5>
+            <input class="form-control" [(ngModel)]="pollTags" />
+        </div>
+
+    </div>
+
+    
+    
+        <div class="mt-3 float-left">
+            <button class="btn btn-danger">Anuluj</button>
+        </div>
+        <div class="mt-3 float-right">
+            <button class="btn btn-success" (click)="submit()">Utwórz</button>
+        </div>
+
+    
+  </div>
+  
+  
