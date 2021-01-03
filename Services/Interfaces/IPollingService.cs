@@ -17,6 +17,8 @@ namespace Ankietyzator.Services.Interfaces
 
         Task<ServiceResponse<GetPollFormDto>> UpdatePollForm(UpdatePollFormDto pollForm, string email);
         
+        Task<ServiceResponse<GetPollFormDto>> ClosePollForm(int pollId, string email);
+        
         Task<ServiceResponse<GetPollFormDto>> RemovePollForm(int pollId, string email);
 
         Task<ServiceResponse<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, string email);

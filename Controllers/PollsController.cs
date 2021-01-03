@@ -106,6 +106,20 @@ namespace Ankietyzator.Controllers
             };
         }
         
+        [HttpPut("close-poll/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> ClosePollForm(int pollId)
+        {
+            var pollsResponse = await _polling.ClosePollForm(pollId, GetUserEmail());
+            var response = new Response<GetPollFormDto>(pollsResponse);
+            return pollsResponse.Code switch
+            {
+                HttpStatusCode.NotFound => NotFound(response),
+                HttpStatusCode.Unauthorized => Unauthorized(response),
+                _ => Ok(response)
+            };
+        }
+        
         //===================== POST =======================//
 
         [HttpPost("create-poll")]

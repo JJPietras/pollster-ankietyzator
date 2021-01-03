@@ -50,7 +50,7 @@ namespace Ankietyzator.Controllers
         //======================= POST ========================//
         
         [HttpPost("add-answers")]
-        [Authorize(Roles = "pollster, admin")]
+        [Authorize(Roles = "user, pollster, admin")]
         public async Task<IActionResult> AddAnswers(List<CreateAnswerDto> answerDtos)
         {
             var answersResponse = await _answer.AddAnswers(answerDtos, GetUserEmail());

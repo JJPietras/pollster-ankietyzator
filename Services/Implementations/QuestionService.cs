@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,6 +13,9 @@ namespace Ankietyzator.Services.Implementations
 {
     public class QuestionService : IQuestionService
     {
+        private const string BaseUrl = "https://cc-2020-group-one-ankietyzator-function.azurewebsites.net/api/";
+        private const string AddAnswer = "AddAnswer?code=lLPk2eq41HV0miGWEaZr6JoHRKDhMWZAWuEXpUpfrl6z8ydvumOwxA==";
+        
         private const string NoQuestionsStr = "There are no questions for the selected poll in the database";
         private const string QuestionsSuccessStr = "Questions fetched successfully";
         private const string QuestionsRemovedStr = "Questions removed successfully";
