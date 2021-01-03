@@ -24,7 +24,7 @@ export class PollComponent{
   ngOnInit() {
     this.poll = this.pollsService.pollSource.value;
     this.poll.questions.forEach(q => {
-      if (q.type==2)
+      if (q.type==1)
         q.answer = new Array<number>(q.options.split('/').length)
     });
   }
@@ -59,7 +59,7 @@ export class PollComponent{
     this.answersFilled = true;
     this.poll.questions.forEach(
       q => {
-        if (q.type==2){
+        if (q.type==1){
             var finalAnswer = []
             q.answer.forEach((element, index) => {
               if (element)
@@ -69,8 +69,9 @@ export class PollComponent{
               this.checkAnswer(finalAnswer);
           }
           else{
-            this.answers.push({questionId: q.questionId, content: q.answer.toString()});
             this.checkAnswer(q.answer);
+            if (q.answer)
+              this.answers.push({questionId: q.questionId, content: q.answer.toString()});
           }
         }
     )
@@ -78,8 +79,16 @@ export class PollComponent{
   }
 
   checkAnswer(answer: any){
-    if (!answer || answer == "")
-      this.answersFilled = false
+    if (!answer || answer == ""){
+      this.answersFilled = false;
+      console.log(answer);
+    }
+      
+      
+  }
+
+  getStep(options: any): number{
+    return (options.split('/')[2] < (options.split('/')[1] - options.split('/')[0]))? options.split('/')[2] : 1;
   }
 
 }
