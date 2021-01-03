@@ -28,7 +28,7 @@ export class PollsStatisticsComponent implements OnInit {
      this.graphPie = {
         data: [{
           values: this.stats.map(stat => stat.completions),
-          labels: this.stats.map(stat => stat.pollId.toString()),
+          labels: this.stats.map(stat => "(" + stat.pollId.toString() + ") " + stat.title),
           type: 'pie'
         }],
         layout: {

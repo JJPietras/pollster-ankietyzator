@@ -107,7 +107,7 @@ export class UserInfoComponent implements OnInit {
 
     this.updateDTO.EMail = this.authenticationService.user.value.eMail;
     this.updateDTO.Tags = this.tags;
-    this.updateDTO.Key = this.authenticationService.user.value.userType;
+    this.updateDTO.Key = this.authenticationService.user.value.userType.toString();
     console.log(this.updateDTO.Tags);
 
     this.authenticationService.user.value.tags = this.tags;
