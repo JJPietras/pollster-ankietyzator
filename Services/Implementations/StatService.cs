@@ -4,9 +4,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
+using Ankietyzator.Models.DataModel.PollModel;
 using Ankietyzator.Models.DataModel.StatModel;
+using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Models.DTO.QuestionDTOs;
+using Ankietyzator.Models.DTO.StatsDTOs;
 using Ankietyzator.Services.Interfaces;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ankietyzator.Services.Implementations
@@ -16,6 +20,7 @@ namespace Ankietyzator.Services.Implementations
         private const string NoAccountStr = "Could not find specified account for provided Email";
         private const string NoPollStatStr = "Could not find specified poll stat for provided poll ID";
         private const string PollStatFetchedStr = "Poll stats fetched successfully";
+        private const string NoPoll = "Could not find specified poll";
         private const string NoPollsStr = "User has no polls";
         private const string NoPollStatsStr = "Could not find (all) stats";
         private const string PollStatsFetchedStr = "Polls stats fetched successfully";
@@ -32,66 +37,87 @@ namespace Ankietyzator.Services.Implementations
         private const string QuestionsStatsRemovedStr = "Questions stats removed successfully";*/
 
         private readonly AnkietyzatorDbContext _context;
+        private readonly IMapper _mapper;
 
-        public StatService(AnkietyzatorDbContext context)
+        public StatService(AnkietyzatorDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<PollStat>> GetPollStat(int pollId)
+        public async Task<ServiceResponse<GetPollStatsDto>> GetPollStat(int pollId)
         {
-            var response = new ServiceResponse<PollStat>();
+            var response = new ServiceResponse<GetPollStatsDto>();
+
+            var pollForm = await _context.PollForms.FindAsync(pollId);
+            if (pollForm == null) return response.Failure(NoPollsStr, HttpStatusCode.NotFound);
+
             var stats = await _context.PollStats.FindAsync(pollId);
-            return stats == null
-                ? response.Failure(NoPollStatStr, HttpStatusCode.NotFound)
-                : response.Success(stats, PollStatFetchedStr);
+            if (stats == null) response.Failure(NoPoll, HttpStatusCode.NotFound);
+
+            var pollStats = _mapper.Map<GetPollStatsDto>(stats);
+            (pollStats.Title, pollStats.Description) = (pollForm.Title, pollForm.Description);
+            return response.Success(pollStats, PollStatFetchedStr);
         }
 
-        public async Task<ServiceResponse<List<PollStat>>> GetPollsStats(string pollsterEmail)
+        public async Task<ServiceResponse<List<GetPollStatsDto>>> GetPollsStats(string pollsterEmail)
         {
-            var response = new ServiceResponse<List<PollStat>>();
+            var response = new ServiceResponse<List<GetPollStatsDto>>();
             const HttpStatusCode code = HttpStatusCode.NotFound;
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == pollsterEmail);
             if (account == null) return response.Failure(NoAccountStr, code);
 
             var polls = await _context.PollForms
                 .Where(p => p.AuthorId == account.AccountId)
-                .Select(p => p.PollId)
                 .ToListAsync();
 
-            if (polls.Count == 0) return response.Failure(NoPollsStr, code);
+            var pollsId = polls.Select(p => p.PollId).ToList();
+
+            if (polls.Count == 0) return response.Success(new List<GetPollStatsDto>(), PollStatsFetchedStr);
             var pollStats = await _context.PollStats
-                .Where(p => polls.Contains(p.PollId))
+                .Where(p => pollsId.Contains(p.PollId))
                 .ToListAsync();
 
-            return pollStats.Count == 0 || pollStats.Count != polls.Count
-                ? response.Failure(NoPollStatsStr, code)
-                : response.Success(pollStats, PollStatsFetchedStr);
+            if (pollStats.Count == 0 || pollStats.Count != polls.Count)
+                return response.Failure(NoPollStatsStr, code);
+
+            var pollStatsDto = pollStats.Select(s => _mapper.Map<GetPollStatsDto>(s)).ToList();
+            for (int i = 0; i < pollStats.Count; i++)
+            {
+                pollStatsDto[i].Title = polls[i].Title;
+                pollStatsDto[i].Description = polls[i].Description;
+            }
+
+            return response.Success(pollStatsDto, PollStatsFetchedStr);
         }
 
-        public async Task<ServiceResponse<List<QuestionStat>>> GetQuestionsStats(int pollId)
+        public async Task<ServiceResponse<List<GetQuestionStatsDto>>> GetQuestionsStats(int pollId)
         {
-            var response = new ServiceResponse<List<QuestionStat>>();
+            var response = new ServiceResponse<List<GetQuestionStatsDto>>();
             var questions = await _context.Questions
                 .Where(q => q.Poll == pollId)
-                .Select(q => q.QuestionId)
                 .ToListAsync();
+
+            var questionsId = questions.Select(q => q.QuestionId).ToList();
 
             if (questions.Count == 0) return response.Failure(PollNoQuestionsStr, HttpStatusCode.Conflict);
             var questionStats = await _context.QuestionStats
-                .Where(q => questions.Contains(q.QuestionId))
+                .Where(q => questionsId.Contains(q.QuestionId))
                 .ToListAsync();
 
-            return questionStats.Count == 0 || questionStats.Count != questions.Count
-                ? response.Failure(NoQuestionStatsStr, HttpStatusCode.NotFound)
-                : response.Success(questionStats, QuestionStatsFetchedStr);
+            if (questionStats.Count == 0 || questionStats.Count != questions.Count)
+                return response.Failure(NoQuestionStatsStr, HttpStatusCode.NotFound);
+
+            var questionStatsDto = questionStats.Select(q => _mapper.Map<GetQuestionStatsDto>(q)).ToList();
+            for (int i = 0; i < questions.Count; i++) UpdateGetQuestionStatDto(questionStatsDto[i], questions[i]);
+            return response.Success(questionStatsDto, QuestionStatsFetchedStr);
         }
 
-        public async Task<ServiceResponse<PollStat>> CreatePollStats(int pollId)
+        public async Task<ServiceResponse<GetPollStatsDto>> CreatePollStats(int pollId)
         {
-            var response = new ServiceResponse<PollStat>();
-            if (await _context.PollForms.FindAsync(pollId) == null) 
-                return response.Failure(NoPollWithIdString, HttpStatusCode.NotFound);
+            var response = new ServiceResponse<GetPollStatsDto>();
+            var poll = await _context.PollForms.FindAsync(pollId);
+            if (poll == null) return response.Failure(NoPollWithIdString, HttpStatusCode.NotFound);
             var stats = new PollStat
             {
                 PollId = pollId,
@@ -100,18 +126,27 @@ namespace Ankietyzator.Services.Implementations
             };
             await _context.PollStats.AddAsync(stats);
             await _context.SaveChangesAsync();
-            return response.Success(stats, PollStatCreatedStr);
+
+            var pollStats = _mapper.Map<GetPollStatsDto>(stats);
+            (pollStats.Title, pollStats.Description) = (poll.Title, poll.Description);
+            return response.Success(pollStats, PollStatCreatedStr);
         }
 
-        public async Task<ServiceResponse<List<QuestionStat>>> CreateQuestionsStats(List<GetQuestionDto> questions)
+        public async Task<ServiceResponse<List<GetQuestionStatsDto>>> CreateQuestionsStats(
+            List<GetQuestionDto> questions)
         {
-            var response = new ServiceResponse<List<QuestionStat>>();
+            var response = new ServiceResponse<List<GetQuestionStatsDto>>();
             var questionStats = questions
                 .Select(q => new QuestionStat {QuestionId = q.QuestionId, AnswerCounts = GetOptionsCount(q.Options)})
                 .ToList();
             await _context.QuestionStats.AddRangeAsync(questionStats);
             await _context.SaveChangesAsync();
-            return response.Success(questionStats, QuestionStatsCreatedStr);
+
+            var questionStatsDto = questionStats.Select(q => _mapper.Map<GetQuestionStatsDto>(q)).ToList();
+            var dalQuestions = questions.Select(q => _mapper.Map<Question>(q)).ToList();
+            for (int i = 0; i < questions.Count; i++) UpdateGetQuestionStatDto(questionStatsDto[i], dalQuestions[i]);
+            
+            return response.Success(questionStatsDto, QuestionStatsCreatedStr);
         }
 
         /*public async Task<Response<object>> RemovePollStats(int pollId)
@@ -144,6 +179,12 @@ namespace Ankietyzator.Services.Implementations
                 ? response.Failure(NoQuestionStatsStr)
                 : response.Success(null, QuestionsStatsRemovedStr);
         }*/
+
+        private static void UpdateGetQuestionStatDto(GetQuestionStatsDto dto, Question dal)
+        {
+            (dto.Title, dto.Options, dto.Position) = (dal.Title, dal.Options, dal.Position);
+            (dto.Type, dto.AllowEmpty, dto.MaxLength) = (dal.Type, dal.AllowEmpty, dal.MaxLength);
+        }
 
         private static string GetOptionsCount(string options)
         {
