@@ -1,5 +1,4 @@
-interface Poll2 {
-    pollId: number;
+interface NewPoll {
     authorId: number;
     title: string;
     description: string;
@@ -7,5 +6,5 @@ interface Poll2 {
     emails: string;
     nonAnonymous: boolean;
     archived: boolean;
-    questions: Question [];
+    questions: NewQuestion[];
   }

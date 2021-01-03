@@ -1,7 +1,6 @@
 import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Router, ActivatedRoute} from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, MaxLengthValidator, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authorisation.service';
 import { PollsService } from 'src/app/services/polls-service';
 import Swal from 'sweetalert2';
@@ -17,178 +16,152 @@ import Swal from 'sweetalert2';
 export class PollCreatorComponent implements OnInit {
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
-   private router: Router, private route: ActivatedRoute, private fb: FormBuilder, 
-   private authenticationService: AuthenticationService, private pollService: PollsService) {
-
+   private router: Router, private authenticationService: AuthenticationService) {
   }
+
+  questionsCreator: NewQuestionCreator[]=[];
+  newPoll: NewPoll;
 
   ngOnInit() {
-   
+    this.newPoll={
+      title: "",
+      authorId: undefined,
+      description: "",
+      tags: "",
+      emails:"",
+      nonAnonymous: false,
+      archived: false,
+      questions: [],
+    }
   }
   
-  
-  // private questions: Question[];
-   private charsMaxNumber = 5555;
-   private dataSource: Array<Question> = [];
-
-   private pollTags: string = "";
-   private pollEmailsUsers: string ="";
-   private pollDescription = "opis";
-   private pollTitle = "Tytuł";
-   //########
-   
-  /*private newPoll: Poll ={
-    pollId: undefined,
-    authorId: undefined,
-    authorEmail: undefined,
-    authorName: undefined,
-    title: undefined,
-    tags: undefined,
-    emails: undefined,
-    nonAnonymous: undefined,
-    archived: undefined,
-    questions: undefined
-   };*/
-
-   private newPoll: Poll2 ={
-    pollId: undefined,
-    authorId: undefined,
-    description: undefined,
-    title: undefined,
-    tags: undefined,
-    emails: undefined,
-    nonAnonymous: undefined,
-    archived: undefined,
-    questions: undefined
-   };
-
-   
-   setType(val: any ,inx: any){
-    console.log(val);
-    this.dataSource[inx].type = val;
+  setType(type: any, index: any){
+    var options: any = [];
+    if (type == 3 || type == 4)
+      options= Array(3);
+    else if (type == 2)
+      options = "";
+   this.questionsCreator[index].options = options;
+   this.questionsCreator[index].type = type;
   }
 
   submit(){
-    let it = 0;
-    this.dataSource.forEach(q => {
-      if(q.allowEmpty == undefined)
-        q.allowEmpty = Boolean(0);
-
-      q.position = it;
-      q.maxLength = this.charsMaxNumber;
-      
-      console.log(q.title + " " + q.allowEmpty + " " + q.position + " " +  q.options + " " + q.maxLength + " " + q.type);
-      it++;
-    })
-
-    
+    this.newPoll.questions = []
     this.newPoll.authorId = this.authenticationService.user.value.accountId;
-    console.log(this.pollTitle);
-    this.newPoll.title = this.pollTitle;
-    this.newPoll.description = this.pollDescription;
-    this.newPoll.tags = this.pollTags;
-    this.newPoll.emails = this.pollEmailsUsers;
-    this.newPoll.nonAnonymous = true;
-    this.newPoll.archived = false;
-    this.newPoll.questions = this.dataSource;
-
-  
-    console.log(this.authenticationService.user.value);
-    this.postPoll(this.newPoll);
-
-
+    this.questionsCreator.forEach(question => {
+      this.newPoll.questions.push(this.convertQuestion(question))
+    });
+    console.log(this.newPoll);
+    this.postPoll()
   }
 
+  removeQuestion(index: number){
+    this.questionsCreator.splice(index, 1);
+  }
+
+  addQuestion(){
+    this.questionsCreator.push(this.emptyQuestion(this.questionsCreator.length))
+  }
   
-  postPoll(poll: Poll2){
-    if(poll){
-    this.http
-      .post<Poll2>(this.baseUrl + "polls/create-poll", poll)
-      .subscribe(
-        (result) => {
-          console.log(result);
-          Swal.fire("Gratulacje", "utworzono ankietę", "info").then(
-            () => {
-              this.router.navigate(['/'])
-            }
-          );
-        },
-        (error) => {
-          Swal.fire("Błąd", error.message, "error");
-          console.log(error.message);
-        }
-      );
+  postPoll(){
+    if(this.newPoll){
+      this.http
+        .post<NewPoll>(this.baseUrl + "polls/create-poll", this.newPoll)
+        .subscribe(
+          (result) => {
+            console.log(result);
+            Swal.fire("Gratulacje", "utworzono ankietę", "info").then(
+              () => { this.router.navigate(['/'])}
+            );
+          },
+          (error) => {
+            Swal.fire("Błąd", error.message, "error");
+            console.log(error.message);
+          }
+        );
     }
     else{
-      Swal.fire("Nie można przesłać odpowiedzi", "?", "error");
-      
+      Swal.fire("Nie można przesłać odpowiedzi.", "", "error");
+    }
+  }
+  
+  convertQuestion(question: NewQuestionCreator): NewQuestion{
+    var options: string;
+
+    if (question.type == 2)
+      options = question.options;
+    else 
+      options = question.options.join("/");
+
+    return {
+      position: question.position,
+      title: question.title,
+      options:  options,
+      allowEmpty: question.allowEmpty,
+      maxLength: question.maxLength,
+      type: question.type
     }
   }
 
-
-  changedCharMaxNumber(){
-    if(this.charsMaxNumber <= 0)
-      this.charsMaxNumber = 5555;
-
-      this.dataSource.forEach(q =>{
-        q.maxLength = this.charsMaxNumber;
-      })
-
-      console.log(this.charsMaxNumber);
+   emptyQuestion(index: number): NewQuestionCreator {
+    return {
+      position: index,
+      title: "",
+      options: "",
+      allowEmpty: false,
+      maxLength: 0,
+      type: undefined,
+      helpText: ""
+    }
   }
 
-
-  addQuery(){
-      let div = new Query();
-      this.dataSource.push(div);    
+  addOption(question: number, text: string){
+    if (text.trim() == ""){
+      Swal.fire("Nie można dodać pustego pytania.", "", "error");
+    }
+    else{
+      this.questionsCreator[question].options.push(text);
+      console.log(this.questionsCreator);
+      this.questionsCreator[question].helpText = ""
+    }
   }
 
-  removeDiv(val : any){
-    this.dataSource.splice(val, 1);
+  deleteOption(question: number, option: number){
+    this.questionsCreator[question].options.splice(option, 1);
   }
 
+  validate(){
+    var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
+    var optionsAdded = true;
+    var typesAdded = true;
+    this.questionsCreator.forEach(q => {
+      if (q.type){
+        if (q.type < 2)
+          if (q.options.length < 2)
+            optionsAdded= false;
+      }
+      else
+        typesAdded = false
+      });
 
-  //#########################################
-  //#########################################
-  //#########################################
-  // dynamiczne inputy narazie nie uzywane  
-  answersForm = this.fb.group({
-    answers: this.fb.array([
-      this.fb.control('')
-    ])
-  })
-  
-  
-  get answers(){
-    return this.answersForm.get('answers') as FormArray;
+    if (this.questionsCreator.length == 0){
+      Swal.fire("Dodanie pytań jest wymagane.", "", "error");
+    }
+    else if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      Swal.fire("Uzupełnij wszystkie wymagane pola.", "", "error");
+    }
+    else if (!optionsAdded){
+      Swal.fire("Dodaj odpowiednie ilości opcji", "", "error");
+    }
+    else if (!typesAdded){
+      Swal.fire("Wybierz typy dla wszystkich pytań.", "", "error");
+    }
+    else{
+      this.submit()
+    }
+    form.classList.add('was-validated');
   }
-
-  
-  addNewAnswer(){
-    this.answers.push(this.fb.control(''));
-    //console.log("odpowiedź: " + this.answersForm.get(['answers','0']).value);
-  }
-
-  removeAnswer(){
-    if(this.answers.length > 1)
-      this.answers.removeAt(this.answers.length-1);
-  }
-//#######################################################
-//#######################################################
-//#######################################################
 
 }
-
-export class Query implements Question{
-  questionId: number;
-  position: number;
-  title: string;
-  options: string;
-  allowEmpty: boolean;
-  maxLength: number;
-  type: number;
-  answer: any;
-  fB: FormGroup;
-}
-
-
