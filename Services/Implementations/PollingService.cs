@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -175,6 +174,26 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(pollFormsDto, PollFormsSuccessStr);
         }
 
+        public async Task<ServiceResponse<GetPollFormDto>> ClosePollForm(int pollId, string email)
+        {
+            //TODO: refactor both methods
+            var response = new ServiceResponse<GetPollFormDto>();
+
+            var pollsterResponse = await GetAccount(email);
+            if (pollsterResponse.Data == null) return response.Failure(pollsterResponse);
+            var account = pollsterResponse.Data;
+            
+            var pollForm = await _context.PollForms.FindAsync(pollId);
+            if (pollForm == null) return response.Failure(NoPollFormStr, HttpStatusCode.NotFound);
+
+            var condition = pollForm.AuthorId != account.AccountId && account.UserType != UserType.User;
+            if (condition) return response.Failure(AccountMismatchStr, HttpStatusCode.Unauthorized);
+
+            pollForm.Archived = true;
+            await _context.SaveChangesAsync();
+            return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollUpdatedStr);
+        }
+
         public async Task<ServiceResponse<GetPollFormDto>> RemovePollForm(int pollId, string email)
         {
             var response = new ServiceResponse<GetPollFormDto>();
@@ -186,14 +205,13 @@ namespace Ankietyzator.Services.Implementations
             var pollForm = await _context.PollForms.FindAsync(pollId);
             if (pollForm == null) return response.Failure(NoPollFormStr, HttpStatusCode.NotFound);
 
-            var condition = pollForm.AuthorId != account.AccountId && account.UserType != UserType.Admin;
+            var condition = pollForm.AuthorId != account.AccountId && account.UserType == UserType.User;
             if (condition) return response.Failure(AccountMismatchStr, HttpStatusCode.Unauthorized);
 
             await _questionService.RemoveQuestions(pollId);
             _context.PollForms.Remove(pollForm);
             await _context.SaveChangesAsync();
-            //await _statService.RemovePollStats(pollId);
-            //await _statService.RemoveQuestionsStats(pollId);
+            
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
 
