@@ -16,7 +16,7 @@
             <div class="mb-1 p-2 border">
 
                 <div *ngFor="let question of questionsCreator; let inx=index" class="mt-5 mb-2 p-3 border">
-                    <button class="btn btn-danger btn-md float-sm-right" (click)="removeQuestion(inx)">X</button>
+                    <button class="btn btn-danger btn-md float-sm-right" (click)="removeQuestion(inx)">&times;</button>
                     <h3>Pytanie nr {{inx+1}}</h3>
                     <div *ngIf="question.type == null">
                         <button class="btn btn-primary mr-1" (click)="setType(0,inx)">Jeden wybór</button>
@@ -30,36 +30,35 @@
                         <h5 class="pt-4">Wybrano typ pytania: Pojedynczego wyboru</h5>
                         <div class="mt-3">
                             <label>Podaj pytanie:</label>
-                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" />
                         </div>
-                        <h5 class="mt-5">Odpowiedzi:</h5>
+                        <h5 class="mt-3">Odpowiedzi:</h5>
 
                         <ul class="list-group">
                             <li *ngFor="let option of question.options; let in2=index" class="list-group-item">{{option}}
-                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">X</button>
+                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
                             </li>
                         </ul>
                         <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
                             Wymagane jest dodanie conajmniej 2 odpowiedzi
                         </div>
-                        <div  class="mt-4">
+                        <div class="mt-4">
                             <label>Wprowadź tekst odpowiedzi</label>
                             <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="questionsCreator[inx].helpText" [ngModelOptions]="{standalone: true}" />
-                            <button class="btn btn-success" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj
-                                opcje</button>
+                            <button class="btn btn-success mt-2" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj opcje</button>
                         </div>
 
-                        <div class="form-check mt-5">
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
                             <label class="form-check-label">Nie wymaga odpowiedzi</label>
                         </div>
-                        <div  class="mt-2">
+                        <div class="mt-2">
                             <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
-                            <input class="form-control" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 1" class="card mt-3">
+                    <div *ngIf="question.type == 1" class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: Wielokrotnego wyboru</h5>
                         <div class="mt-3">
                             <label>Podaj pytanie:</label>
@@ -69,7 +68,7 @@
                         <h5 class="mt-4">Odpowiedzi:</h5>
                         <ul class="list-group">
                             <li *ngFor="let option of question.options; let in2=index" class="list-group-item">{{option}}
-                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">X</button>
+                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
                             </li>
                         </ul>
                         <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
@@ -78,33 +77,37 @@
                         <div class="mt-4">
                             <label>Dodaj nową odpowiedź</label>
                             <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="questionsCreator[inx].helpText" [ngModelOptions]="{standalone: true}" />
-                            <button class="btn btn-success" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj
+                            <button class="btn btn-success mt-2" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj
                                 opcje</button>
                         </div>
 
-                        <div class="form-check mt-5">
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
                             <label class="form-check-label">Nie wymaga odpowiedzi</label>
                         </div>
 
-                        <div>
+                        <!-- <div>
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+
                         </div>
                         <div class="mt-2">
+                        </div> -->
+
+                        <div class="mt-2">
                             <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
-                            <input class="form-control" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 2" class="card mt-3">
+                    <div *ngIf="question.type == 2" class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: tekstowy</h5>
                         <div class="mt-5">
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
                         </div>
 
-                        <div class="form-check mt-5">
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
                             <label class="form-check-label">Nie wymaga odpowiedzi</label>
                         </div>
@@ -114,7 +117,7 @@
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 3 " class="card mt-3">
+                    <div *ngIf="question.type == 3 " class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: suwak</h5>
                         <div>
                             <label>Podaj pytanie:</label>
@@ -122,22 +125,22 @@
                         </div>
                         <div>
                             <label>Wartości:</label>
-                            <input class="form-control" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
-                            <input class="form-control" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
-                            <input class="form-control" type="number" placeholder="Podaj skok wartości" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" min="0" placeholder="Podaj skok wartości" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
                         </div>
 
-                        <div class="form-check mt-5">
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
                             <label class="form-check-label">Nie wymaga odpowiedzi</label>
                         </div>
                         <div class="mt-2">
                             <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
-                            <input class="form-control" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 4" class="card mt-3">
+                    <div *ngIf="question.type == 4" class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: liczbowy</h5>
                         <div class="mt-5">
                             <label>Podaj pytanie:</label>
@@ -145,18 +148,18 @@
                         </div>
                         <div class="mt-5">
                             <label>Wartości:</label>
-                            <input class="form-control" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
-                            <input class="form-control" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
-                            <input class="form-control" type="number" placeholder="Podaj wartość początkową" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj wartość początkową" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
                         </div>
-                        <div class="form-check mt-5">
+                        <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
                             <label class="form-check-label">Nie wymaga odpowiedzi</label>
                         </div>
 
                         <div class="mt-2">
                             <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
-                            <input class="form-control" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
                         </div>
                     </div>
 
@@ -168,7 +171,7 @@
             </div>
         </div>
 
-        <div class="mt-5">
+        <div class="mt-3">
             <div>
                 <h5>Przypisz użytkowników - Email:</h5>
                 <div class="form-group">

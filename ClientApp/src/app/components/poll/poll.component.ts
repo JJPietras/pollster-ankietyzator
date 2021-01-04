@@ -9,7 +9,8 @@ import { PollsService } from "../../services/polls-service";
 @Component({
   selector: 'app-poll',
   templateUrl: './poll.component.html',
-  styleUrls: ['./poll.component.scss']
+  styleUrls: ['./poll.component.scss'],
+  
 })
 
 export class PollComponent{
@@ -30,15 +31,16 @@ export class PollComponent{
   }
 
   submitPoll(){
+
     this.reformatAndAccept();
 
-    if (this.answersFilled){
+    if (this.answersFilled && this.validate()){
       this.http
       .post<Answer[]>(this.baseUrl + "answers/add-answers", this.answers)
       .subscribe(
         (result) => {
           console.log(result);
-          Swal.fire("Dziękujemy", "Dodano odpowiedzi", "info").then(
+          Swal.fire("Dziękujemy.", "Dodano odpowiedzi.", "info").then(
             () => {
               this.router.navigate(['/'])
             }
@@ -50,7 +52,7 @@ export class PollComponent{
       );
     }
     else{
-      Swal.fire("Nie można przesłać odpowiedzi", "Wypełnij wszystkie pytania", "error");
+      Swal.fire("Nie można przesłać odpowiedzi", "Wypełnij wszystkie pytania poprawnie", "error");
     }
   }
 
@@ -65,11 +67,12 @@ export class PollComponent{
               if (element)
                 finalAnswer.push(index);
             });
+            this.checkAnswer(finalAnswer, q.allowEmpty);
+            if (finalAnswer.length>0)
               this.answers.push({questionId: q.questionId, content: finalAnswer.join("/")});
-              this.checkAnswer(finalAnswer);
           }
           else{
-            this.checkAnswer(q.answer);
+            this.checkAnswer(q.answer, q.allowEmpty);
             if (q.answer)
               this.answers.push({questionId: q.questionId, content: q.answer.toString()});
           }
@@ -78,17 +81,40 @@ export class PollComponent{
     console.log(this.answers);
   }
 
-  checkAnswer(answer: any){
-    if (!answer || answer == ""){
-      this.answersFilled = false;
-      console.log(answer);
+  checkAnswer(answer: any, allowEmpty: boolean){
+    if (!allowEmpty){
+      if (!answer || answer == ""){
+        this.answersFilled = false;
+        console.log(allowEmpty)
+      }
     }
-      
-      
   }
+
+  
 
   getStep(options: any): number{
     return (options.split('/')[2] < (options.split('/')[1] - options.split('/')[0]))? options.split('/')[2] : 1;
+  }
+
+  validate(): boolean{
+    var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
+    var valid = true;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      valid = false;
+    }
+    form.classList.add('was-validated');
+    return valid;
+  }
+
+  checkboxValidate(answers: any[]): boolean{
+    var res = false;
+    answers.forEach(a => {
+      if (a==true)
+        res = true;
+      })
+    return res;
   }
 
 }
