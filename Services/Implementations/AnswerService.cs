@@ -121,7 +121,7 @@ namespace Ankietyzator.Services.Implementations
             
             // Update poll stats
             var pollBuilder = new StringBuilder(BaseUrl).Append(Update);
-            pollBuilder.Append($"&pollId={pollId}");
+            pollBuilder.Append($"&accountId={accountId}");
             var pollMessage = new HttpRequestMessage(HttpMethod.Get, pollBuilder.ToString()); 
             
             // Update question stats

@@ -199,7 +199,7 @@ namespace Ankietyzator.Services.Implementations
             _context.PollForms.Remove(pollForm);
             await _context.SaveChangesAsync();
             
-            RunFunction(pollId);
+            RunFunction(account.AccountId);
             
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
@@ -295,13 +295,13 @@ namespace Ankietyzator.Services.Implementations
             getPollFormDto.AuthorName = author.Name;
         }
         
-        private static async void RunFunction(int pollId)
+        private static async void RunFunction(int authorId)
         {
             using var httpClient = new HttpClient();
             
             // Update poll stats
             var pollBuilder = new StringBuilder(BaseUrl).Append(Update);
-            pollBuilder.Append($"&pollId={pollId}");
+            pollBuilder.Append($"&authorId={authorId}");
             var pollMessage = new HttpRequestMessage(HttpMethod.Get, pollBuilder.ToString());
 
             var pollResponse = await httpClient.SendAsync(pollMessage);
