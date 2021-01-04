@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.AccountModel;
@@ -15,23 +18,20 @@ namespace Ankietyzator.Services.Implementations
 {
     public class PollingService : IPollingService
     {
+        private const string BaseUrl = "https://cc-2020-group-one-ankietyzator-function.azurewebsites.net/api/";
+        private const string Update = "UpdatePollStats?code=Et1tL0adY4uEKmeS3pK5/I9WzGf0BznFAnVO3CdtvUNYY30K5fLYLA==";
+        
         private const string AccountNotFoundStr = "Account not found. That should not happen";
         private const string NoPollFormStr = "Could not find form with the specified ID";
         private const string InvalidIndexStr = "Questions must have distinct indexes";
-
         private const string NoQuestionsStr = "Poll has no questions";
-
-        //private const string PollFormSuccessStr = "Poll form fetched successfully";
-        //private const string NoPollFormsStr = "Could not find forms with the specified Pollster ID";
+        
         private const string PollFormsSuccessStr = "Poll forms fetched successfully";
         private const string PollRemovedStr = "Poll form removed successfully";
         private const string PollUpdatedStr = "Poll updated successfully";
         private const string PollCreatedStr = "Poll created successfully";
-
         private const string PrevPollNotFoundStr = "Could not find previous poll";
-
         private const string AccountMismatchStr = "You cannot modify this poll";
-        //private const string NotCreatedStr = "Poll could not be created";
 
         private readonly AnkietyzatorDbContext _context;
         private readonly IQuestionService _questionService;
@@ -46,19 +46,6 @@ namespace Ankietyzator.Services.Implementations
             _mapper = mapper;
             _context = context;
         }
-
-        /*public async Task<Response<GetPollFormDto>> GetPollForm(int pollId)
-        {
-            var response = new Response<GetPollFormDto>();
-            var pollForm = await _context.PollForms.FindAsync(pollId);
-            if (pollForm == null) return response.Failure(NoPollFormStr);
-
-            var pollFormDto = _mapper.Map<GetPollFormDto>(pollForm);
-            var questionsResponse = await GetQuestionsDto(pollForm, response, null);
-            return questionsResponse.Data == null
-                ? response.Failure(questionsResponse.Message)
-                : response.Success(pollFormDto, PollFormSuccessStr);
-        }*/
 
         public async Task<ServiceResponse<List<GetPollFormDto>>> GetAllPollForms(bool archived)
         {
@@ -212,6 +199,8 @@ namespace Ankietyzator.Services.Implementations
             _context.PollForms.Remove(pollForm);
             await _context.SaveChangesAsync();
             
+            RunFunction(pollId);
+            
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
 
@@ -304,6 +293,20 @@ namespace Ankietyzator.Services.Implementations
             getPollFormDto.Questions = questions;
             getPollFormDto.AuthorEmail = author.EMail;
             getPollFormDto.AuthorName = author.Name;
+        }
+        
+        private static async void RunFunction(int pollId)
+        {
+            using var httpClient = new HttpClient();
+            
+            // Update poll stats
+            var pollBuilder = new StringBuilder(BaseUrl).Append(Update);
+            pollBuilder.Append($"&pollId={pollId}");
+            var pollMessage = new HttpRequestMessage(HttpMethod.Get, pollBuilder.ToString());
+
+            var pollResponse = await httpClient.SendAsync(pollMessage);
+            dynamic pollResult = await pollResponse.Content.ReadAsStringAsync();
+            Console.WriteLine("Poll response: " + pollResult);
         }
     }
 }
