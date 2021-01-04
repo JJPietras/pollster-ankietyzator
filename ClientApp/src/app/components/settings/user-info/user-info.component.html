@@ -1,65 +1,59 @@
 <div class="container">
     <h1 class="font-weight-bold">Panel użytkownika</h1>
        
+    <div class="mt-5 mb-5 form-group">
+        <h2>Klucz zmiany uprawnień</h2>
+        <form class="form-inline pt-1">
+                <div >
+                    <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange" [ngModelOptions]="{standalone: true}">
+                    
+                 </div>
+                <div>
+                    <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
+                   
+                </div>
+               
+        </form>
+    </div>  
 
-       <div class="mt-5 mb-5 ">
-           
-            <div class="col-4">
-                <h3 class="font-weight-bold">Klucz zmiany uprawnień</h3>
-            </div>
-
-            <div class="col-4 col-offset-4">
-                <!--<form class="form-inline pt-1"> </form>-->
-                    <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange" [ngModelOptions]="{standalone: true}">
-                        <span class="input-group-btn">
-                            <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
-                        </span>
-                    </div>    
+    <div class="mt-5">
+        <h2>Modyfikowanie Tagów</h2>
+        <form >
+            <div>
+                <div class="mt-3">
+                    <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
+                <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
+                   <option >Wybierz Tag:</option>
+                    <option *ngFor="let item of tagsArray"  [value]="item"> 
+                        {{item}} 
+                    </option>
+                    <br>
+                    
+                </select> 
                 
             </div>
-            
-       </div>  
-   
-       <div class="mt-5 col-6 offset-col-3">
-           <h3 class="font-weight-bold">Modyfikowanie tagów</h3>
-           <form >
-               <div>
-                   <div class="mt-3">
-                       <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
-                   <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
-                      <option >Wybierz tag:</option>
-                       <option *ngFor="let item of tagsArray"  [value]="item"> 
-                           {{item}} 
-                       </option>
-                       <br>
-                       
-                   </select> 
-                   
-               </div>
-             
-                     
-                     <div class="mt-5 d-flex justify-content-center">
-                        
-                        <input class="form-control " name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
+          
+                  
+                  <div class="mt-5">
+                     <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
+                    <div class="d-flex justify-content-center">
+                     <button class="btn btn-primary" (click) ="addTag()">
+                         Dodaj
+                     </button>
+                     <button class="btn btn-primary" (click) ="changeTag()">
+                         Zamień
+                     </button>
+                     <button class="btn btn-primary" (click)="removeTag()">
+                         Usuń
+                     </button>
+                 </div>
+                  </div>  
 
-                       <div class="mt-4 d-flex justify-content-center">
-                        <button class="btn btn-primary" (click) ="addTag()">
-                            Dodaj
-                        </button>
-                        <button class="btn btn-primary" (click) ="changeTag()">
-                            Zamień
-                        </button>
-                        <button class="btn btn-primary" (click)="removeTag()">
-                            Usuń
-                        </button>
-                    </div>
-                     </div>  
+            </div>
+        </form>
+    </div>
 
-               </div>
-           </form>
-       </div>
-
+     
 </div>
 
     <!--
