@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Ankietyzator.Models;
 using Ankietyzator.Models.DataModel.PollModel;
 using Ankietyzator.Models.DataModel.StatModel;
-using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Models.DTO.QuestionDTOs;
 using Ankietyzator.Models.DTO.StatsDTOs;
 using Ankietyzator.Services.Interfaces;
@@ -137,7 +136,11 @@ namespace Ankietyzator.Services.Implementations
         {
             var response = new ServiceResponse<List<GetQuestionStatsDto>>();
             var questionStats = questions
-                .Select(q => new QuestionStat {QuestionId = q.QuestionId, AnswerCounts = GetOptionsCount(q.Options)})
+                .Select(q => new QuestionStat
+                {
+                    QuestionId = q.QuestionId, 
+                    AnswerCounts = GetOptionsCount(q.Options, q.Type)
+                })
                 .ToList();
             await _context.QuestionStats.AddRangeAsync(questionStats);
             await _context.SaveChangesAsync();
@@ -145,7 +148,7 @@ namespace Ankietyzator.Services.Implementations
             var questionStatsDto = questionStats.Select(q => _mapper.Map<GetQuestionStatsDto>(q)).ToList();
             var dalQuestions = questions.Select(q => _mapper.Map<Question>(q)).ToList();
             for (int i = 0; i < questions.Count; i++) UpdateGetQuestionStatDto(questionStatsDto[i], dalQuestions[i]);
-            
+
             return response.Success(questionStatsDto, QuestionStatsCreatedStr);
         }
 
@@ -186,8 +189,10 @@ namespace Ankietyzator.Services.Implementations
             (dto.Type, dto.AllowEmpty, dto.MaxLength) = (dal.Type, dal.AllowEmpty, dal.MaxLength);
         }
 
-        private static string GetOptionsCount(string options)
+        private static string GetOptionsCount(string options, QuestionType type)
         {
+            if (type == QuestionType.Number) return "";
+            if (type == QuestionType.Text) return "0";
             int count = options.Split('/').Length;
             var builder = new StringBuilder().Insert(0, "0/", count);
             return builder.Remove(builder.Length - 1, 1).ToString();
