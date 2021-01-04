@@ -17,7 +17,6 @@ namespace Ankietyzator.Services.Implementations
     public class StatService : IStatService
     {
         private const string NoAccountStr = "Could not find specified account for provided Email";
-        private const string NoPollStatStr = "Could not find specified poll stat for provided poll ID";
         private const string PollStatFetchedStr = "Poll stats fetched successfully";
         private const string NoPoll = "Could not find specified poll";
         private const string NoPollsStr = "User has no polls";
@@ -28,12 +27,7 @@ namespace Ankietyzator.Services.Implementations
         private const string NoQuestionStatsStr = "Could not find (all) question stats";
         private const string NoPollWithIdString = "Poll with provided poll ID does not exists";
         private const string PollStatCreatedStr = "Poll stats created successfully";
-
         private const string QuestionStatsCreatedStr = "Question stats created successfully";
-        /*private const string PollStatNotFoundStr = "Could not found poll stat for provided ID";
-        private const string PollStatRemovedStr = "Poll stats removed successfully";
-        private const string NoQuestionsStr = "Could not find questions";
-        private const string QuestionsStatsRemovedStr = "Questions stats removed successfully";*/
 
         private readonly AnkietyzatorDbContext _context;
         private readonly IMapper _mapper;
@@ -151,37 +145,6 @@ namespace Ankietyzator.Services.Implementations
 
             return response.Success(questionStatsDto, QuestionStatsCreatedStr);
         }
-
-        /*public async Task<Response<object>> RemovePollStats(int pollId)
-        {
-            var response = new Response<object>();
-            var pollStat = await _context.PollStats.FindAsync(pollId);
-            if (pollStat == null) return response.Failure(PollStatNotFoundStr);
-            _context.PollStats.Remove(pollStat);
-            await _context.SaveChangesAsync();
-            return response.Success(null, PollStatRemovedStr);
-        }
-
-        public async Task<Response<object>> RemoveQuestionsStats(int pollId)
-        {
-            var response = new Response<object>();
-            var questions = await _context.Questions
-                .Where(q => q.Poll == pollId)
-                .Select(q => q.QuestionId)
-                .ToListAsync();
-
-            if (questions.Count == 0) return response.Failure(NoQuestionsStr);
-            var questionStats = await _context.QuestionStats
-                .Where(q => questions.Contains(q.QuestionId))
-                .ToListAsync();
-            
-            _context.QuestionStats.RemoveRange(questionStats);
-            await _context.SaveChangesAsync();
-
-            return questionStats.Count == 0 || questionStats.Count != questions.Count
-                ? response.Failure(NoQuestionStatsStr)
-                : response.Success(null, QuestionsStatsRemovedStr);
-        }*/
 
         private static void UpdateGetQuestionStatDto(GetQuestionStatsDto dto, Question dal)
         {
