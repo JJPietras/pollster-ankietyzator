@@ -1,59 +1,102 @@
 <div class="container">
-    <h1>Panel użytkownika</h1>
+    <h1 class="font-weight-bold">Panel użytkownika</h1>
        
-      
-       <div class="mt-5 mb-5 form-group">
-           <h2>Klucz zmiany uprawnień</h2>
-           <form class="form-inline pt-1">
-                   <div >
-                       <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange" [ngModelOptions]="{standalone: true}">
-                       
-                    </div>
-                   <div>
-                       <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
-                      
-                   </div>
-                  
-           </form>
-       </div>  
-   
-       <div class="mt-5">
-           <h2>Modyfikowanie Tagów</h2>
-           <form >
-               <div>
-                   <div class="mt-3">
-                       <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
-                   <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
-                      <option >Wybierz Tag:</option>
-                       <option *ngFor="let item of tagsArray"  [value]="item"> 
-                           {{item}} 
-                       </option>
-                       <br>
-                       
-                   </select> 
+    <div class="mt-5 mb-5 form-group">
+        <h2>Klucz zmiany uprawnień</h2>
+        <form class="form-inline pt-1">
+                <div >
+                    <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange" [ngModelOptions]="{standalone: true}">
+                    
+                 </div>
+                <div>
+                    <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
                    
-               </div>
-             
-                     
-                     <div class="mt-5">
-                        <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
-                       <div>
-                        <button class="btn btn-primary" (click) ="addTag()">
-                            Dodaj
-                        </button>
-                        <button class="btn btn-primary" (click) ="changeTag()">
-                            Zamień
-                        </button>
-                        <button class="btn btn-primary" (click)="removeTag()">
-                            Usuń
-                        </button>
+                </div>
+               
+        </form>
+    </div>  
+
+    <div class="mt-5">
+        <h2>Modyfikowanie Tagów</h2>
+        <form >
+            <div>
+                <div class="mt-3">
+                    <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
+                <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
+                   <option >Wybierz Tag:</option>
+                    <option *ngFor="let item of tagsArray"  [value]="item"> 
+                        {{item}} 
+                    </option>
+                    <br>
+                    
+                </select> 
+                
+            </div>
+          
+                  
+                  <div class="mt-5">
+                     <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
+                    <div class="d-flex justify-content-center">
+                     <button class="btn btn-primary" (click) ="addTag()">
+                         Dodaj
+                     </button>
+                     <button class="btn btn-primary" (click) ="changeTag()">
+                         Zamień
+                     </button>
+                     <button class="btn btn-primary" (click)="removeTag()">
+                         Usuń
+                     </button>
+                 </div>
+                  </div>  
+
+            </div>
+        </form>
+    </div>
+
+     
+</div>
+
+    <!--
+
+        <div id="inputs">
+          <h4>Inputs</h4>
+          <p class="category">Form Controls</p>
+          <div class="row">
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                      <input type="text" value="" placeholder="Regular" class="form-control" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group has-success">
+                      <input type="text" value="Success" class="form-control form-control-success" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group has-danger">
+                      <input type="email" value="Error Input" class="form-control form-control-danger" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                    <div class="input-group-prepend" >
+                      <span class="input-group-text">
+                          <i class="fa fa-user-circle"></i>
+                      </span>
                     </div>
-                     </div>  
-
-               </div>
-           </form>
-       </div>
-   </div>
-
-
-    
+                      <input type="text" class="form-control" placeholder="Left Font Awesome Icon" (focus)="focus=true" (blur)="focus=false">
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
+                      <input type="text" class="form-control" placeholder="Right Nucleo Icon" (focus)="focus1=true" (blur)="focus1=false">
+                      <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="now-ui-icons users_single-02"></i>
+                        </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    -->
