@@ -135,7 +135,7 @@ export class PollCreatorComponent implements OnInit {
     var optionsAdded = true;
     var typesAdded = true;
     this.questionsCreator.forEach(q => {
-      if (q.type){
+      if (q.type!=null){
         if (q.type < 2)
           if (q.options.length < 2)
             optionsAdded= false;

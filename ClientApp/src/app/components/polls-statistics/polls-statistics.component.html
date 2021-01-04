@@ -8,6 +8,9 @@
     <div *ngIf="stats">
 
         <h3>Twoje ankiety</h3>
+
+        <h3 *ngIf="stats.length==0">Brak ankiet</h3>
+
         <plotly-plot [data]="graphPie.data" [layout]="graphPie.layout"></plotly-plot>
 
         <table class="table table-hover">
