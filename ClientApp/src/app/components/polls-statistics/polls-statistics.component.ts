@@ -42,5 +42,4 @@ export class PollsStatisticsComponent implements OnInit {
     this.router.navigate(['/poll-statistics/' + pollId])
   }
 
-
 }

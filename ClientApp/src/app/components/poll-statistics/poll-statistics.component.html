@@ -1,9 +1,11 @@
 <div class="container">
     <div *ngIf="!stats">
-        <h1>Brak odpowiedzi do ankiety</h1>
+        <h1>Wczytywanie</h1>
     </div>
 
     <div *ngIf="stats">
+        <h1 *ngIf="stats.length==0">Brak odpowiedzi do ankiety</h1>
+
         <div *ngFor="let graph of graphs">
             <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
         </div>

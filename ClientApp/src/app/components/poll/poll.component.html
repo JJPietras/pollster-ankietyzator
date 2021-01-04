@@ -1,6 +1,6 @@
 <div class="container">
     <div class="card">
-        <form class="form">
+        <form class="needs-validation">
             <div class="panel-heading">
                 <h3>Tytuł</h3>
                 <p>Opis ankiety</p>
@@ -8,12 +8,14 @@
 
             <div *ngFor="let question of poll.questions">
                 <div class="card" *ngIf="question.type==0">
-                    <p>{{question.title}}</p>
+                    <label>({{question.position}}) {{question.title}}</label>
 
                     <div class="form-check form-check-inline" *ngFor="let option of question.options.split('/'); let in=index">
                         <input class="form-check-input" type="radio" name={{question.position}} value={{in}} [(ngModel)]="question.answer">
+                        <!-- <input class="form-check-input" type="radio" name={{question.position}} value={{in}} [(ngModel)]="question.answer"> -->
                         <label class="form-check-label" for="yes">{{option}}</label>
                     </div>
+                    <div class="alert alert-danger" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div>
                 </div>
 
                 <div class="card" *ngIf="question.type==1">
@@ -23,30 +25,38 @@
                         <input class="form-check-input" type="checkbox" value={{in}} name={{question.position}} [(ngModel)]="question.answer[in]">
                         <label class="form-check-label" for={{question.questionId}}>{{option}}</label>
                     </div>
+                    <div class="alert alert-danger" *ngIf="!question.allowEmpty && !checkboxValidate(question.answer)">To pole jest wymagane</div>
                 </div>
 
                 <div class="card" *ngIf="question.type==2">
-                    <label>{{question.title}}</label>
+                    <label>({{question.position}}) {{question.title}}</label>
                     <div class="form-group">
                         <textarea class="form-control" rows="3" placeholder={{question.options}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}"></textarea>
+                        <!-- <textarea class="form-control" rows="3" placeholder={{question.options}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}" *ngIf="question.allowEmpty"></textarea> -->
                     </div>
+                    <div class="alert alert-danger" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div>
                 </div>
 
                 <div class="card" *ngIf="question.type==3">
-                    <label>{{question.title}}</label>
+                    <label>({{question.position}}) {{question.title}}</label>
+                    <label>Podaj wartość od {{question.options.split('/')[0]}} do {{question.options.split('/')[1]}}</label>
+                    <p>Wybrana wartość: {{(question.answer)? question.answer: "wybierz liczbę"}}</p>
                     <input type="range" class="custom-range" min="{{question.options.split('/')[0]}}" max="{{question.options.split('/')[1]}}" step="{{getStep(question.options)}}" value="{{question.options.split('/')[2]}}" id={{question.questionId}} [(ngModel)]="question.answer"
                         [ngModelOptions]="{standalone: true}">
+                    <div class="alert alert-danger" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div>
                 </div>
 
                 <div class="card" *ngIf="question.type==4">
-                    <label>{{question.title}}</label>
+                    <label>({{question.position}}) {{question.title}}</label>
+                    <label>Podaj wartość od {{question.options.split('/')[0]}} do {{question.options.split('/')[1]}}</label>
                     <input type="number" class="form-control text-center" min="{{question.options.split('/')[0]}}" max="{{question.options.split('/')[1]}}" value="{{question.options.split('/')[2]}}" id={{question.questionId}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}">
+                    <div class="alert alert-danger" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div>
                 </div>
             </div>
 
             <div class="">
                 <button type="button" class="btn btn-danger btn-sm buttons">Anuluj</button>
-                <button type="button" class="btn btn-success btn-sm btn-right buttons" (click)="submitPoll()">Submit</button>
+                <button type="button" class="btn btn-success btn-sm btn-right buttons" (click)="submitPoll()">Zgłoś</button>
             </div>
 
         </form>
