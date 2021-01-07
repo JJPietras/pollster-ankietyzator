@@ -83,7 +83,7 @@ export class PollComponent{
 
   checkAnswer(answer: any, allowEmpty: boolean){
     if (!allowEmpty){
-      if (!answer || answer == ""){
+      if (answer==null || answer == ""){
         this.answersFilled = false;
         console.log(allowEmpty)
       }
@@ -91,7 +91,6 @@ export class PollComponent{
   }
 
   
-
   getStep(options: any): number{
     return (options.split('/')[2] < (options.split('/')[1] - options.split('/')[0]))? options.split('/')[2] : 1;
   }

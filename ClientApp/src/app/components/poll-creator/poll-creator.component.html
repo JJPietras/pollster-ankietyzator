@@ -31,6 +31,7 @@
                         <div class="mt-3">
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" />
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
                         </div>
                         <h5 class="mt-3">Odpowiedzi:</h5>
 
@@ -39,9 +40,13 @@
                                 <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
                             </li>
                         </ul>
-                        <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                        <!-- <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div> -->
+                        <div class="alert mt-2 {{(question.options.length<2)? 'alert-danger' : 'alert-success'}}">
                             Wymagane jest dodanie conajmniej 2 odpowiedzi
                         </div>
+
                         <div class="mt-4">
                             <label>Wprowadź tekst odpowiedzi</label>
                             <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="questionsCreator[inx].helpText" [ngModelOptions]="{standalone: true}" />
@@ -63,6 +68,7 @@
                         <div class="mt-3">
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
                         </div>
 
                         <h5 class="mt-4">Odpowiedzi:</h5>
@@ -71,7 +77,11 @@
                                 <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
                             </li>
                         </ul>
-                        <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                        <!-- <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div> -->
+
+                        <div class="alert mt-2 {{(question.options.length<2)? 'alert-danger' : 'alert-success'}}">
                             Wymagane jest dodanie conajmniej 2 odpowiedzi
                         </div>
                         <div class="mt-4">
@@ -105,6 +115,7 @@
                         <div class="mt-5">
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
                         </div>
 
                         <div class="form-check mt-3">
@@ -122,6 +133,7 @@
                         <div>
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
                         </div>
                         <div>
                             <label>Wartości:</label>
@@ -145,12 +157,13 @@
                         <div class="mt-5">
                             <label>Podaj pytanie:</label>
                             <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
                         </div>
                         <div class="mt-5">
                             <label>Wartości:</label>
                             <input class="form-control mt-2" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
                             <input class="form-control mt-2" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
-                            <input class="form-control mt-2" type="number" placeholder="Podaj wartość początkową" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
+                            <!-- <input class="form-control mt-2" type="number" placeholder="Podaj wartość początkową" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/> -->
                         </div>
                         <div class="form-check mt-3">
                             <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">

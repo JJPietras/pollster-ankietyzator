@@ -4,6 +4,7 @@ interface Poll {
   authorEmail: string;
   authorName: string;
   title: string;
+  description: string;
   tags: string;
   emails: string;
   nonAnonymous: boolean;

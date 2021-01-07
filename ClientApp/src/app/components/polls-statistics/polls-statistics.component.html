@@ -1,39 +1,86 @@
 <div class="container">
 
+    <mat-tab-group mat-align-tabs="start" dynamicHeight>
+        <mat-tab label="Aktywne ankiety">
+            <div *ngIf="!pollsActive">
+                <h1 class="row d-flex justify-content-center mt-5 mb-3">Wczytywanie</h1>
+            </div>
 
-    <div *ngIf="!stats">
-        <h1>Wczytywanie</h1>
-    </div>
+            <div *ngIf="pollsActive">
+                <h1 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsActive.length==0">Brak ankiet</h1>
 
-    <div *ngIf="stats">
+                <div *ngIf="pollsActive.length>0">
+                    <h3 class="mt-2">Twoje ankiety</h3>
 
-        <h3>Twoje ankiety</h3>
+                    <plotly-plot [data]="graphActive.data" [layout]="graphActive.layout"></plotly-plot>
 
-        <h3 *ngIf="stats.length==0">Brak ankiet</h3>
+                    <h3 class="row d-flex justify-content-center mt-5 mb-3">Lista ankiet</h3>
 
-        <plotly-plot [data]="graphPie.data" [layout]="graphPie.layout"></plotly-plot>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Tytuł</th>
+                                <th scope="col">Opis</th>
+                                <th scope="col">Wypełnienia</th>
+                                <th scope="col">Udział procetowy</th>
+                                <th scope="col">Anonimowość</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let stat of pollsActive" (click)="selectPoll(stat)" style="cursor: pointer;">
+                                <th scope="row">{{stat.pollId}}</th>
+                                <td>{{stat.title}}</td>
+                                <td>{{stat.description}}</td>
+                                <td>{{stat.completions}}</td>
+                                <td>{{stat.percentage}}%</td>
+                                <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </mat-tab>
 
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Tytuł</th>
-                    <th scope="col">Opis</th>
-                    <th scope="col">Wypełnienia</th>
-                    <th scope="col">Udział procetowy</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let stat of stats" (click)="selectPoll(stat.pollId)" style="cursor: pointer;">
-                    <th scope="row">{{stat.pollId}}</th>
-                    <td>{{stat.title}}</td>
-                    <td>{{stat.description}}</td>
-                    <td>{{stat.completions}}</td>
-                    <td>{{stat.percentage}}%</td>
-                </tr>
-            </tbody>
-        </table>
+        <mat-tab label="Archiwum">
+            <div *ngIf="!pollsArchived">
+                <h1 class="row d-flex justify-content-center mt-5 mb-3">Wczytywanie</h1>
+            </div>
 
-    </div>
+            <div *ngIf="pollsArchived">
+                <h1 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsArchived.length==0">Brak ankiet</h1>
 
+                <div *ngIf="pollsArchived.length>0">
+                    <h3 class="mt-2">Ankiety archiwalne</h3>
+
+                    <plotly-plot [data]="graphArchived.data" [layout]="graphArchived.layout"></plotly-plot>
+
+                    <h3 class="row d-flex justify-content-center mt-5 mb-3">Lista ankiet</h3>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Tytuł</th>
+                                <th scope="col">Opis</th>
+                                <th scope="col">Wypełnienia</th>
+                                <th scope="col">Udział procetowy</th>
+                                <th scope="col">Anonimowość</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let stat of pollsArchived" (click)="selectPoll(stat.pollId)" style="cursor: pointer;">
+                                <th scope="row">{{stat.pollId}}</th>
+                                <td>{{stat.title}}</td>
+                                <td>{{stat.description}}</td>
+                                <td>{{stat.completions}}</td>
+                                <td>{{stat.percentage}}%</td>
+                                <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </div>

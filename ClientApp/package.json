@@ -24,19 +24,21 @@
     "@angular/platform-browser-dynamic": "8.2.12",
     "@angular/platform-server": "8.2.12",
     "@angular/router": "8.2.12",
+    "@ng-bootstrap/ng-bootstrap": "^5.3.1",
+    "@ng-bootstrap/schematics": "^2.0.0-alpha.1",
     "@nguniversal/module-map-ngfactory-loader": "8.1.1",
     "angular-plotly.js": "^3.0.0",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.3.1",
     "core-js": "^3.3.3",
+    "firebase": ">= 5.5.7 <8",
     "jquery": "3.4.1",
     "oidc-client": "^1.9.1",
     "plotly.js": "^1.57.1",
     "popper.js": "^1.16.0",
     "rxjs": "^6.5.3",
     "sweetalert2": "^10.12.0",
-    "zone.js": "0.9.1",
-    "firebase": ">= 5.5.7 <8"
+    "zone.js": "0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.26",

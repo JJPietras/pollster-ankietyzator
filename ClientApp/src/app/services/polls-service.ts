@@ -18,4 +18,15 @@ export class PollsService {
         this.pollSource.next(poll);
     }
 
+    pollStatsSource: BehaviorSubject<PollStats>;
+    currentPollStats: Observable<PollStats>;
+
+    changePollStats(poll: PollStats) {
+        if (!this.pollStatsSource){
+            this.pollStatsSource = new BehaviorSubject(poll);
+            this.currentPollStats = this.pollStatsSource.asObservable();
+        }
+        this.pollStatsSource.next(poll);
+    }
+
 }

@@ -60,7 +60,7 @@ export class PollCreatorComponent implements OnInit {
   }
 
   addQuestion(){
-    this.questionsCreator.push(this.emptyQuestion(this.questionsCreator.length))
+    this.questionsCreator.push(this.emptyQuestion(this.questionsCreator.length+1))
   }
   
   postPoll(){
@@ -121,7 +121,7 @@ export class PollCreatorComponent implements OnInit {
     }
     else{
       this.questionsCreator[question].options.push(text);
-      console.log(this.questionsCreator);
+      //console.log(this.questionsCreator);
       this.questionsCreator[question].helpText = ""
     }
   }
@@ -137,7 +137,7 @@ export class PollCreatorComponent implements OnInit {
     this.questionsCreator.forEach(q => {
       if (q.type!=null){
         if (q.type < 2)
-          if (q.options.length < 2)
+          if (q.options.length < 2 || !q.title || q.title == '')
             optionsAdded= false;
       }
       else
@@ -153,7 +153,7 @@ export class PollCreatorComponent implements OnInit {
       Swal.fire("Uzupełnij wszystkie wymagane pola.", "", "error");
     }
     else if (!optionsAdded){
-      Swal.fire("Dodaj odpowiednie ilości opcji", "", "error");
+      Swal.fire("Uzupełnij pytania prawidłowo", "", "error");
     }
     else if (!typesAdded){
       Swal.fire("Wybierz typy dla wszystkich pytań.", "", "error");
