@@ -1,9 +1,11 @@
 
-import {Component, OnInit, OnDestroy, Input, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Inject, ViewChild, ElementRef } from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-
+import { map } from "rxjs/operators";
+import { forkJoin } from 'rxjs';
+import { PollsService } from "../../services/polls-service";
 
 @Component({
   selector: 'app-polls-statistics',
@@ -13,22 +15,58 @@ import { Router } from '@angular/router';
 
 export class PollsStatisticsComponent implements OnInit {
 
-  public graphPie: any;
+  public graphActive: any;
+  public graphArchived: any;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private pollsService: PollsService) {
 
   }
 
-  stats: PollStats[];
+  pollsActive: PollStats[];
+  pollsArchived: PollStats[];
 
   ngOnInit() {
-    this.http.get<Request>(this.baseUrl + 'stats/get-polls-stats').subscribe(result => {
-     this.stats = result.data;
+    this.getPollsData()
+  }
 
-     this.graphPie = {
+  selectPoll(poll: PollStats) {
+    this.pollsService.changePollStats(poll)
+    this.router.navigate(['/poll-statistics/' + poll.pollId])
+  }
+
+  getPollsData() {
+    let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-un-archived');
+    let r2 = this.http.get<Request>(this.baseUrl + 'polls/get-archived');
+    let r3 = this.http.get<Request>(this.baseUrl + 'stats/get-polls-stats');
+
+    forkJoin([r1, r2, r3]).subscribe(result => {
+      const [active, archived, stats] = result;
+
+      this.pollsActive = active.data.map(item => {
+        const obj = stats.data.find(o => o.pollId === item.pollId);
+        return { ...item, ...obj };
+      });
+
+      this.pollsArchived = archived.data.map(item => {
+        const obj = stats.data.find(o => o.pollId === item.pollId);
+        return { ...item, ...obj };
+      });
+
+      this.graphActive = {
         data: [{
-          values: this.stats.map(stat => stat.completions),
-          labels: this.stats.map(stat => "(" + stat.pollId.toString() + ") " + stat.title),
+          values: this.pollsActive.map(stat => stat.completions),
+          labels: this.pollsActive.map(stat => "(" + stat.pollId.toString() + ") " + stat.title),
+          type: 'pie'
+        }],
+        layout: {
+          title: 'Udział wypełnionych ankiet'
+        }
+      };
+
+      this.graphArchived = {
+        data: [{
+          values: this.pollsArchived.map(stat => stat.completions),
+          labels: this.pollsArchived.map(stat => "(" + stat.pollId.toString() + ") " + stat.title),
           type: 'pie'
         }],
         layout: {
@@ -36,10 +74,7 @@ export class PollsStatisticsComponent implements OnInit {
         }
       };
     }, error => console.error(error));
-  }
 
-  selectPoll(pollId: number) {
-    this.router.navigate(['/poll-statistics/' + pollId])
   }
 
 }

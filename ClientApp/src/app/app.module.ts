@@ -19,15 +19,18 @@ import { PollsStatisticsComponent } from './components/polls-statistics/polls-st
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
 import { AdminInfoComponent } from './components/settings/admin-info/admin-info.component'
 import { PollCreatorComponent } from './components/poll-creator/poll-creator.component';
+import { PollAnswersComponent } from './components/poll-answers/poll-answers.component';
 
 import {MatNativeDateModule} from '@angular/material/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 //import { BootstrapTabDirective } from './directives/bootstrap-tab.directive'
 
+
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { CommonModule } from '@angular/common';
 import { PlotlyModule } from 'angular-plotly.js';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -43,8 +46,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     SettingsComponent, UserInfoComponent,
     LoginComponent,
     AdminInfoComponent,
-    PollCreatorComponent
-
+    PollCreatorComponent,
+    PollAnswersComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,6 +58,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
     MatNativeDateModule,
     BrowserAnimationsModule,
     CommonModule, PlotlyModule,
+    NgbModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user-login', component: LoginComponent },
@@ -64,7 +68,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: 'poll-statistics', component: PollsStatisticsComponent },
       { path: 'poll-statistics/:id', component: PollStatisticsComponent },
       { path: 'poll-creator', component: PollCreatorComponent },
-    ])
+      { path: 'poll-answers', component: PollAnswersComponent },
+      
+    ]),
   ],
   providers: [],
   bootstrap: [AppComponent]

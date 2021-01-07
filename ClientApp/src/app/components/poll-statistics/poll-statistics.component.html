@@ -1,14 +1,126 @@
 <div class="container">
-    <div *ngIf="!stats">
-        <h1>Wczytywanie</h1>
-    </div>
+    <mat-tab-group mat-align-tabs="start" dynamicHeight>
+        <mat-tab label="Dane statystyczne">
+            <div *ngIf="!questionStats">
+                <h1>Wczytywanie</h1>
+            </div>
 
-    <div *ngIf="stats">
-        <h1 *ngIf="stats.length==0">Brak odpowiedzi do ankiety</h1>
+            <div *ngIf="questionStats">
 
-        <div *ngFor="let graph of graphs">
-            <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
-        </div>
-    </div>
+                <h1 *ngIf="questionStats.length==0">Brak odpowiedzi do ankiety</h1>
 
+                <div *ngFor="let graph of graphs">
+                    <div *ngIf="graph.data">
+                        <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+                    </div>
+                    <div *ngIf="!graph.data">
+                        <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
+                        <h5 class="row d-flex justify-content-center mb-2 mt-3">Brak odpowiedzi na to pytanie.</h5>
+                    </div>
+                </div>
+
+            </div>
+        </mat-tab>
+
+        <mat-tab label="Pogląd ankiety">
+            <div>
+                <form>
+                    <div class="panel-heading mb-2">
+                        <h3>{{pollStats.title}}</h3>
+                        <h5>{{pollStats.description}}</h5>
+                    </div>
+
+                    <div *ngFor="let question of pollStats.questions">
+                        <div class="card" *ngIf="question.type==0">
+                            <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
+
+                            <div class="form-check form-check-inline" *ngFor="let option of question.options.split('/'); let in=index">
+                                <input class="form-check-input" type="radio" name={{question.position}} value={{in}}>
+                                <label class="form-check-label" for="yes">{{option}}</label>
+                            </div>
+                            <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane
+                            </div>
+                        </div>
+
+                        <div class="card" *ngIf="question.type==1">
+                            <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
+
+                            <div class="form-check" *ngFor="let option of question.options.split('/'); let in=index;">
+                                <input class="form-check-input" type="checkbox" value={{in}} name={{question.position}}> -->
+                                <label class="form-check-label" for={{question.questionId}}>{{option}}</label>
+                            </div>
+                            <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane
+                            </div>
+                        </div>
+
+                        <div class="card" *ngIf="question.type==2">
+                            <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
+
+                            <div class="form-group">
+                                <textarea class="form-control" rows="3" placeholder={{question.options}}></textarea>
+                            </div>
+
+                            <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
+                        </div>
+
+                        <div class="card" *ngIf="question.type==3">
+                            <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
+                            <ng-container *ngIf="{ min: question.options.split('/')[0], max: question.options.split('/')[1], step: question.options.split('/')[2] } as options">
+
+                                <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
+                                <p>Wybrana wartość: {{(question.answer!=null)? question.answer: "wybierz liczbę"}}</p>
+
+                                <input type="range" class="custom-range" min="{{options.min}}" max="{{options.max}}" step="{{options.step}}" id={{question.questionId}}>
+                            </ng-container>
+
+                            <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
+                        </div>
+
+                        <div class="card" *ngIf="question.type==4">
+                            <ng-container *ngIf="{ min: question.options.split('/')[0], max: question.options.split('/')[1] } as options">
+                                <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
+
+                                <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
+                                <input type="number" class="form-control text-center" min="{{options.min}}" max="{{options.max}}" id={{question.questionId}}>
+                                <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <h5 class="stick">Ankieta jest {{(pollStats.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</h5>
+        </mat-tab>
+
+        <mat-tab label="Dane szczegółowe">
+
+            <!-- <div *ngIf="pollsUnfilled">
+                <table *ngIf="pollsUnfilled.length>0" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Numer ankiety</th>
+                            <th scope="col">Tytuł ankiety</th>
+                            <th scope="col">Tagi</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Mail Autora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let poll of pollsUnfilled" (click)="selectPoll(poll)" style="cursor: pointer;">
+                            <th scope="row">{{poll.pollId}}</th>
+                            <td>{{poll.title}}</td>
+                            <td>{{poll.tags}}</td>
+                            <td>{{poll.authorName}}</td>
+                            <td>{{poll.authorEmail}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsUnfilled.length==0">Brak ankiet</h2> -->
+
+        </mat-tab>
+
+        <!-- <app-poll-answers [content]="product"></app-poll-answers> -->
+    </mat-tab-group>
 </div>
