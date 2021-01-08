@@ -116,4 +116,7 @@ export class PollComponent{
     return res;
   }
 
+  cancel(){
+    this.router.navigate(['/select-poll'])
+  }
 }

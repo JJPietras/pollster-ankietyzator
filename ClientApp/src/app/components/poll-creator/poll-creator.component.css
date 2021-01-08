@@ -1,0 +1,23 @@
+.chonky-radio {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    border: 4px solid #ccc;
+    border-top-color: #bbb;
+    border-left-color: #bbb;
+    background: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.chonky-radio:checked {
+    border: 20px solid #4099ff;
+}
+
+.center-vert {
+    vertical-align: middle;
+    font-size: 16pt;
+    margin-right: 10pt;
+}
