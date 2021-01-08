@@ -131,6 +131,7 @@ export class PollCreatorComponent implements OnInit {
   }
 
   validate(){
+    //console.log(this.newPoll);
     var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
     var optionsAdded = true;
     var typesAdded = true;

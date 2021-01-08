@@ -12,7 +12,7 @@
         </div>
 
         <div class="mt-4">
-            <h2 class="mt-5">Tworzenie pytań</h2>
+            <h3 class="mt-5">Tworzenie pytań</h3>
             <div class="mb-1 p-2 border">
 
                 <div *ngFor="let question of questionsCreator; let inx=index" class="mt-5 mb-2 p-3 border">
@@ -186,17 +186,29 @@
 
         <div class="mt-3">
             <div>
-                <h5>Przypisz użytkowników - Email:</h5>
+                <h3>Przypisz użytkowników - Email:</h3>
                 <div class="form-group">
                     <textarea class="form-control" name="mails" rows="3" [(ngModel)]="newPoll.emails" required></textarea>
                 </div>
             </div>
 
             <div class="mt-4">
-                <h5>Ustal tagi dla ankiety: </h5>
+                <h3>Ustal tagi dla ankiety: </h3>
                 <input class="form-control" name="tags" [(ngModel)]="newPoll.tags" required/>
             </div>
 
+        </div>
+
+        <h3 class="mt-3">Ustal anonimowość ankiety: </h3>
+        <div class="row mt-3">
+            <div class="col d-flex justify-content-center">
+                <label class="center-vert " for="anonim0">Nieanonimowa</label>
+                <input type="radio" class="chonky-radio" name="anonim0" id=anonim0 [value]="true" [(ngModel)]="newPoll.nonAnonymous" />
+            </div>
+            <div class="col d-flex justify-content-center">
+                <label class="center-vert" for="anonim1">Anonimowa</label>
+                <input type="radio" class="chonky-radio" name="anonim1" id=anonim1 [value]="false" [(ngModel)]="newPoll.nonAnonymous" />
+            </div>
         </div>
 
         <div class="mt-3 float-left">
