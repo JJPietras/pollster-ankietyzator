@@ -25,11 +25,12 @@ namespace Ankietyzator.Services.Implementations
         private const string AuthorNotFoundStr = "Could not find author account";
         private const string AnswersFetchedStr = "Answers fetched successfully";
         private const string AnswersCreatedStr = "Answers created successfully";
-
+        private const string AnswersDetailedInfoNotAvailable = "Cannot retrieve detailed answers for an anonymous Poll";
         private const string AlreadyAnsweredStr = "User has already answered at least one of provided questions";
         private const string NoQuestionStr = "Provided question does not belong to any poll";
         private const string AnswersForManyStr = "Answers asociated with questions that belongs to multiple polls";
         private const string InvalidQuestionsStr = "The answer count is other than question count. Possible duplicates";
+
 
         private readonly AnkietyzatorDbContext _context;
         private readonly IMapper _mapper;
@@ -67,6 +68,40 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(answers, AnswersFetchedStr);
         }
 
+        public async Task<ServiceResponse<List<GetDetailedAnswerDto>>> GetDetailedAnswers(int pollId){
+            var response = new ServiceResponse<List<GetDetailedAnswerDto>>();
+            //var account = await _context.Accounts.FirstOrDefaultAsync(a => a.EMail == email);
+            //if (account == null) return response.Failure(AccountNotFoundStr, HttpStatusCode.NotFound);
+            
+            var nonAnymous = await _context.PollForms.Where(p => pollId == p.PollId).Select(q => q.NonAnonymous).FirstOrDefaultAsync();
+            if (!nonAnymous) return response.Failure(AnswersDetailedInfoNotAvailable, HttpStatusCode.BadRequest);
+
+            var usersAnswered = (from a in _context.Answers 
+                                 join q in _context.Questions on a.QuestionId equals q.QuestionId 
+                                 where q.Poll == pollId select a.AccountId).Distinct();
+
+            var answers = await _context.Accounts
+                .Where(a => usersAnswered.Contains(a.AccountId))
+                .Select(q => _mapper.Map<GetDetailedAnswerDto>(q))
+                .ToListAsync();
+
+            answers.ForEach(a => a.Answers = (from qa in _context.Answers 
+                                              join p in _context.Questions on qa.QuestionId equals p.QuestionId
+                                              where qa.AccountId == a.AccountId && p.Poll == pollId 
+                                              select _mapper.Map<GetAnswerDto>(qa)).ToList());
+            return response.Success(answers, AnswersFetchedStr);
+        }
+        public async Task<ServiceResponse<List<GetAnswerDto>>> GetAnonymousAnswers(int pollId){
+            var response = new ServiceResponse<List<GetAnswerDto>>();
+
+            var answers = await _context.Answers
+                .Where(a => _context.Questions.Any(q => q.QuestionId == a.QuestionId && q.Poll == pollId && q.Type==2))
+                .Select(ans => _mapper.Map<GetAnswerDto>(ans))
+                .ToListAsync();
+
+            return response.Success(answers, AnswersFetchedStr);
+        }
+
         public async Task<ServiceResponse<List<GetAnswerDto>>> AddAnswers(List<CreateAnswerDto> answers, string email)
         {
             var response = new ServiceResponse<List<GetAnswerDto>>();
@@ -88,13 +123,25 @@ namespace Ankietyzator.Services.Implementations
             if (pollIDs.Count == 0) return response.Failure(NoQuestionStr, HttpStatusCode.UnprocessableEntity);
 
             // Then we take all questions that are bound to this poll to check if there are all questions in answers
-            var pollQuestionIDs = await _context.Questions
-                .Where(q => q.Poll == pollIDs.ElementAtOrDefault(0))
+            // var pollQuestionIDs = await _context.Questions
+            //     .Where(q => q.Poll == pollIDs.ElementAtOrDefault(0))
+            //     .Select(q => q.QuestionId)
+            //     .ToListAsync();
+
+            // // After that we have to heck if amount of questions and answers are equal
+            // if (!answers.Select(a => a.QuestionId).Distinct().SequenceEqual(pollQuestionIDs))
+            //     return response.Failure(InvalidQuestionsStr, HttpStatusCode.UnprocessableEntity); //It had to be changed to account for the non obligatory questions
+
+            var requiredQuestions = await _context.Questions
+                .Where(q => q.Poll == pollIDs.FirstOrDefault() && !q.AllowEmpty)
                 .Select(q => q.QuestionId)
                 .ToListAsync();
 
-            // After that we have to heck if amount of questions and answers are equal
-            if (!answers.Select(a => a.QuestionId).Distinct().SequenceEqual(pollQuestionIDs))
+            var requiredAnswers = answers
+                .Where(a => requiredQuestions.Any(q => q == a.QuestionId ) )
+                .Select(a => a.QuestionId).ToList();
+
+            if (!requiredAnswers.SequenceEqual(requiredQuestions))
                 return response.Failure(InvalidQuestionsStr, HttpStatusCode.UnprocessableEntity);
 
             // Lastly we have to check if there are any already answered questions by the current user

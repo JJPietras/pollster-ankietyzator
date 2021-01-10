@@ -47,6 +47,26 @@ namespace Ankietyzator.Controllers
             return Ok(response);
         }
         
+        [HttpGet("get-detailed-answers/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetDetailedAnswers(int pollId)
+        {
+            var answersResponse = await _answer.GetDetailedAnswers(pollId);
+            var response = new Response<List<GetDetailedAnswerDto>>(answersResponse);
+            if (answersResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
+            return Ok(response);
+        }
+
+        [HttpGet("get-anonymous-answers/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> GetAnonymousAnswers(int pollId)
+        {
+            var answersResponse = await _answer.GetAnonymousAnswers(pollId);
+            var response = new Response<List<GetAnswerDto>>(answersResponse);
+            if (answersResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
+            return Ok(response);
+        }
+
         //======================= POST ========================//
         
         [HttpPost("add-answers")]

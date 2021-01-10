@@ -15,7 +15,7 @@
                         <label class="form-check-label" for="yes">{{option}}</label>
                     </div>
                     <!-- <div class="alert alert-danger mt-2" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div> -->
-                    <div class="alert {{(!question.allowEmpty && question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
+                    <div *ngIf="!question.allowEmpty" class="alert {{(question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
                         To pole jest wymagane</div>
                 </div>
 
@@ -27,10 +27,10 @@
                         <label class="form-check-label" for={{question.questionId}}>{{option}}</label>
                     </div>
                     <!-- <div class="alert alert-danger mt-2" *ngIf="!question.allowEmpty && !checkboxValidate(question.answer)">To pole jest wymagane</div> -->
-                    <div class="alert {{(!question.allowEmpty && !checkboxValidate(question.answer))? 'alert-danger' : 'alert-success'}} mt-2">
+
+                    <div *ngIf="!question.allowEmpty" class="alert {{(!checkboxValidate(question.answer))? 'alert-danger' : 'alert-success'}} mt-2">
                         To pole jest wymagane</div>
                 </div>
-
                 <div class="card" *ngIf="question.type==2">
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
@@ -39,7 +39,7 @@
                         <!-- <textarea class="form-control" rows="3" placeholder={{question.options}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}" *ngIf="question.allowEmpty"></textarea> -->
                     </div>
                     <!-- <div class="alert alert-danger mt-2" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div> -->
-                    <div class="alert {{(!question.allowEmpty && question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
+                    <div *ngIf="!question.allowEmpty" class="alert {{(question.answer==null || question.answer=='')? 'alert-danger' : 'alert-success'}} mt-2">
                         To pole jest wymagane</div>
                 </div>
 
@@ -54,7 +54,8 @@
                     </ng-container>
 
                     <!-- <div class="alert {{(!question.allowEmpty && !question.answer)? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane</div> -->
-                    <div class="alert {{(!question.allowEmpty && question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
+
+                    <div *ngIf="!question.allowEmpty" class="alert {{(question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
                         To pole jest wymagane</div>
                 </div>
 
@@ -65,8 +66,9 @@
                         <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
                         <input type="number" class="form-control text-center" min="{{options.min}}" max="{{options.max}}" id={{question.questionId}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}">
                         <!-- <div class="alert alert-danger mt-2" *ngIf="!question.allowEmpty && !question.answer">To pole jest wymagane</div> -->
-                        <div class="alert {{(!question.allowEmpty && question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
-                            To pole jest wymagane</div>
+                        <div *ngIf="!question.allowEmpty" class="alert {{(question.answer==null)? 'alert-danger' : 'alert-success'}} mt-2">
+                            To pole jest wymagane
+                        </div>
                     </ng-container>
                 </div>
             </div>
