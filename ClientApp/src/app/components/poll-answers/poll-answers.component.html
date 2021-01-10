@@ -1,5 +1,5 @@
 <ng-template #content let-modal>
-    <div class="card">
+    <div class="card m-2">
         <form class="needs-validation">
             <div class="panel-heading mb-2">
                 <h3>{{poll.title}}</h3>
@@ -11,18 +11,18 @@
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
                     <div class="form-check form-check-inline" *ngFor="let option of question.options.split('/'); let in=index">
-                        <input class="form-check-input" type="radio" name={{question.position}} value={{in}} [(ngModel)]="question.answer" readonly>
+                        <input class="form-check-input" type="radio" name={{question.position}} disabled="disabled" checked="{{getCheckedState(question.questionId, in)}}">
                         <label class="form-check-label" for="yes">{{option}}</label>
                     </div>
-
+                    <!-- [value]="getAnswer(question.questionId).split('/').some(in)" -->
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
                 </div>
 
                 <div class="card" *ngIf="question.type==1">
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
-                    <div class="form-check" *ngFor="let option of question.options.split('/'); let in=index;">
-                        <input class="form-check-input" type="checkbox" value={{in}} name={{question.position}} [(ngModel)]="question.answer[in]" readonly>
+                    <div class="form-check range" *ngFor="let option of question.options.split('/'); let in=index;">
+                        <input class="form-check-input" type="checkbox" [value]="in" name={{question.position}} disabled="disabled" checked="{{getCheckedState(question.questionId, in)}}">
                         <label class="form-check-label" for={{question.questionId}}>{{option}}</label>
                     </div>
 
@@ -33,7 +33,7 @@
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
                     <div class="form-group">
-                        <textarea class="form-control" rows="3" placeholder={{question.options}} [(ngModel)]="question.answer" [ngModelOptions]="{standalone: true}" readonly></textarea>
+                        <textarea class="form-control" rows="3" placeholder={{question.options}} [value]="getAnswer(question.questionId)" readonly></textarea>
                     </div>
 
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
@@ -46,7 +46,7 @@
                         <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
                         <p>Wybrana wartość: {{(question.answer)? question.answer: "wybierz liczbę"}}</p>
 
-                        <input type="range" class="custom-range" min="{{options.min}}" max="{{options.max}}" id={{question.questionId}} readonly>
+                        <input type="range" class="custom-range" min="{{options.min}}" max="{{options.max}}" [value]="getAnswer(question.questionId)" id={{question.questionId}} disabled="disabled">
                     </ng-container>
 
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
@@ -57,7 +57,7 @@
                         <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
                         <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
-                        <input type="number" class="form-control text-center" min="{{options.min}}" max="{{options.max}}" id={{question.questionId}} readonly>
+                        <input type="number" class="form-control text-center" min="{{options.min}}" max="{{options.max}}" id={{question.questionId}} [value]="getAnswer(question.questionId)" readonly>
 
                         <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
                     </ng-container>
@@ -65,13 +65,12 @@
             </div>
 
             <div class="">
-                <button type="button" class="btn btn-danger btn-sm buttons">Cofnij</button>
+                <button type="button" class="btn btn-danger btn-sm buttons" (click)="close()">Cofnij</button>
                 <!-- <button type="button" class="btn btn-success btn-sm btn-right buttons" (click)="submitPoll()">Zgłoś</button> -->
             </div>
 
         </form>
-        <h5 class="stick">Ankieta jest {{(poll.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</h5>
     </div>
 </ng-template>
 
-<button class="btn btn-sm btn-outline-secondary" (click)="open(content)">{{poll.pollId + poll.title}}</button>
+<button class="btn btn-sm btn-outline-secondary" (click)="open(content)">Pogląd</button>

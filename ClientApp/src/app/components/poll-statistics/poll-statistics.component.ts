@@ -23,14 +23,23 @@ export class PollStatisticsComponent implements OnInit {
 
   pollStats: PollStats;
 
-  ngOnInit() {
+  pollDetailedAnswers: PollDetailedAnswers[];
 
+  pollAnonymousAnswers: Answer[];
+
+  ngOnInit() {
+    this.loadStatistics();
+    this.loadDetails();
+  }
+
+
+  loadStatistics(){
     this.pollStats = this.pollsService.pollStatsSource.value;
     // this.poll.questions.forEach(q => {
     //   if (q.type==1)
     //     q.answer = new Array<number>(q.options.split('/').length)
     // });
-    console.log(this.pollStats)
+    //console.log(this.pollStats)
     
     this.http.get<Request>(this.baseUrl + 'stats/get-questions-stats/' + this.pollId).subscribe(result => {
       this.questionStats = result.data;
@@ -92,4 +101,20 @@ export class PollStatisticsComponent implements OnInit {
     }, error => console.error(error));
   }
 
+  loadDetails(){
+    if (this.pollStats.nonAnonymous){
+      this.http.get<Request>(this.baseUrl + 'answers/get-detailed-answers/' + this.pollId).subscribe(result => {
+        this.pollDetailedAnswers = result.data;
+      });
+    }
+    else{
+      this.http.get<Request>(this.baseUrl + 'answers/get-anonymous-answers/' + this.pollId).subscribe(result => {
+        this.pollAnonymousAnswers = result.data;
+      });
+    }
+  }
+
+  getAnswers(questionId: number){
+    return this.pollAnonymousAnswers.filter(a => a.questionId == questionId);
+  }
 }

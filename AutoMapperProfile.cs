@@ -1,5 +1,6 @@
 ﻿using Ankietyzator.Models.DataModel.PollModel;
 using Ankietyzator.Models.DataModel.StatModel;
+using Ankietyzator.Models.DataModel.AccountModel;
 using Ankietyzator.Models.DTO.AnswerDTOs;
 using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Models.DTO.QuestionDTOs;
@@ -23,6 +24,7 @@ namespace Ankietyzator
             CreateMap<UpdatePollFormDto, CreatePollFormDto>();
             CreateMap<PollStat, GetPollStatsDto>();
             CreateMap<QuestionStat, GetQuestionStatsDto>();
+            CreateMap<Account, GetDetailedAnswerDto>();
         }
     }
 }

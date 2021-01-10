@@ -21,14 +21,19 @@ export class PollAnswersComponent{
   }
   
   poll: PollStats;
-
+  answers: PollDetailedAnswers;
   ngOnInit() {
 
   }
 
   @Input()
-  set content(content: PollStats) {
-    this.poll = content;
+  set stats(stats: PollStats) {
+    this.poll = stats;
+  }
+
+  @Input()
+  set answer(answer: PollDetailedAnswers) {
+    this.answers = answer;
   }
 
   open(content: PollStats) {
@@ -37,9 +42,20 @@ export class PollAnswersComponent{
       centered: true,
     }
 
-    this.modalService.open(content, settings).result.then(result => {})
-
+    this.modalService.open(content, settings);//.result.then(result => {});
+    console.log(this.poll)
+    console.log(this.answers)
   }
 
+  close(){
+    this.modalService.dismissAll();
+  }
 
+  getAnswer(questionId: number): String{
+    return this.answers.answers.find(a => a.questionId == questionId).content;
+  }
+
+  getCheckedState(questionId: number ,index: number): String{
+   return this.getAnswer(questionId).split('/').some(a => Number(a)==index)? 'checked': ''
+  }
 }
