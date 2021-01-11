@@ -1,23 +1,17 @@
 <div class="container">
     <h1 class="font-weight-bold">Panel użytkownika</h1>
        
-    <div class="mt-5 mb-5 form-group">
-        <h2>Klucz zmiany uprawnień</h2>
-        <form class="form-inline pt-1">
-                <div >
-                    <input class="form-control" type="text" placeholder="Wprowadź" [(ngModel)]="keyChange" [ngModelOptions]="{standalone: true}">
-                    
-                 </div>
-                <div>
-                    <button class="btn btn-primary" (click)="sendKey()">Wyślij</button>
-                   
-                </div>
-               
-        </form>
+    <div class="mt-5 mb-5 form-group col-6">
+        <h2>Klucze zmiany uprawnień</h2>
+                <select class="form-control">
+                    <option> <!--*ngFor="let item of tagsArray"  [value]="item"-->
+                        <span>klucz</span>
+                    </option>
+                </select>
     </div>  
 
     <div class="mt-5">
-        <h2>Modyfikowanie Tagów</h2>
+        <h2>Modyfikowanie własnych Tagów</h2>
         <form >
             <div>
                 <div class="mt-3">
@@ -33,7 +27,6 @@
                 
             </div>
           
-                  
                   <div class="mt-5">
                      <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
                     <div class="d-flex justify-content-center">
@@ -46,7 +39,58 @@
                      <button class="btn btn-primary" (click)="removeTag()">
                          Usuń
                      </button>
-                 </div>
+                    </div>
+                  </div>  
+
+            </div>
+        </form>
+    </div>
+
+     
+<!--</div>-->
+
+    <!--<div class="container">
+    <h1 class="font-weight-bold">Panel użytkownika</h1>
+       
+    <div class="mt-5 mb-5 form-group col-6">
+        <h2>Klucze zmiany uprawnień</h2>
+                <select class="form-control">
+                    <option> <!--*ngFor="let item of tagsArray"  [value]="item"
+                        <span>klucz</span>
+                    </option>
+                </select>
+    </div>  -->
+
+    <div class="mt-5">
+        <h2>Modyfikowanie własnych Tagów</h2>
+        <form >
+            <div>
+                <div class="mt-3">
+                    <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"       -->
+                <select class="form-control"  (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)" >
+                   <option >Wybierz Tag:</option>
+                    <option *ngFor="let item of tagsArray"  [value]="item"> 
+                        {{item}} 
+                    </option>
+                    <br>
+                    
+                </select> 
+                
+            </div>
+          
+                  <div class="mt-5">
+                     <input class="form-control" name="dodaj"  placeholder="Wprowadź"  [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
+                    <div class="d-flex justify-content-center">
+                     <button class="btn btn-primary" (click) ="addTag()">
+                         Dodaj
+                     </button>
+                     <button class="btn btn-primary" (click) ="changeTag()">
+                         Zamień
+                     </button>
+                     <button class="btn btn-primary" (click)="removeTag()">
+                         Usuń
+                     </button>
+                    </div>
                   </div>  
 
             </div>

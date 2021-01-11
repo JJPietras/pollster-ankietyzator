@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Pipe, PipeTransform } from '@angular/core';
 
 import { AppComponent } from './components/app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
@@ -18,8 +19,11 @@ import { PollStatisticsComponent } from './components/poll-statistics/poll-stati
 import { PollsStatisticsComponent } from './components/polls-statistics/polls-statistics.component'
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
 import { AdminInfoComponent } from './components/settings/admin-info/admin-info.component'
-import { PollCreatorComponent } from './components/poll-creator/poll-creator.component';
-import { PollAnswersComponent } from './components/poll-answers/poll-answers.component';
+import { PollCreatorComponent } from './components/poll-creator/poll-creator.component'
+import { PollAnswersComponent } from './components/poll-answers/poll-answers.component'
+import { PollsAdminPanelComponent } from './components/polls-admin-panel/polls-admin-panel.component'
+
+import { PollsAdminPanelPipe } from './components/polls-admin-panel/polls-admin-panel-filter.pipe'
 
 import {MatNativeDateModule} from '@angular/material/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
@@ -31,6 +35,7 @@ import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { CommonModule } from '@angular/common';
 import { PlotlyModule } from 'angular-plotly.js';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatFormFieldModule, MatInput, MatInputModule, MatSelect, MatSelectModule } from '@angular/material';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -47,7 +52,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     LoginComponent,
     AdminInfoComponent,
     PollCreatorComponent,
-    PollAnswersComponent
+    PollAnswersComponent,
+    PollsAdminPanelComponent,
+    PollsAdminPanelPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -55,6 +62,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     FormsModule,
     ReactiveFormsModule,
     MatTabsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
     MatNativeDateModule,
     BrowserAnimationsModule,
     CommonModule, PlotlyModule,
@@ -69,6 +79,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: 'poll-statistics/:id', component: PollStatisticsComponent },
       { path: 'poll-creator', component: PollCreatorComponent },
       { path: 'poll-answers', component: PollAnswersComponent },
+      { path: 'polls-admin', component: PollsAdminPanelComponent }
       
     ]),
   ],

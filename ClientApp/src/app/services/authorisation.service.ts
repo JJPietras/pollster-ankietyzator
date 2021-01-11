@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 @Injectable({
   providedIn: "root",
 })
-export class AuthenticationService{ś
+export class AuthenticationService{
   private windowHandle: Window;
   private userSource:BehaviorSubject<User>;
   private usersSource: BehaviorSubject<User[]>;
@@ -64,12 +64,8 @@ export class AuthenticationService{ś
    
   }
 
-  /*const httpOptions = {
-    headers: new HttpHeaders({
-       'Content-Type': 'application/xml,application/xhtml+xml,text/html'
-    })
-  };*/
 
+   
   public updateUser(val: UpdateAccountDto) {
     console.log(val);
     //return this.http.put(this.baseUrl + 'accounts/update-my-account', val); "keys/update-key"
@@ -80,29 +76,9 @@ export class AuthenticationService{ś
       (error) => {
         Swal.fire("Błąd", error.message, "error");
       })
-    //return this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", val) //ze niby teraz 400 i nie moze rozpoznac zadania polcenia - 400 http
-    //return this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", val) //wykrywa ze null i nie obsluguje czegps innego - 415 http
-          //.post<Request>("https://localhost:5001/settings/accounts/update-my-account", val)
-          
-          
+       
   }
 
-/*
-  this.http
-          .post<OrderRequest>(AppSettings.API_ENDPOINT + "orders", body)
-          .subscribe(
-            (result) => {
-              console.log(result);
-              Swal.fire("Gratulacje", "Dokonano zakupu pomyślnie", "info").then(
-                () => {
-                  window.location.reload();
-                }
-              );
-            },
-            (error) => {
-              Swal.fire("Błąd", error.message, "error");
-            }
-          );*/
 
   public SignInWithGoogle() {
     document.location.href = (this.baseUrl + 'google/google-login')
