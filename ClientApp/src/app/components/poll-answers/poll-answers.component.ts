@@ -40,6 +40,7 @@ export class PollAnswersComponent{
     let settings = {
       ariaLabelledBy: 'modal-basic-title',
       centered: true,
+      size: 'lg',
     }
 
     this.modalService.open(content, settings);//.result.then(result => {});
@@ -52,10 +53,14 @@ export class PollAnswersComponent{
   }
 
   getAnswer(questionId: number): String{
-    return this.answers.answers.find(a => a.questionId == questionId).content;
+    let res = this.answers.answers.find(a => a.questionId == questionId)
+    if (res)
+      return this.answers.answers.find(a => a.questionId == questionId).content;
+    return "";
   }
 
   getCheckedState(questionId: number ,index: number): String{
+  
    return this.getAnswer(questionId).split('/').some(a => Number(a)==index)? 'checked': ''
   }
 }
