@@ -23,7 +23,7 @@ import { PollCreatorComponent } from './components/poll-creator/poll-creator.com
 import { PollAnswersComponent } from './components/poll-answers/poll-answers.component'
 import { PollsAdminPanelComponent } from './components/polls-admin-panel/polls-admin-panel.component'
 
-import { PollsAdminPanelPipe } from './components/polls-admin-panel/polls-admin-panel-filter.pipe'
+import { PollsAdminPanelPipe } from './pipes/polls-admin-panel-filter.pipe'
 
 import {MatNativeDateModule} from '@angular/material/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
