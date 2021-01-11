@@ -8,6 +8,7 @@ import { AppComponent } from '../../app.component';
 import { AuthenticationService } from "../../../services/authorisation.service";
 import { UpdateAccountDto } from '../../../models/updateDTO.model';
 import { throwToolbarMixedModesError } from '@angular/material';
+import { SettingsService } from 'src/app/services/settings.service';
 
 
 @Component({
@@ -58,7 +59,8 @@ export class UserInfoComponent implements OnInit {
 // pobranie uzytkownika i dodanie tagow
 
 
-  constructor(public authenticationService: AuthenticationService,public httpclient: HttpClient, @Inject('BASE_URL') baseUrl: string, private router: Router ) {
+  constructor(public authenticationService: AuthenticationService,public httpclient: HttpClient, 
+    @Inject('BASE_URL') baseUrl: string, private router: Router, public settingService: SettingsService) {
     //this.http = httpclient;
     this.baseUrl = baseUrl;
    
@@ -106,16 +108,21 @@ export class UserInfoComponent implements OnInit {
 
     this.resetStringItems(this.tagsArray);
       
-
-    this.updateDTO.EMail = this.authenticationService.user.value.eMail;
     this.updateDTO.Tags = this.tags;
-    //this.updateDTO.Key = this.authenticationService.user.value.userType.toString();
+    this.updateDTO.EMail =this.authenticationService.user.value.eMail;
+    this.updateDTO.Key = "klucz1"
+ 
     console.log(this.updateDTO.Tags);
 
-    this.authenticationService.user.value.tags = this.tags;
-    this.authenticationService.updateUser(this.updateDTO);
-   // this.httpclient.put<Request>(this.baseUrl + 'accounts/update-my-account', this.updateDTO).pipe();
-    //this.authenticationService.getUser();
+ 
+    if(this.updateDTO){
+        this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
+        console.log(result);
+    
+    }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));
+
+    }
+
   }
 
 
