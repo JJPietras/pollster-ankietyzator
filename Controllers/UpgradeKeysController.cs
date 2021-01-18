@@ -64,7 +64,7 @@ namespace Ankietyzator.Controllers
             {
                 HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
                 HttpStatusCode.Conflict => Conflict(response),
-                _ => Conflict(response)
+                _ => Ok(response)
             };
         }
         

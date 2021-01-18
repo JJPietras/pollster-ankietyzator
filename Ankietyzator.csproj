@@ -11,6 +11,9 @@
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <UserSecretsId>9207a9af-f0f7-4263-b4a9-ec0224f907d3</UserSecretsId>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
