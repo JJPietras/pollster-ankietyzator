@@ -10,3 +10,7 @@ h1{
     text-shadow: 1px 1px #111;
     font-size: 20px;
 }
+
+mat-form-field {
+    width: 100%;
+  }

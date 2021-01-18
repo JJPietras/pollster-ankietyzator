@@ -84,8 +84,6 @@ export class SettingsService {
 
   
 
-   
-    
 
     /*changeTags(tag: string) {
         if (!this.pollSource){
@@ -107,9 +105,6 @@ export class SettingsService {
     }
 
 
-     //return this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", val) //ze niby teraz 400 i nie moze rozpoznac zadania polcenia - 400 http
-    //return this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", val) //wykrywa ze null i nie obsluguje czegps innego - 415 http
-          //.post<Request>("https://localhost:5001/settings/accounts/update-my-account", val)
 
 /*
   this.http
@@ -135,24 +130,5 @@ export class SettingsService {
 
 
 
-    /*
-    changePoll(poll: Poll) {
-        if (!this.pollSource){
-            this.pollSource = new BehaviorSubject(poll);
-            this.currentPoll = this.pollSource.asObservable();
-        }
-        this.pollSource.next(poll);
-    }
-
-    pollStatsSource: BehaviorSubject<PollStats>;
-    currentPollStats: Observable<PollStats>;
-
-    changePollStats(poll: PollStats) {
-        if (!this.pollStatsSource){
-            this.pollStatsSource = new BehaviorSubject(poll);
-            this.currentPollStats = this.pollStatsSource.asObservable();
-        }
-        this.pollStatsSource.next(poll);
-    }*/
 
 }

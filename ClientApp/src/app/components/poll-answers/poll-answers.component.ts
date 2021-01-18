@@ -1,4 +1,3 @@
-
 import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
@@ -6,6 +5,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import Swal from 'sweetalert2';
 import { PollsService } from "../../services/polls-service";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-poll-answers',

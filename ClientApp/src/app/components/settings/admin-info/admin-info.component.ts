@@ -2,10 +2,16 @@ import { Component, Inject, Pipe, NgModule, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Router } from '@angular/router'
 import { AuthenticationService } from "../../../services/authorisation.service";
-import { MatTableDataSource } from '@angular/material';
+import { MatIcon, MatTableDataSource } from '@angular/material';
 import Swal from 'sweetalert2';
 import { SettingsService } from 'src/app/services/settings.service';
 import { UpdateAccountDto } from 'src/app/models/updateDTO.model';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { from, Observable } from 'rxjs';
+import { AdminInfoPopupComponent } from './admin-info-popup-select/admin-info-popup.component';
+import { map, startWith } from 'rxjs/operators';
+import {MatDialog, MatDialogConfig} from '@angular/material';
+import { AdminInfoPopupAddkeyComponent } from './admin-info-popup-addkey/admin-info-popup-addkey.component';
 //import { generateKeyPairSync } from 'crypto';
 
 @Component({
@@ -15,8 +21,7 @@ import { UpdateAccountDto } from 'src/app/models/updateDTO.model';
 })
 export class AdminInfoComponent implements OnInit {
 
-  //private userSource:BehaviorSubject<User>;
-  //currentUsers:Observable<User>;
+  
   rows: Number = 10; 
   namesAccounts: string[] = [];
   UsersAccounts: User[];
@@ -40,7 +45,23 @@ export class AdminInfoComponent implements OnInit {
   newKey: Key;
   keysFiltered: Key[];
 
+  keyForm = new FormGroup({
+    name: new FormControl('',Validators.required)
+  })
 
+  get key(){return this.keyForm.get('name')};
+
+
+
+  
+  emailControl = new FormControl();
+  accountControl = new FormControl();
+
+  filteredOptions: Observable<Key[]>;
+  filteredOptions2: Observable<User[]>;
+
+  
+  
   updateAccount: UpdateAccountDto ={
     EMail: '',
     Tags: '',
@@ -51,9 +72,10 @@ export class AdminInfoComponent implements OnInit {
   objectProperty2: any[];
 
 
+  
 
   constructor(public authenticationService: AuthenticationService, public httpclient: HttpClient, @Inject('BASE_URL') public baseUrl: string, private router: Router
-    ,public settingsService: SettingsService) {
+    ,public settingsService: SettingsService, private dialog: MatDialog) {
 
      this.UsersAccounts = this.authenticationService.users.value;
      console.log(this.authenticationService);
@@ -72,66 +94,68 @@ export class AdminInfoComponent implements OnInit {
       eMail: "",
       userType: null
     }
-  }
-/*
-  public filterEmail(){
-    this.filterTypeUser(this.typeUserValueNumber);
+    
+
+    this.filteredOptions = this.emailControl.valueChanges.pipe(
+      startWith(''), 
+      map(value => this._filter(value))
+    )
+
+    this.filteredOptions2 = this.accountControl.valueChanges.pipe(
+      startWith(''), 
+      map(value => this._filter2(value))
+    )
+
+
   }
 
- public filterTypeUser(val: any){
 
-   this.typeUserValueNumber = val;
-  //this.filteredUsersAccounts = this.UsersAccounts.filter(user =>user.userType != 2 && user.eMail.includes(this.emailFilter));
-  this.filteredUsersAccounts = this.UsersAccounts.filter(user => user.eMail.includes(this.emailFilter));
-  console.log(val);
-  if(val != -1){
-   this.filteredUsersAccounts = this.filteredUsersAccounts.filter(user => user.userType == val && user.eMail.includes(this.emailFilter));
+  public onCreate(key: Key){
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = false;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = "60%";
+      dialogConfig.data = key;
+      this.dialog.open(AdminInfoPopupComponent, dialogConfig).afterClosed().subscribe(result =>{
+       // this.showData
+      });
   }
- }*/
 
- /*
-  public removeAccount(val:any){
-    let timerInterval;
-
-    Swal.fire({
-      showDenyButton: true,
-      title: `czy napewno chcesz usunąć konto ? `,
-      confirmButtonText: `Tak`,
-      denyButtonText: `Nie`,
-    })
-    .then(
-      (result) => {
-        if (result.isConfirmed) {
-          this.UsersAccounts.splice(this.UsersAccounts.indexOf(val),1);
-          this.filteredUsersAccounts = this.UsersAccounts;
-          //Swal.fire('Usunięto');
-          
-            Swal.fire({
-              title: 'Usunięto',
-              timer: 800,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(()=>{}, 100) 
-              
-              },
-              willClose: () => {
-                clearInterval(timerInterval)
-              }
-            }).then((result) => {
-              if (result.dismiss === Swal.DismissReason.timer) {
-                console.log('I was closed by the timer')
-              }
-            })
-        } 
-      }
-    );
+  public onAddKey(){
+    const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = false;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = "60%";
+      dialogConfig.data = this.filteredOptions2;
+      this.dialog.open(AdminInfoPopupAddkeyComponent, dialogConfig).afterClosed().subscribe(result =>{
+       // this.showData
+      });
   }
-*/
+
+  private _filter(value: string): Key[] {
+    //const filterValue = value.eMail;
+    const filterValue = value;
+    return this.keys.filter(option =>
+      option.eMail.includes(filterValue))
+      //option.eMail.includes(filterValue));
+  }
+
+  t
+  private _filter2(value: string): User[] {
+    //const filterValue = value.eMail;
+    const filterValue = value;
+    return this.UsersAccounts.filter(option =>
+      option.eMail.includes(filterValue))
+      //option.eMail.includes(filterValue));
+  }
+
+
+  displayFn(subject){
+    return subject ? subject.name : undefined;
+  }
+
 
  
-
-
   public onItemSelected(val: any){
 
     this.currentModifyUser  = Number(val);
@@ -235,16 +259,23 @@ export class AdminInfoComponent implements OnInit {
 
 
   public addKey(){
-      console.log("nazwa: " + this.keyName);
-      console.log(this.selectedEmails);
-      console.log(this.keyUserType);
-
-    //this.newKey.KeyId = 9;
-   // this.newKey.Key = "klwewe"; 
+     
     this.newKey.key = this.keyName; 
+    console.log(this.newKey.key);
     this.newKey.eMail = this.selectedEmails;
+    console.log(this.newKey.eMail);
     this.newKey.userType = this.keyUserType;
     
+    let keyNameExists = this.keys.some(key => key.key === this.keyName);
+    let keyEmailExists = this.keys.some(key => key.eMail === this.selectedEmails);
+
+    if(keyNameExists){
+        console.log("nazwa klucza juz istnieje.");
+    }
+
+    if(keyEmailExists){
+      console.log("klucz z wybranym email'em juz istnieje.");
+    }
 
     this.settingsService.addKey(this.newKey);
     this.keys = this.settingsService.keys.value;
@@ -292,4 +323,65 @@ export class AdminInfoComponent implements OnInit {
 
 
 }
+
+
+
+
+
+/*
+  public filterEmail(){
+    this.filterTypeUser(this.typeUserValueNumber);
+  }
+
+ public filterTypeUser(val: any){
+
+   this.typeUserValueNumber = val;
+  //this.filteredUsersAccounts = this.UsersAccounts.filter(user =>user.userType != 2 && user.eMail.includes(this.emailFilter));
+  this.filteredUsersAccounts = this.UsersAccounts.filter(user => user.eMail.includes(this.emailFilter));
+  console.log(val);
+  if(val != -1){
+   this.filteredUsersAccounts = this.filteredUsersAccounts.filter(user => user.userType == val && user.eMail.includes(this.emailFilter));
+  }
+ }*/
+
+ /*
+  public removeAccount(val:any){
+    let timerInterval;
+
+    Swal.fire({
+      showDenyButton: true,
+      title: `czy napewno chcesz usunąć konto ? `,
+      confirmButtonText: `Tak`,
+      denyButtonText: `Nie`,
+    })
+    .then(
+      (result) => {
+        if (result.isConfirmed) {
+          this.UsersAccounts.splice(this.UsersAccounts.indexOf(val),1);
+          this.filteredUsersAccounts = this.UsersAccounts;
+          //Swal.fire('Usunięto');
+          
+            Swal.fire({
+              title: 'Usunięto',
+              timer: 800,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+                timerInterval = setInterval(()=>{}, 100) 
+              
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            }).then((result) => {
+              if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer')
+              }
+            })
+        } 
+      }
+    );
+  }
+*/
+
 
