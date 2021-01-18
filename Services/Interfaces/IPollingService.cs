@@ -22,5 +22,7 @@ namespace Ankietyzator.Services.Interfaces
         Task<ServiceResponse<GetPollFormDto>> RemovePollForm(int pollId, string email);
 
         Task<ServiceResponse<GetPollFormDto>> CreatePollForm(CreatePollFormDto pollForm, string email);
+
+        Task<ServiceResponse<GetPollFormDto>> ClonePollForm(string email, int pollsterId, int pollId);
     }
 }

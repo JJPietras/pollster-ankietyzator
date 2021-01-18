@@ -20,8 +20,12 @@ namespace Ankietyzator.Services.Implementations
     {
         private const string BaseUrl = "https://cc-2020-group-one-ankietyzator-function.azurewebsites.net/api/";
         private const string Update = "UpdatePollStats?code=Et1tL0adY4uEKmeS3pK5/I9WzGf0BznFAnVO3CdtvUNYY30K5fLYLA==";
+        private const string Clone = "ClonePoll?code=wyMBaAvWkQmszy2bR5zj23J/sKccaq4fce2saugflJ2lceg/EN7Gow==";
         
         private const string AccountNotFoundStr = "Account not found. That should not happen";
+        private const string NotAPollster = "You cannot clone polls as standard user";
+        private const string NotValidPollster = "User does not exists or is not a pollster";
+        private const string NotValidPoll = "Poll does not exists or pollster does not have it";
         private const string NoPollFormStr = "Could not find form with the specified ID";
         private const string InvalidIndexStr = "Questions must have distinct indexes";
         private const string NoQuestionsStr = "Poll has no questions";
@@ -30,6 +34,7 @@ namespace Ankietyzator.Services.Implementations
         private const string PollRemovedStr = "Poll form removed successfully";
         private const string PollUpdatedStr = "Poll updated successfully";
         private const string PollCreatedStr = "Poll created successfully";
+        private const string PollClonedStr = "Poll cloned successfully";
         private const string PrevPollNotFoundStr = "Could not find previous poll";
         private const string AccountMismatchStr = "You cannot modify this poll";
 
@@ -150,12 +155,18 @@ namespace Ankietyzator.Services.Implementations
             {
                 var questionsResponse = await GetQuestionsDto(pollForm, response, pollFormsDto);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse);
+                Console.WriteLine("HERE");
             }
             
             foreach (GetPollFormDto formDto in pollFormsDto)
             {
                 formDto.AuthorEmail = pollster.EMail;
                 formDto.AuthorName = pollster.Name;
+            }
+
+            foreach (GetPollFormDto getPollFormDto in pollFormsDto)
+            {
+                Console.WriteLine(getPollFormDto.Title);
             }
 
             return response.Success(pollFormsDto, PollFormsSuccessStr);
@@ -199,7 +210,7 @@ namespace Ankietyzator.Services.Implementations
             _context.PollForms.Remove(pollForm);
             await _context.SaveChangesAsync();
             
-            RunFunction(account.AccountId);
+            RunStatisticsFunction(account.AccountId);
             
             return response.Success(_mapper.Map<GetPollFormDto>(pollForm), PollRemovedStr);
         }
@@ -262,18 +273,43 @@ namespace Ankietyzator.Services.Implementations
             return response.Success(getPollFormDto, PollCreatedStr);
         }
 
-        private async Task<ServiceResponse<T>> GetQuestionsDto<T>(
-            PollForm updatePollFormDto,
-            ServiceResponse<T> response,
+        public async Task<ServiceResponse<GetPollFormDto>> ClonePollForm(string email, int pollsterId, int pollId)
+        {
+            var response = new ServiceResponse<GetPollFormDto>();
+            var pollsterResponse = await GetAccount(email);
+            
+            if (pollsterResponse.Data == null) 
+                return response.Failure(pollsterResponse);
+            if (pollsterResponse.Data.UserType == UserType.User)
+                return response.Failure(NotAPollster, HttpStatusCode.Unauthorized);
+
+            var pollsterAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountId == pollsterId);
+            if (pollsterAccount == null || pollsterAccount.UserType == UserType.User)
+                return response.Failure(NotValidPollster, HttpStatusCode.UnprocessableEntity);
+
+            var poll = await _context.PollForms.FirstOrDefaultAsync(p => p.PollId == pollId);
+            if (poll == null || poll.AuthorId != pollsterId)
+                return response.Failure(NotValidPoll, HttpStatusCode.UnprocessableEntity);
+            
+            RunCloningFunction(pollsterResponse.Data.AccountId, pollsterId, pollId);
+            return response.Success(_mapper.Map<GetPollFormDto>(poll), PollClonedStr);
+        }
+
+        private async Task<ServiceResponse<List<GetPollFormDto>>> GetQuestionsDto(PollForm updatePollFormDto,
+            ServiceResponse<List<GetPollFormDto>> response,
             ICollection<GetPollFormDto> questions)
         {
-            questions?.Clear();
+            //questions?.Clear();
             GetPollFormDto pollFormDto = _mapper.Map<GetPollFormDto>(updatePollFormDto);
             var questionsResponse = await _questionService.GetQuestions(updatePollFormDto.PollId);
-            if (questionsResponse.Data == null) return response.Failure(questionsResponse);
+            if (questionsResponse.Data == null) return response.Failure(questionsResponse.Message, questionsResponse.Code);
             pollFormDto.Questions = questionsResponse.Data;
-            questions?.Last().Questions.AddRange(questionsResponse.Data);
-            return response.Success(default, questionsResponse.Message);
+            
+            questions?.Add(pollFormDto);
+            Console.WriteLine(questions.Count);
+            //questions?.Last().Questions.AddRange(questionsResponse.Data);
+            //TODO: heavy refactor
+            return response.Success(new List<GetPollFormDto>(), questionsResponse.Message);
         }
 
         //======================= HELPER METHODS ===================//
@@ -295,13 +331,28 @@ namespace Ankietyzator.Services.Implementations
             getPollFormDto.AuthorName = author.Name;
         }
         
-        private static async void RunFunction(int authorId)
+        private static async void RunStatisticsFunction(int authorId)
         {
             using var httpClient = new HttpClient();
             
             // Update poll stats
             var pollBuilder = new StringBuilder(BaseUrl).Append(Update);
             pollBuilder.Append($"&authorId={authorId}");
+            var pollMessage = new HttpRequestMessage(HttpMethod.Get, pollBuilder.ToString());
+
+            var pollResponse = await httpClient.SendAsync(pollMessage);
+            dynamic pollResult = await pollResponse.Content.ReadAsStringAsync();
+            Console.WriteLine("Poll response: " + pollResult);
+        }
+        
+        
+        private static async void RunCloningFunction(int clientId, int pollsterId, int pollId)
+        {
+            using var httpClient = new HttpClient();
+            
+            // Update poll stats
+            var pollBuilder = new StringBuilder(BaseUrl).Append(Clone);
+            pollBuilder.Append($"&reqUserId={clientId}&srcUserId={pollsterId}&pollId={pollId}");
             var pollMessage = new HttpRequestMessage(HttpMethod.Get, pollBuilder.ToString());
 
             var pollResponse = await httpClient.SendAsync(pollMessage);

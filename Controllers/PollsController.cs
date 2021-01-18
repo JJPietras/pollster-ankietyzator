@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -88,6 +89,21 @@ namespace Ankietyzator.Controllers
             var response = new Response<List<GetPollFormDto>>(pollsResponse);
             if (pollsResponse.Code == HttpStatusCode.NotFound) return NotFound(response);
             return Ok(response);
+        }
+        
+        [HttpGet("clone-poll/{pollsterId}/{pollId}")]
+        [Authorize(Roles = "pollster, admin")]
+        public async Task<IActionResult> ClonePoll(int pollsterId, int pollId)
+        {
+            var pollsResponse = await _polling.ClonePollForm(GetUserEmail(), pollsterId, pollId);
+            var response = new Response<GetPollFormDto>(pollsResponse);
+            return pollsResponse.Code switch
+            {
+                HttpStatusCode.NotFound => NotFound(response),
+                HttpStatusCode.Unauthorized => Unauthorized(response),
+                HttpStatusCode.UnprocessableEntity => UnprocessableEntity(response),
+                _ => Ok(response)
+            };
         }
 
         //===================== PUT =======================//
