@@ -79,6 +79,18 @@ export class AuthenticationService{
        
   }
 
+  public updateOtherUser(val: UpdateAccountDto) {
+    console.log(val);
+     this.http.put<UpdateAccountDto>(this.baseUrl + "update-other-account", val).subscribe(
+      (result) => {
+        console.log(result);
+      },
+      (error) => {
+        Swal.fire("Błąd", error.message, "error");
+      })
+       
+  }
+
 
   public SignInWithGoogle() {
     document.location.href = (this.baseUrl + 'google/google-login')

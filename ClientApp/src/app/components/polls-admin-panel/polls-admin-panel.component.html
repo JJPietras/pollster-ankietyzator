@@ -28,7 +28,6 @@
                                 <th scope="col">Tytuł</th>
                                 <th scope="col">Opis</th>
                                 <th scope="col">Wypełnienia</th>
-                                <th scope="col">Udział procetowy</th>
                                 <th scope="col">Anonimowość</th>
                                 <th scope="col">Akcja</th>
                             </tr>
@@ -39,11 +38,10 @@
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
-                                <td>{{stat.percentage}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                                 <td>
-                                    <!--<button (click)="pokaz">sds</button>-->
-                                    <!--<app-poll-answers [stats]="stat" [answer]="stat"></app-poll-answers> <!---->   
+                                     <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button>
+                                     <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -87,8 +85,8 @@
                                 <td>{{stat.percentage}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                                 <td>
-                                    <app-poll-answers [stats]="pollStats" [answer]="stat"></app-poll-answers>
-                                    <button class="btn btn-primary" (click)="deletePoll(stat)">Usuń Ankietę</button>
+                                    <button class="btn btn-primary" (click)="onShow(stat)">Pokaż</button>
+                                    <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
                                 </td>
                             </tr>
                         </tbody>

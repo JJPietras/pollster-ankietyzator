@@ -21,6 +21,9 @@ export class PollsService {
     pollStatsSource: BehaviorSubject<PollStats>;
     currentPollStats: Observable<PollStats>;
 
+
+    
+
     changePollStats(poll: PollStats) {
         if (!this.pollStatsSource){
             this.pollStatsSource = new BehaviorSubject(poll);
@@ -28,5 +31,7 @@ export class PollsService {
         }
         this.pollStatsSource.next(poll);
     }
+
+   
 
 }
