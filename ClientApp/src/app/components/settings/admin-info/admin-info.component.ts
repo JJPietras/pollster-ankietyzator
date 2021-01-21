@@ -82,6 +82,7 @@ export class AdminInfoComponent implements OnInit {
      this.keys = this.settingsService.keys.value;
      this.keysFiltered = this.keys;
      console.log(this.keys);
+     console.log(this.keysFiltered);
      //this.dataSource = new MatTableDataSource(this.UsersAccounts);
      this.filteredUsersAccounts = this.UsersAccounts.filter(user =>user.userType != 2 )
      
@@ -203,7 +204,7 @@ export class AdminInfoComponent implements OnInit {
          // this.settingsService.updateOtherAccount(this.updateAccount);
       }
   }
-
+/*
   public updateOtherAccount(val :any){
     console.log("tu niby val: " + this.contentProperty);
 
@@ -214,7 +215,7 @@ export class AdminInfoComponent implements OnInit {
     this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-other-account", this.updateAccount).subscribe(result =>{
       console.log(result);
     }, error => console.log(error));
-  }
+  }*/
 
   //KLUCZE
   public removeKey(val:any){
@@ -321,67 +322,9 @@ export class AdminInfoComponent implements OnInit {
  }
 
 
-
 }
 
 
 
-
-
-/*
-  public filterEmail(){
-    this.filterTypeUser(this.typeUserValueNumber);
-  }
-
- public filterTypeUser(val: any){
-
-   this.typeUserValueNumber = val;
-  //this.filteredUsersAccounts = this.UsersAccounts.filter(user =>user.userType != 2 && user.eMail.includes(this.emailFilter));
-  this.filteredUsersAccounts = this.UsersAccounts.filter(user => user.eMail.includes(this.emailFilter));
-  console.log(val);
-  if(val != -1){
-   this.filteredUsersAccounts = this.filteredUsersAccounts.filter(user => user.userType == val && user.eMail.includes(this.emailFilter));
-  }
- }*/
-
- /*
-  public removeAccount(val:any){
-    let timerInterval;
-
-    Swal.fire({
-      showDenyButton: true,
-      title: `czy napewno chcesz usunąć konto ? `,
-      confirmButtonText: `Tak`,
-      denyButtonText: `Nie`,
-    })
-    .then(
-      (result) => {
-        if (result.isConfirmed) {
-          this.UsersAccounts.splice(this.UsersAccounts.indexOf(val),1);
-          this.filteredUsersAccounts = this.UsersAccounts;
-          //Swal.fire('Usunięto');
-          
-            Swal.fire({
-              title: 'Usunięto',
-              timer: 800,
-              timerProgressBar: true,
-              didOpen: () => {
-                Swal.showLoading()
-                timerInterval = setInterval(()=>{}, 100) 
-              
-              },
-              willClose: () => {
-                clearInterval(timerInterval)
-              }
-            }).then((result) => {
-              if (result.dismiss === Swal.DismissReason.timer) {
-                console.log('I was closed by the timer')
-              }
-            })
-        } 
-      }
-    );
-  }
-*/
 
 

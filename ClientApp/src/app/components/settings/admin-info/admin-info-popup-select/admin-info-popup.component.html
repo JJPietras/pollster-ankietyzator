@@ -43,22 +43,26 @@
                     <mat-label>Wybierz</mat-label>
                    <!-- <mat-select  (selectionChange)="this.selectedTag($event.value)" >
                         <mat-option *ngFor="let tag of receivedUserTags.split('/'); let i = index"  [value]="tag">-->
-                    <mat-select  (selectionChange)="this.selectedTag($event.value)" >
-                        <mat-option *ngFor="let tag of receivedUserTags.split('/'); let i = index"  [value]="tag">
+                    <!-- <mat-select  (selectionChange)="modifiedtext=$event.target.value; this.selectedTag($event.value); " > -->
+                        <!--<mat-option *ngFor="let tag of receivedUserTags.split('/'); let i = index"  [value]="tag">-->
+                    <mat-select  (selectionChange)="modifiedtext=$event.value; this.onItemSelected(modifiedtext); " >
+                        <mat-option *ngFor="let tag of tagsArray; let i = index"  [value]="tag">
                             {{tag}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
                     <div class="form-group">
-                        <input class="form-control" placeholder="Tekst..." (ngModelChange)="userTag()" 
-                        [ngModelOptions]="{standalone: true}" [(ngModel)]="currentUserTag"/>
+                        <!-- <input class="form-control" placeholder="Tekst..." (ngModelChange)="userTag()" 
+                        [ngModelOptions]="{standalone: true}" [(ngModel)]="currentUserTag"/> -->
+                        <input class="form-control" placeholder="Tekst..."
+                        [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}"/>
                     </div>
                     
-                    <div class="d-flex justify-content-center mt-2 mb-2" >
-                        <button class="btn btn-primary" (click) ="addTag()">
+                    <div class="d-flex justify-content-center mt-1 mb-1" >
+                        <button class="btn btn-primary mr-1" (click) ="addTag()">
                             Dodaj
                         </button>
-                        <button class="btn btn-primary" (click) ="changeTag()">
+                        <button class="btn btn-primary mr-1" (click) ="changeTag()">
                             Zamień
                         </button>
                         <button class="btn btn-primary" (click)="removeTag()">

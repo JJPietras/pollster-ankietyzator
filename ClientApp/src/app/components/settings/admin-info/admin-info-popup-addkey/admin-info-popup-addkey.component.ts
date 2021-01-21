@@ -25,7 +25,7 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
   newKey = {
     key: "",
     eMail: "",
-    userType: null
+    userType: 0
   }
 
   accountControl= new FormControl();
@@ -88,7 +88,7 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Nie podałeś klucza'
+        text: 'Nie podałeś nazwy klucza'
       })
     }
   
@@ -111,6 +111,19 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
 
     else{
       this.settingsService.addKey(this.newKey);
+
+      Swal.fire({
+        title: 'Dodano nowy klucz !',
+        confirmButtonText: `Ok`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        //if (result.isConfirmed) {
+          location.reload();
+       // } else if (result.isDenied) {
+         // Swal.fire('Changes are not saved', '', 'info')
+       // }
+      })
+      
     }
 
     

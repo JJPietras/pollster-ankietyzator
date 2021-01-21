@@ -25,6 +25,10 @@ export class AdminInfoPopupComponent implements OnInit {
   currentUserTag = "";
   numberUserTag;
 
+  modifiedtext: string;
+  currentIndex: number;
+   tagsArray: string[] = new Array<string>();
+   tags: string = "";
 
 
   constructor(public dialogRef: MatDialogRef<AdminInfoComponent>,
@@ -35,6 +39,9 @@ export class AdminInfoPopupComponent implements OnInit {
 
       this.receivedData = data;
       this.receivedUsers = this.authenticationService.users.value;
+
+      
+    
     } 
   
 
@@ -42,6 +49,7 @@ export class AdminInfoPopupComponent implements OnInit {
 
   ngOnInit() {
     //this.service.getEmployees();
+    this.tagsArray = (this.tags.split('/')); 
     this.selectUser();
   }
 
@@ -53,10 +61,11 @@ export class AdminInfoPopupComponent implements OnInit {
    selectUser(){
 
     const user = this.receivedUsers.find(element => element.eMail == this.receivedData.eMail);
-    this.receivedUserTags = user.tags;
+    this.tags = user.tags;
+    this.tagsArray = (this.tags.split('/')); 
     this.receviedUser = user;
-    console.log(user.name);
-    console.log(user.tags);
+    //console.log(user.name);
+    //console.log(user.tags);
     //return user;
   }
 
@@ -66,7 +75,8 @@ export class AdminInfoPopupComponent implements OnInit {
     let updateAccount: UpdateAccountDto = {EMail:"", Key:"", Tags:""};
     updateAccount.EMail = this.receivedData.eMail;
     updateAccount.Key = this.receivedData.key;
-    updateAccount.Tags = this.receivedUserTags;
+    //updateAccount.Tags = this.receivedUserTags;
+    updateAccount.Tags = this.tags;
 
     if(this.receivedData.key.length == 0)
     {
@@ -79,7 +89,14 @@ export class AdminInfoPopupComponent implements OnInit {
     else
     {
       this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-other-account",  updateAccount).subscribe(result =>{
-        console.log(result);
+
+        Swal.fire({
+          title: 'Dokonano zmiany !',
+          confirmButtonText: `Ok`,
+        }).then((result) => {
+            location.reload();
+        })
+       
       }, (error) => console.log(error.message + " + Failed."));
     }
   
@@ -111,5 +128,71 @@ export class AdminInfoPopupComponent implements OnInit {
     //this.service.initializeFormGroup();
     this.dialogRef.close();
   }
+
+
+
+  onItemSelected(val: any){
+    
+    this.modifiedtext = String(val);
+    this.currentIndex  = this.tagsArray.indexOf(this.modifiedtext);
+    
+  }
+
+   //ADD TAG
+   public addTag(){
+    if(!(this.modifiedtext.length == 0)){
+      this.tags = this.tags + '/'+ this.modifiedtext;
+      this.tagsArray.push(this.modifiedtext);
+      this.modifiedtext = "";
+
+      this.tags ="";
+      this.tags = this.tagsArray.join('/');
+     
+    }
+     
+
+    
+    
+  }
+
+  //CHANGE TAG
+  public changeTag(){
+    if(!(this.modifiedtext.length == 0)){
+      if (this.currentIndex !== -1) {
+          this.tagsArray[this.currentIndex] = this.modifiedtext;
+      }  
+      this.modifiedtext = "";
+
+      this.resetStringItems(this.tagsArray);
+    }
+
+  }
+
+
+  //REMOVE TAG
+  public removeTag(){
+      
+    if (this.currentIndex !== -1) {
+        this.tagsArray.splice(this.currentIndex, 1);
+    }  
+    this.modifiedtext = "";
+
+    this.resetStringItems(this.tagsArray);
+    
+ }
+
+
+ public resetStringItems(val: string[]){
+
+  this.tags ="";
+  val.forEach(slowo => {
+      this.tags = this.tags + slowo.toString() + "/" ; 
+   })
+   this.tags = this.tags.slice(0,-1);
+
+}
+
+
+
 
 }
