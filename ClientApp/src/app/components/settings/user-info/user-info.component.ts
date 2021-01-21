@@ -22,20 +22,14 @@ import { SettingsService } from 'src/app/services/settings.service';
     BrowserModule,
     FormsModule
   ],
-  declarations: [
-    AppComponent
-
-  ]
+  declarations: [ AppComponent]
 })
 
 
 export class UserInfoComponent implements OnInit {
 
-  //http : HttpClient;
   baseUrl : string;
-  
-
-
+  keys: Key;
   //konwersja z stringa na tablice
   tags: string = "to/nie/to/pwowinno/sie/wyswietlic";
   tagsArray: string[] = new Array<string>();
@@ -53,85 +47,62 @@ export class UserInfoComponent implements OnInit {
   };
  
 
-  
-  
-  
-// pobranie uzytkownika i dodanie tagow
-
-
   constructor(public authenticationService: AuthenticationService,public httpclient: HttpClient, 
     @Inject('BASE_URL') baseUrl: string, private router: Router, public settingService: SettingsService) {
-    //this.http = httpclient;
+    
     this.baseUrl = baseUrl;
-   
     this.tags =  this.authenticationService.user.value.tags.toString();
-   
+    this.keys = this.settingService.keys.value.find(result =>{
+      if(this.authenticationService.user.value.eMail == result.eMail){
+        return result;
+      }  
+        
+    });
   }
 
   ngOnInit(){
-
     this.tags =  this.authenticationService.user.value.tags.toString();
-    //console.log(this.items);
-    console.log(this.authenticationService.user.value.tags);
     this.tagsArray = (this.tags.split('/')); 
-    
-    
+    console.log(this.keys);
   }
 
 
 
   //ADD TAG
   public addTag(){
-    
-     this.tags = this.tags + '/'+ this.modifiedtext;
-     this.tagsArray.push(this.modifiedtext);
-     this.modifiedtext = "";
+    if(!(this.modifiedtext.length == 0)){
+      this.tags = this.tags + '/'+ this.modifiedtext;
+      this.tagsArray.push(this.modifiedtext);
+      this.modifiedtext = "";
 
-    this.tags ="";
+      this.tags ="";
      this.tagsArray.forEach(slowo => {
         this.tags = this.tags +  "/" + slowo.toString(); 
      })
+    }
+     
+
+    
     
   }
 
   //CHANGE TAG
   public changeTag(){
-    
-    /*if(this.modifiedtext.length === 0){
-      return 
-    }*/
+    if(!(this.modifiedtext.length == 0)){
+      if (this.currentIndex !== -1) {
+          this.tagsArray[this.currentIndex] = this.modifiedtext;
+      }  
+      this.modifiedtext = "";
 
-    if (this.currentIndex !== -1) {
-        this.tagsArray[this.currentIndex] = this.modifiedtext;
-    }  
-    this.modifiedtext = "";
-
-    this.resetStringItems(this.tagsArray);
-      
-    this.updateDTO.Tags = this.tags;
-    this.updateDTO.EMail =this.authenticationService.user.value.eMail;
-    this.updateDTO.Key = "klucz1"
- 
-    console.log(this.updateDTO.Tags);
-
- 
-    if(this.updateDTO){
-        this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
-        console.log(result);
-    
-    }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));
-
+      this.resetStringItems(this.tagsArray);
     }
 
   }
 
 
-
-
   //REMOVE TAG
   public removeTag(){
       
-   
     if (this.currentIndex !== -1) {
         this.tagsArray.splice(this.currentIndex, 1);
     }  
@@ -149,9 +120,6 @@ export class UserInfoComponent implements OnInit {
     
   }
 
-
-
-
   //METHOD TO USE RESET STRING
   public resetStringItems(val: string[]){
 
@@ -163,17 +131,29 @@ export class UserInfoComponent implements OnInit {
 
   }
 
-  //SEND KEY
-  public sendKey(){
-    console.log(this.keyChange);
-
-    if(this.keyChange.length < 4){
-      console.log('Podany klucz jest za krótki')
-    }
-    this.keyChange = '';
-    //this.httpclient.put(this.baseUrl +  , this.keyChange);
+  //check if obj is empty
+  isEmptyObject(obj) {
+    return (obj && (Object.keys(obj).length === 0));
   }
 
 
+  //save changes
+  saveChanges(){
+
+    this.updateDTO.Tags = this.tags;
+    this.updateDTO.EMail =this.authenticationService.user.value.eMail;
+    this.updateDTO.Key = this.keys.key
+
+    if(this.updateDTO){
+      
+        this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
+        console.log(result);
+    
+         }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));}
+
+  }
+  
+
+  
 }
 

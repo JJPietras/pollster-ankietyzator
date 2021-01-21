@@ -1,0 +1,52 @@
+<div class="container">
+    <button type="btn" class="b-close close" aria-label="Close" (click)="onClose()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      
+    <div class="form-group">
+        <h3>Dodawanie klucza</h3>
+    </div>  
+    <div class="d-flex justify-content-center">
+        <form class="w-50 needs-validation">
+            <div class="form-group  mt-2 mb-2">
+                <label class="font-weight-bold">Nazwa klucza:</label>
+                <input matInput type="text" class="form-control-lg mat-input-custom"   [formControl]="keyControl" [(ngModel)]="newKey.key"/>
+               
+            </div>
+            
+            <div class="mt-5 form-group">
+                <label class="font-weight-bold">Lista Email</label>
+                <div class="form-group">
+                    <mat-form-field class="mat-form-field">
+                        <input type="text" class="form-control-lg" matInput [matAutocomplete]="auto" [formControl]="accountControl" [(ngModel)]="newKey.eMail"/>
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let account of filteredOptions | async" [(value)]="account.eMail" >  
+                                {{ account.eMail }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>   
+            </div>
+
+
+            <div class="form-group mt-5 mb-2">
+                <div>
+                    <label class="font-weight-bold">Typ użytkownika:</label>
+                </div>
+                <mat-form-field>
+                    <mat-label></mat-label>
+                    <mat-select [(value)]="newKey.userType"> <!-- [(value)]="receivedData.userType"-->
+                    <mat-option [value]="0">Użytkownik</mat-option>
+                    <mat-option [value]="1">Ankieter</mat-option>
+                    <mat-option [value]="2">Admin</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            
+        
+            <div class="form-group float-right">
+                <button class="btn btn-success" (click)="addKey()">Wprowadź klucz</button>
+            </div>
+        </form>
+    </div>
+</div>

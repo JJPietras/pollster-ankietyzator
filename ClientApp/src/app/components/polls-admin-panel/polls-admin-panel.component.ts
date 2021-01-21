@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, Input, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Inject} from '@angular/core';
 import { UserLogin } from '../../models/user-login.model';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map } from "rxjs/operators";
 import { forkJoin } from 'rxjs';
 import { PollsService } from "../../services/polls-service";
 import Swal from 'sweetalert2';
-
+import { MatDialog,  MatDialogConfig} from '@angular/material';
+import { PollsAdminPanelPopupComponent } from './polls-admin-panel-popup/polls-admin-panel-popup.component';
 
 @Component({
   selector: 'app-polls-admin-panel',
@@ -20,10 +20,12 @@ import Swal from 'sweetalert2';
 
 export class PollsAdminPanelComponent implements OnInit {
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
-   private router: Router, private pollsService: PollsService, private route: ActivatedRoute) { 
 
-    this.pollId = Number(this.route.snapshot.paramMap.get('id'));
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
+   private router: Router, private pollsService: PollsService, private route: ActivatedRoute,
+   private dialog: MatDialog) { 
+
+    //this.pollId = Number(this.route.snapshot.paramMap.get('id'));
     //this.loadDetails();
   }
   
@@ -34,7 +36,7 @@ export class PollsAdminPanelComponent implements OnInit {
    previewPoll: boolean;
 
    
-
+   questionStats: QuestionStats[];
    pollStats: PollStats;
    pollDetailedAnswers: PollDetailedAnswers[];
    private pollId: number;
@@ -43,36 +45,40 @@ export class PollsAdminPanelComponent implements OnInit {
 
   ngOnInit() {
     this.getPollsData();
-    this.loadDetails();
+    this.pollsActiveA.forEach(element => {
+      element.nonAnonymous = true;
+    });
   }
 
-  pokaz(){
-    console.log(this.pollDetailedAnswers);
-  }
-
+  
   selectPoll(poll: PollStats) {
     this.pollsService.changePollStats(poll)
-    if(!this.previewPoll){
-      this.previewPoll = true;
-    }else{
-      this.previewPoll = false;
-    }
-      
-    /*Swal.fire({
-      showDenyButton: true,
-      title: `czy napewno chcesz usunąć klucz ? `,
-      confirmButtonText: `Tak`,
-      denyButtonText: `Nie`,
-    })
-    .then(
-      (result) => {
-        if (result.isConfirmed) {
-          
-  
-      }
-    );*/
-    //this.router.navigate(['/poll-statistics/' + poll.pollId])
+    this.pollId = poll.pollId;
+    this.http.get<Request>(this.baseUrl + 'stats/get-questions-stats/' + this.pollId).subscribe(result => {
+      this.questionStats = result.data;
+    }, error => console.error(error));
+
+    
+    this.loadDetails();
+
   }
+
+
+  onShow(poll: PollStats){
+
+      this.selectPoll(poll);
+      const dialogConfig = new MatDialogConfig();
+        dialogConfig.disableClose = false;
+        dialogConfig.autoFocus = true;
+        dialogConfig.width = "60%";
+        dialogConfig.data = {n: this.pollId, pActive: this.pollsActiveA, pArchive: this.pollsArchivedA, pStats: this.pollStats};
+        this.dialog.open(PollsAdminPanelPopupComponent, dialogConfig).afterClosed().subscribe(result =>{
+         // this.showData
+        });
+  
+  }
+
+
 
   getPollsData() {
     let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-un-archived');
@@ -88,30 +94,23 @@ export class PollsAdminPanelComponent implements OnInit {
       });
 
       this.pollsArchivedA = archived.data.map(item => {
+        //this.pollsActiveA.concat( archived.data.map(item => {
         const obj = stats.data.find(o => o.pollId === item.pollId);
         return { ...item, ...obj };
-      });
+      }); //}));
     }, error => console.error(error));
   }
 
 
   loadDetails(){
-    //if (this.pollStats.nonAnonymous){
-      this.http.get<Request>(this.baseUrl + 'answers/get-detailed-answers/' + this.pollId).subscribe(result => {
-        this.pollDetailedAnswers = result.data;
-      });
-   // }
-   // else{
-     // this.http.get<Request>(this.baseUrl + 'answers/get-anonymous-answers/' + this.pollId).subscribe(result => {
-       // this.pollAnonymousAnswers = result.data;
-     // });
-   // }
+    this.http.get<Request>(this.baseUrl + 'answers/get-detailed-answers/' + this.pollId).subscribe(result => {
+      this.pollDetailedAnswers = result.data;
+    });
   }
 
 
   loadStatistics(){
     this.pollStats = this.pollsService.pollStatsSource.value;
-  
   }
 
 

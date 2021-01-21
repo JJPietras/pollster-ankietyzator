@@ -4,3 +4,4 @@ interface PollDetailedAnswers {
   eMail: string;
   answers: Answer[];
   }
+
