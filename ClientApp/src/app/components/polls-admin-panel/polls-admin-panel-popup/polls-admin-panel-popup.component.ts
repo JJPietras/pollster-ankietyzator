@@ -43,9 +43,7 @@ export class PollsAdminPanelPopupComponent implements OnInit {
   ngOnInit() {
     this.loadDetails();
     this.pollStats = this.pollsService.pollStatsSource.value;
-    console.log(this.pollStats);
     
-    //this.loadStatistics();
   }
 
 
@@ -70,7 +68,6 @@ export class PollsAdminPanelPopupComponent implements OnInit {
 
   onClose(){
     this.dialogRef.close();
-    console.log("odpowiedzi: " + this.pollDetailedAnswers);
   }
 
   /*

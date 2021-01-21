@@ -16,8 +16,6 @@ import { PollsAdminPanelPopupComponent } from './polls-admin-panel-popup/polls-a
 
 
 
-
-
 export class PollsAdminPanelComponent implements OnInit {
 
 
@@ -25,8 +23,6 @@ export class PollsAdminPanelComponent implements OnInit {
    private router: Router, private pollsService: PollsService, private route: ActivatedRoute,
    private dialog: MatDialog) { 
 
-    //this.pollId = Number(this.route.snapshot.paramMap.get('id'));
-    //this.loadDetails();
   }
   
 
@@ -45,13 +41,12 @@ export class PollsAdminPanelComponent implements OnInit {
 
   ngOnInit() {
     this.getPollsData();
-    this.pollsActiveA.forEach(element => {
-      element.nonAnonymous = true;
-    });
+
   }
 
   
   selectPoll(poll: PollStats) {
+
     this.pollsService.changePollStats(poll)
     this.pollId = poll.pollId;
     this.http.get<Request>(this.baseUrl + 'stats/get-questions-stats/' + this.pollId).subscribe(result => {
@@ -73,7 +68,7 @@ export class PollsAdminPanelComponent implements OnInit {
         dialogConfig.width = "60%";
         dialogConfig.data = {n: this.pollId, pActive: this.pollsActiveA, pArchive: this.pollsArchivedA, pStats: this.pollStats};
         this.dialog.open(PollsAdminPanelPopupComponent, dialogConfig).afterClosed().subscribe(result =>{
-         // this.showData
+       
         });
   
   }
@@ -94,10 +89,10 @@ export class PollsAdminPanelComponent implements OnInit {
       });
 
       this.pollsArchivedA = archived.data.map(item => {
-        //this.pollsActiveA.concat( archived.data.map(item => {
+       
         const obj = stats.data.find(o => o.pollId === item.pollId);
         return { ...item, ...obj };
-      }); //}));
+      }); 
     }, error => console.error(error));
   }
 
@@ -116,7 +111,6 @@ export class PollsAdminPanelComponent implements OnInit {
 
   deletePoll(poll : Poll){
 
-
     let timerInterval;
 
     Swal.fire({
@@ -129,11 +123,9 @@ export class PollsAdminPanelComponent implements OnInit {
       (result) => {
         if (result.isConfirmed) {
           this.http.delete<Poll>(this.baseUrl + 'polls/remove-poll/' + poll.pollId).subscribe(result =>{
-            console.log(result);
+            //console.log(result);
           }, error => console.log(error));
-          //this.UsersAccounts.splice(this.UsersAccounts.indexOf(val),1);
-          //this.filteredUsersAccounts = this.UsersAccounts;
-          //Swal.fire('Usunięto');
+        
           
             Swal.fire({
               title: 'Usunięto',
@@ -159,7 +151,7 @@ export class PollsAdminPanelComponent implements OnInit {
     }
 
     archivePoll(poll : Poll){
-      //close-poll/
+    
 
       let timerInterval;
 
@@ -191,7 +183,6 @@ export class PollsAdminPanelComponent implements OnInit {
             }).then((result) => {
               location.reload();
               if (result.dismiss === Swal.DismissReason.timer) {
-                console.log('I was closed by the timer')
               }
             })
         } 

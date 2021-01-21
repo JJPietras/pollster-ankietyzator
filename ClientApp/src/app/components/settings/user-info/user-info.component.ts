@@ -31,7 +31,7 @@ export class UserInfoComponent implements OnInit {
   baseUrl : string;
   keys: Key;
   //konwersja z stringa na tablice
-  tags: string = "to/nie/to/pwowinno/sie/wyswietlic";
+  tags: string = "";
   tagsArray: string[] = new Array<string>();
   //index tagu ktory zostal wybrany
    currentIndex: number;
@@ -51,19 +51,21 @@ export class UserInfoComponent implements OnInit {
     @Inject('BASE_URL') baseUrl: string, private router: Router, public settingService: SettingsService) {
     
     this.baseUrl = baseUrl;
+
     this.tags =  this.authenticationService.user.value.tags.toString();
     this.keys = this.settingService.keys.value.find(result =>{
       if(this.authenticationService.user.value.eMail == result.eMail){
         return result;
-      }  
-        
+      }     
     });
+    
   }
 
   ngOnInit(){
-    this.tags =  this.authenticationService.user.value.tags.toString();
+    
     this.tagsArray = (this.tags.split('/')); 
-    console.log(this.keys);
+    console.log("klucz: " + this.keys);
+    
   }
 
 
@@ -76,9 +78,7 @@ export class UserInfoComponent implements OnInit {
       this.modifiedtext = "";
 
       this.tags ="";
-     this.tagsArray.forEach(slowo => {
-        this.tags = this.tags +  "/" + slowo.toString(); 
-     })
+      this.tags = this.tagsArray.join('/');
     }
      
 
@@ -141,15 +141,18 @@ export class UserInfoComponent implements OnInit {
   saveChanges(){
 
     this.updateDTO.Tags = this.tags;
+    console.log(this.tags);
+    console.log("tagi updateDTO: " + this.updateDTO.Tags);
     this.updateDTO.EMail =this.authenticationService.user.value.eMail;
     this.updateDTO.Key = this.keys.key
 
     if(this.updateDTO){
       
         this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
-        console.log(result);
+        //console.log(result);
     
          }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));}
+         location.reload();
 
   }
   
