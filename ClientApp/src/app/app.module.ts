@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Pipe, PipeTransform } from '@angular/core';
+import { MatDialogModule } from '@angular/material';
 
 import { AppComponent } from './components/app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
@@ -22,6 +23,7 @@ import { AdminInfoComponent } from './components/settings/admin-info/admin-info.
 import { PollCreatorComponent } from './components/poll-creator/poll-creator.component'
 import { PollAnswersComponent } from './components/poll-answers/poll-answers.component'
 import { PollsAdminPanelComponent } from './components/polls-admin-panel/polls-admin-panel.component'
+import { AdminInfoPopupAddkeyComponent} from './components/settings/admin-info/admin-info-popup-addkey/admin-info-popup-addkey.component';
 
 import { PollsAdminPanelPipe } from './pipes/polls-admin-panel-filter.pipe'
 
@@ -35,7 +37,9 @@ import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { CommonModule } from '@angular/common';
 import { PlotlyModule } from 'angular-plotly.js';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { MatFormFieldModule, MatInput, MatInputModule, MatSelect, MatSelectModule } from '@angular/material';
+import { MatAutocompleteModule, MatFormFieldModule, MatInput, MatInputModule, MatSelect, MatSelectModule } from '@angular/material';
+import { AdminInfoPopupComponent } from './components/settings/admin-info/admin-info-popup-select/admin-info-popup.component';
+import { PollsAdminPanelPopupComponent } from './components/polls-admin-panel/polls-admin-panel-popup/polls-admin-panel-popup.component';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -54,6 +58,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     PollCreatorComponent,
     PollAnswersComponent,
     PollsAdminPanelComponent,
+    PollsAdminPanelPopupComponent,
+    AdminInfoPopupComponent,
+    AdminInfoPopupAddkeyComponent,
     PollsAdminPanelPipe
   ],
   imports: [
@@ -66,6 +73,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     MatInputModule,
     MatSelectModule,
     MatNativeDateModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatAutocompleteModule,
     BrowserAnimationsModule,
     CommonModule, PlotlyModule,
     NgbModule,
@@ -84,7 +94,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     ]),
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AdminInfoPopupComponent, AdminInfoPopupAddkeyComponent, PollsAdminPanelPopupComponent]
 })
 
 export class AppModule {

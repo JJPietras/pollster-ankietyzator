@@ -1,0 +1,80 @@
+<div class="container">
+    <button type="btn" class="b-close close" aria-label="Close" (click)="onClose()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    <div class="form-group">
+        <h3>Modyfikowanie klucza</h3>
+    </div>
+    <div class="d-flex justify-content-center">
+        
+        
+        <form class="w-50 justify-content-center">
+            <div class="form-group mb-2">
+                <label class="font-weight-bold">Nazwa klucza:</label>
+                <input  class="form-control" [(ngModel)]="receivedData.key" [ngModelOptions]="{standalone: true}"/>
+            </div>
+
+            <div class="form-group mt-4 mb-3">
+                <label class="font-weight-bold">Email:</label>
+                <input class="form-control" [(ngModel)]="receivedData.eMail" [ngModelOptions]="{standalone: true}" readonly/>
+                
+            </div>
+
+            <div class="form-group mt-5 mb-2">
+                <div>
+                    <label class="font-weight-bold">Typ użytkownika:</label>
+                </div>
+                <mat-form-field>
+                    <mat-label></mat-label>
+                    <mat-select  [(value)]="receivedData.userType">
+                    <mat-option [value]="0">Użytkownik</mat-option>
+                    <mat-option [value]="1">Ankieter</mat-option>
+                    <mat-option [value]="2">Admin</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            
+            <div class="form-group mt-4 mb-2">
+                <div>
+                    <label class="font-weight-bold">Tagi:</label>
+                </div>
+
+                <mat-form-field>
+                    <mat-label>Wybierz</mat-label>
+                   <!-- <mat-select  (selectionChange)="this.selectedTag($event.value)" >
+                        <mat-option *ngFor="let tag of receivedUserTags.split('/'); let i = index"  [value]="tag">-->
+                    <mat-select  (selectionChange)="this.selectedTag($event.value)" >
+                        <mat-option *ngFor="let tag of receivedUserTags.split('/'); let i = index"  [value]="tag">
+                            {{tag}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Tekst..." (ngModelChange)="userTag()" 
+                        [ngModelOptions]="{standalone: true}" [(ngModel)]="currentUserTag"/>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mt-2 mb-2" >
+                        <button class="btn btn-primary" (click) ="addTag()">
+                            Dodaj
+                        </button>
+                        <button class="btn btn-primary" (click) ="changeTag()">
+                            Zamień
+                        </button>
+                        <button class="btn btn-primary" (click)="removeTag()">
+                            Usuń
+                        </button>
+                    </div>
+                      
+            </div>
+
+
+            <div class="form-group float-left">
+                <button class="btn btn-primary" (click)="onSave()">Zapisz klucz</button>
+            </div>
+            <div class="form-group float-right">
+                <button class="btn btn-success" (click)="onChangeUserProperties()">Wprowadź zmiany</button>
+            </div>
+        </form>
+    </div>
+</div>

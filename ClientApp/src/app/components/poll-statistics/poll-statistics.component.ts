@@ -35,6 +35,7 @@ export class PollStatisticsComponent implements OnInit {
 
   loadStatistics(){
     this.pollStats = this.pollsService.pollStatsSource.value;
+  
     // this.poll.questions.forEach(q => {
     //   if (q.type==1)
     //     q.answer = new Array<number>(q.options.split('/').length)
