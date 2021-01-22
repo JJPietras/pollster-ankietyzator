@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {Router, ActivatedRoute} from '@angular/router'; 
 import { AuthenticationService } from 'src/app/services/authorisation.service';
 import { PollsService } from 'src/app/services/polls-service';
+import { QuestionType } from 'src/app/models/question-type.model';
 import Swal from 'sweetalert2';
 
 
@@ -37,9 +38,9 @@ export class PollCreatorComponent implements OnInit {
   
   setType(type: any, index: any){
     var options: any = [];
-    if (type == 3 || type == 4)
+    if (type == 2 || type == 4)
       options= Array(3);
-    else if (type == 2)
+    else if (type == 3)
       options = "";
    this.questionsCreator[index].options = options;
    this.questionsCreator[index].type = type;
@@ -88,7 +89,7 @@ export class PollCreatorComponent implements OnInit {
   convertQuestion(question: NewQuestionCreator): NewQuestion{
     var options: string;
 
-    if (question.type == 2)
+    if (question.type == 3)
       options = question.options;
     else 
       options = question.options.join("/");

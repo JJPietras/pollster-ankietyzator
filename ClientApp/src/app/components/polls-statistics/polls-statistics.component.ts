@@ -27,6 +27,7 @@ export class PollsStatisticsComponent implements OnInit {
 
   ngOnInit() {
     this.getPollsData()
+
   }
 
   selectPoll(poll: PollStats) {

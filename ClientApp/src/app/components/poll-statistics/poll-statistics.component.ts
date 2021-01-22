@@ -48,7 +48,7 @@ export class PollStatisticsComponent implements OnInit {
     let counts = [];
     console.log(this.questionStats)
     this.questionStats.forEach(stat => {
-      if (stat.type<2 || stat.type>2 ){
+      if (stat.type<2 || stat.type==2 || stat.type==4  ){
         counts = stat.answerCounts.split("/")
 
         if (this.checkForAnswers(counts)){
@@ -67,7 +67,7 @@ export class PollStatisticsComponent implements OnInit {
           this.graphs.push({title: "(" + stat.questionId + ") " + stat.title, counts: stat.answerCounts})
         }
       }
-      else if (stat.type==2){
+      else if (stat.type==3){
         this.graphs.push({title: "(" + stat.questionId + ") " + stat.title, counts: stat.answerCounts})
         // this.graphs.push({
         //   type: 'table',
