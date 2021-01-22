@@ -21,7 +21,7 @@ export class AdminInfoPopupComponent implements OnInit {
   receivedData;
   receivedUsers;
   receivedUserTags;
-  receviedUser;
+  receivedUser;
   currentUserTag = "";
   numberUserTag;
 
@@ -38,32 +38,49 @@ export class AdminInfoPopupComponent implements OnInit {
     public settingsService: SettingsService){
 
       this.receivedData = data;
-      this.receivedUsers = this.authenticationService.users.value;
 
+      /*this.httpclient.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
+        this.receivedUsers = result.data;
+      }, error => console.log(error))*/
+      this.receivedUsers = this.authenticationService.users.value;
+      console.log("http: " + this.httpclient);
+
+
+      //this.selectUser();
       
     
     } 
   
 
 
-
   ngOnInit() {
     //this.service.getEmployees();
-    this.tagsArray = (this.tags.split('/')); 
+    console.log("basuURL: " + this.baseUrl + " " + this.httpclient);
+    //const user = this.receivedUsers.find(element => element.eMail === this.receivedData.eMail);
+    /*this.receivedUser = this.receivedUsers.find(element => element.eMail === this.receivedData.eMail);
+    this.tags = this.receivedUser.tags;
+    this.tagsArray = (this.tags.split('/'));*/
+    //this.tagsArray = (this.tags.split('/')); 
+   // this.receivedUser = user;
     this.selectUser();
   }
 
   onSave(){
-    this.settingsService.updateKey(this.receivedData);
+
+    this.httpclient.put<UpdateAccountDto>(this.baseUrl + 'keys/update-key', this.receivedData).subscribe(result =>{
+
+    }, error => console.log(error))
+    //this.settingsService.updateKey(this.receivedData);
 
   }
 
    selectUser(){
 
-    const user = this.receivedUsers.find(element => element.eMail == this.receivedData.eMail);
-    this.tags = user.tags;
+    //const user = this.receivedUsers.find(element => element.eMail === this.receivedData.eMail);
+    this.receivedUser = this.receivedUsers.find(element => element.eMail === this.receivedData.eMail);
+    this.tags = this.receivedUser.tags;
     this.tagsArray = (this.tags.split('/')); 
-    this.receviedUser = user;
+    //this.receivedUser = user;
     //console.log(user.name);
     //console.log(user.tags);
     //return user;
@@ -75,9 +92,9 @@ export class AdminInfoPopupComponent implements OnInit {
     let updateAccount: UpdateAccountDto = {EMail:"", Key:"", Tags:""};
     updateAccount.EMail = this.receivedData.eMail;
     updateAccount.Key = this.receivedData.key;
-    //updateAccount.Tags = this.receivedUserTags;
     updateAccount.Tags = this.tags;
-
+    
+    
     if(this.receivedData.key.length == 0)
     {
       Swal.fire({
@@ -108,6 +125,7 @@ export class AdminInfoPopupComponent implements OnInit {
     this.currentUserTag = value;
     this.numberUserTag = this.receivedUserTags.split('/').indexOf(this.currentUserTag);
   }
+
 
   userTag(){
     let stringArray: string[];
