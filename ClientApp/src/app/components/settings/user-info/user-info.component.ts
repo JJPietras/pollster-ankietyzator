@@ -9,6 +9,8 @@ import { AuthenticationService } from "../../../services/authorisation.service";
 import { UpdateAccountDto } from '../../../models/updateDTO.model';
 import { throwToolbarMixedModesError } from '@angular/material';
 import { SettingsService } from 'src/app/services/settings.service';
+import { Observable } from 'rxjs';
+import { subscribeOn } from 'rxjs/operators';
 
 
 @Component({
@@ -59,7 +61,7 @@ export class UserInfoComponent implements OnInit {
 
     this.httpclient.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
       tmpusers = result.data;
-      this.tags = tmpusers.map(user => {return user["tags"];});
+      this.tags = tmpusers
 
     }, error => console.error(error))
 
@@ -67,65 +69,39 @@ export class UserInfoComponent implements OnInit {
 
     this.httpclient.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
       this.userTemp = result.data;
-
+      
     }, error => console.error(error))
 
-    /*this.userTemp = authenticationService.user.subscribe(result =>{
-      return result;
-    });*/
-
-
-    //this.tags =  tmpusers.tags;
-    //this.tags =  this.authenticationService.user.value.tags;
-    //console.log(this.tags);
-
+     
+    
+    this.tags =  this.authenticationService.user.value.tags;
 
     this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
+      
       this.keysM = result.data;
-      if(!(result.data == null || result.data == undefined || !result.data.length)){
-        this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
-    }
-    }, error => console.error(error))
-
-    //this.keysM = this.settingService.keys.value;
+      this.keys = this.settingService.findKey(this.authenticationService.user.value.eMail);
+      
+    }, error => console.error(error));
+    // /this.keys = this.settingService.findKey(this.userTemp.eMail);
     
-    //this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
-    //this.keysM = this.settingService.keys.value;
     
   }
 
   ngOnInit(){
     
+    //this.tags =  this.authenticationService.user.value.tags;
+    
     this.tagsArray = (this.tags.split('/')); 
-
+    //this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
+    //this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
     //this.keysM = this.settingService.keys.value;
-
-    //this.keys = this.keysM.find(result => this.userTemp.map(value =>{ return value["eMail"];}) == result.eMail);
-    //this.keys = this.keysM.filter(result => {return this.userTemp.map(value =>{ return value["eMail"];}) == result.eMail;});
-    //console.log(this.keys);
-        //console.log("tak");
-        //return result;
-      //}  
-    //)
-
-
-     /*this.keys = this.settingService.keys.value.find(result =>{
-      if(this.authenticationService.user.value.eMail == result.eMail){
-        return result;
-      }  
-    })*/
-   
-    /*this.httpclient.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
-        this.tags = result.data.value.tags;
-    })
-
-    this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
-        this.keys = result.data.value;
-    })*/
     
   }
 
-
+  public findKey(value: Key[], user: User){
+    this.keys = value.find(result => user.eMail === result.eMail);
+    //return this.keys;
+  }
 
   //ADD TAG
   public addTag(){
