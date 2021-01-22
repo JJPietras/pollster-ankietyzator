@@ -48,7 +48,7 @@ export class PollStatisticsComponent implements OnInit {
     let counts = [];
     console.log(this.questionStats)
     this.questionStats.forEach(stat => {
-      if (stat.type<2 || stat.type==2 || stat.type==4  ){
+      if (stat.type<2){
         counts = stat.answerCounts.split("/")
 
         if (this.checkForAnswers(counts)){
@@ -69,32 +69,30 @@ export class PollStatisticsComponent implements OnInit {
       }
       else if (stat.type==3){
         this.graphs.push({title: "(" + stat.questionId + ") " + stat.title, counts: stat.answerCounts})
-        // this.graphs.push({
-        //   type: 'table',
-        //   header: {
-        //     values: [["<b>EXPENSES</b>"], ["<b>Q1</b>"],
-        //          ["<b>Q2</b>"], ["<b>Q3</b>"], ["<b>Q4</b>"]],
-        //     align: "center",
-        //     line: {width: 1, color: 'black'},
-        //     fill: {color: "grey"},
-        //     font: {family: "Arial", size: 12, color: "white"}
-        //   },
-        //   cells: {
-        //     values: stat.options.split("/"),
-        //     align: "center",
-        //     line: {color: "black", width: 1},
-        //     font: {family: "Arial", size: 11, color: ["black"]}
-        //   }
-        // })
       }
       else {
+        let values = [];
+        let counts = [];
+
+        stat.answerCounts.split("/").forEach(
+          cnt => {
+            values.push(Number(cnt.split(";")[0]));
+            counts.push(Number(cnt.split(";")[1]));
+        })
+
         this.graphs.push({
           data: [{
-            values: stat.answerCounts.split("/"),
-            labels: stat.options.split("/"),
-            type: 'bar'
+            x: values,
+            y: counts,
+            type: 'bar',
+            marker: {
+              color: 'rgb(49,130,189)',
+              opacity: 0.7,
+            }
           }],
+
           layout: {
+            xaxis: {range: [stat.options.split("/")[0], stat.options.split("/")[1]]},
             title: "(" + stat.questionId + ") " + stat.title
           }
         })

@@ -22,17 +22,21 @@ export class PollCreatorComponent implements OnInit {
 
   questionsCreator: NewQuestionCreator[]=[];
   newPoll: NewPoll;
-
+  submited = false;
   ngOnInit() {
     this.newPoll={
       title: "",
       authorId: undefined,
       description: "",
       tags: "",
-      emails:"",
+      emails: "",
       nonAnonymous: false,
       archived: false,
       questions: [],
+      newEmail: "",
+      newEmails: [],
+      newTag: "",
+      newTags: []
     }
   }
   
@@ -52,7 +56,9 @@ export class PollCreatorComponent implements OnInit {
     this.questionsCreator.forEach(question => {
       this.newPoll.questions.push(this.convertQuestion(question))
     });
-    console.log(this.newPoll);
+    this.newPoll.emails = this.newPoll.newEmails.join("/");
+    this.newPoll.tags = this.newPoll.newTags.join("/");
+    //console.log(this.newPoll);
     this.postPoll()
   }
 
@@ -65,12 +71,13 @@ export class PollCreatorComponent implements OnInit {
   }
   
   postPoll(){
-    if(this.newPoll){
+    if(this.newPoll && !this.submited){
+      this.submited = true;
       this.http
         .post<NewPoll>(this.baseUrl + "polls/create-poll", this.newPoll)
         .subscribe(
           (result) => {
-            console.log(result);
+            //console.log(result);
             Swal.fire("Gratulacje", "utworzono ankietę", "info").then(
               () => { this.router.navigate(['/'])}
             );
@@ -78,6 +85,7 @@ export class PollCreatorComponent implements OnInit {
           (error) => {
             Swal.fire("Błąd", error.message, "error");
             console.log(error.message);
+            this.submited = false;
           }
         );
     }
@@ -131,6 +139,36 @@ export class PollCreatorComponent implements OnInit {
     this.questionsCreator[question].options.splice(option, 1);
   }
 
+  deleteMail(option: number){
+    this.newPoll.newEmails.splice(option, 1);
+  }
+
+  addMail(){
+    if (this.newPoll.newEmail.trim() == ""){
+      Swal.fire("Podaj poprawny E-mail.", "", "error");
+    }
+    else{
+      this.newPoll.newEmails.push(this.newPoll.newEmail);
+      //console.log(this.questionsCreator);
+      this.newPoll.newEmail = ""
+    }
+  }
+
+  deleteTag(option: number){
+    this.newPoll.newTags.splice(option, 1);
+  }
+
+  addTag(){
+    if (this.newPoll.newTag.trim() == ""){
+      Swal.fire("Podaj poprawny tag.", "", "error");
+    }
+    else{
+      this.newPoll.newTags.push(this.newPoll.newTag);
+      //console.log(this.questionsCreator);
+      this.newPoll.newTag = ""
+    }
+  }
+
   validate(){
     //console.log(this.newPoll);
     var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
@@ -155,10 +193,13 @@ export class PollCreatorComponent implements OnInit {
       Swal.fire("Uzupełnij wszystkie wymagane pola.", "", "error");
     }
     else if (!optionsAdded){
-      Swal.fire("Uzupełnij pytania prawidłowo", "", "error");
+      Swal.fire("Uzupełnij pytania prawidłowo.", "", "error");
     }
     else if (!typesAdded){
       Swal.fire("Wybierz typy dla wszystkich pytań.", "", "error");
+    }
+    else if (this.newPoll.newEmails.length<1 && this.newPoll.newTags.length<1){
+      Swal.fire("Uzupełnij tagi lub maile.", "", "error");
     }
     else{
       this.submit()
