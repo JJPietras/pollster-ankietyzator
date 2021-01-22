@@ -7,4 +7,8 @@ interface NewPoll {
     nonAnonymous: boolean;
     archived: boolean;
     questions: NewQuestion[];
+    newEmail: string;
+    newEmails: string[];
+    newTag: string;
+    newTags: string[];
   }

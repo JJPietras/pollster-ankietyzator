@@ -6,7 +6,7 @@ import {PipeTransform, Pipe } from '@angular/core'
 
 export class PollsAdminPanelPipe implements PipeTransform{
     
-    transform(polls: Poll[], searchTerm: string): Poll[] {
+    transform(polls: PollStats[], searchTerm: string): PollStats[] {
 
         if(!polls || !searchTerm){
           return polls;
