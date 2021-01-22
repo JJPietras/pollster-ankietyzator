@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container fg">
     <mat-tab-group mat-align-tabs="start" dynamicHeight>
         <mat-tab label="Dane statystyczne">
             <div *ngIf="!questionStats">
@@ -13,7 +13,13 @@
                     <div *ngIf="graph.data">
                         <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
                     </div>
-                    <div *ngIf="!graph.data">
+
+                    <div *ngIf="graph.title">
+                        <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
+                        <h5 class="row d-flex justify-content-center mb-2 mt-3">{{graph.counts}} osób odpowiedziało na to pytanie.</h5>
+                    </div>
+
+                    <div *ngIf="!graph.data && !graph.title">
                         <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
                         <h5 class="row d-flex justify-content-center mb-2 mt-3">Brak odpowiedzi na to pytanie.</h5>
                     </div>

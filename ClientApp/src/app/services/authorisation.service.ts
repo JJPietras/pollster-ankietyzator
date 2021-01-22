@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UpdateAccountDto } from "../models/updateDTO.model";
 import { catchError } from 'rxjs/operators';
 import Swal from "sweetalert2";
-
+import {Router, ActivatedRoute} from '@angular/router';
 //import { AngularFireAuth } from '@angular/fire/auth';
 //import { auth } from 'firebase/app';
 
@@ -21,13 +21,17 @@ export class AuthenticationService{
   //do pytan ##################
   //private questionsSource: BehaviorSubject<Question[]>;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+  constructor(private http: HttpClient, private router: Router, @Inject('BASE_URL') private baseUrl: string) {
     this.getUser()
     this.getUsers();
 
   }
 
-  
+  public tryToGetSession(){
+    this.getUser()
+    if (!this.userSource)
+      this.router.navigate(['/user-login']);
+  }
 
   get user() {
     return this.userSource;
@@ -42,7 +46,10 @@ export class AuthenticationService{
       this.userSource = new BehaviorSubject(result.data);
       this.currentUser = this.user.asObservable();
       //console.log(this.user)
-    }, error => console.error("Failed to fetch the user session. Please, log in again."));
+    }, error => {
+      console.error("Failed to fetch the user session. Please, log in again.")
+      this.userSource = null;
+    });
   }
 
   /*

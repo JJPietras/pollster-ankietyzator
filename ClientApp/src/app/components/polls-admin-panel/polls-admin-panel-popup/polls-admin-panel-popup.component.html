@@ -1,38 +1,38 @@
-<div class="container">
+<div class="container fg">
     <button type="btn" class="b-close close" aria-label="Close" (click)="onClose()">
         <span aria-hidden="true">&times;</span>
       </button>
 
-            <div *ngIf="pollDetailedAnswers">
-                <table *ngIf="pollDetailedAnswers.length>0" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">E-Mail</th>
-                            <th scope="col">Użytkownik</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let poll of pollDetailedAnswers" style="cursor: pointer;">
-                            <td>{{poll.eMail}}</td>
-                            <td>{{poll.name}}</td>
-                            <td>
-                                <app-poll-answers [stats]="pollStats" [answer]="poll"></app-poll-answers>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div *ngIf="pollDetailedAnswers">
+        <table *ngIf="pollDetailedAnswers.length>0" class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">E-Mail</th>
+                    <th scope="col">Użytkownik</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let poll of pollDetailedAnswers" style="cursor: pointer;">
+                    <td>{{poll.eMail}}</td>
+                    <td>{{poll.name}}</td>
+                    <td>
+                        <app-poll-answers [stats]="pollStats" [answer]="poll"></app-poll-answers>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-                <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollDetailedAnswers.length==0">Brak odpowiedzi</h2>
-            </div>
-
-            
+        <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollDetailedAnswers.length==0">Brak odpowiedzi</h2>
+    </div>
 
 
-            <div *ngIf="!pollDetailedAnswers">
-                <span>Nie znaleziono</span>
-            </div>
 
-            
- 
+
+    <div *ngIf="!pollDetailedAnswers">
+        <span>Nie znaleziono</span>
+    </div>
+
+
+
 </div>

@@ -35,8 +35,8 @@ export class PollsStatisticsComponent implements OnInit {
   }
 
   getPollsData() {
-    let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-un-archived');
-    let r2 = this.http.get<Request>(this.baseUrl + 'polls/get-archived');
+    let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-pollster-un-archived');
+    let r2 = this.http.get<Request>(this.baseUrl + 'polls/get-pollster-archived');
     let r3 = this.http.get<Request>(this.baseUrl + 'stats/get-polls-stats');
 
     forkJoin([r1, r2, r3]).subscribe(result => {

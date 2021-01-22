@@ -1,20 +1,26 @@
-
-<div class="card text-center">
-  <div class="card-header">
-    Zaloguj się
-  </div>
-  <div class="card-body">
-    <h5 class="card-title">Zaloguj się używając konta Google</h5>
-
-    <div style="cursor: pointer;" class="google-btn" (click)="authenticationService.SignInWithGoogle()">
-      <div class="google-icon-wrapper">
-        <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
-      </div>
-      <p class="btn-text"><b>Zaloguj się</b></p>
+<div>
+    <div class="row px-0 mb-3">
+        <div class="col-12 px-0 ">
+            <img src="https://www.logigear.com/magazine/wp-content/uploads/2018/12/Survey-banner-01.png" class="MainImage img-responsive px-0" alt="HTML5 Icon" width="100%">
+        </div>
     </div>
 
-  </div>
-  <!-- <div class="card-footer text-muted">
+    <div class="container slide-up text-center fg">
+        <div class="card-header">
+            Zaloguj się
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Zaloguj się używając konta Google</h5>
+
+            <div style="cursor: pointer;" class="google-btn c" (click)="authenticationService.SignInWithGoogle()">
+                <div class="google-icon-wrapper">
+                    <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+                </div>
+                <p class="btn-text"><b>Zaloguj się</b></p>
+            </div>
+
+        </div>
+        <!-- <div class="card-footer text-muted">
     <div class="google-btn" (click)="LogOutFromGoogle()">
       <div class="google-icon-wrapper">
         <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
@@ -22,4 +28,5 @@
       <p class="btn-text"><b>Wyloguj się</b></p>
     </div>
   </div> -->
+    </div>
 </div>
