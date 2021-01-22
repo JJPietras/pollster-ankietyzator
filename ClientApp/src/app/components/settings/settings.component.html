@@ -9,7 +9,7 @@
             </div>
         </mat-tab>
 
-        <mat-tab *ngIf="authenticationService.user.value.userType == 2" label="Administrator">
+        <mat-tab *ngIf="userType > 1" label="Administrator">
             <div>
                 <app-admin-info></app-admin-info>
             </div>
