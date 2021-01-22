@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router'; 
 import { AuthenticationService } from 'src/app/services/authorisation.service';
 import { PollsService } from 'src/app/services/polls-service';
 import Swal from 'sweetalert2';

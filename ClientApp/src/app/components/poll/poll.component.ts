@@ -78,14 +78,14 @@ export class PollComponent{
           }
         }
     )
-    console.log(this.answers);
+    //console.log(this.answers);
   }
 
   checkAnswer(answer: any, allowEmpty: boolean){
     if (!allowEmpty){
       if (answer==null || answer == ""){
         this.answersFilled = false;
-        console.log(allowEmpty)
+        //console.log(allowEmpty)
       }
     }
   }

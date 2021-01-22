@@ -25,6 +25,8 @@ import { PollAnswersComponent } from './components/poll-answers/poll-answers.com
 import { PollsAdminPanelComponent } from './components/polls-admin-panel/polls-admin-panel.component'
 import { AdminInfoPopupAddkeyComponent} from './components/settings/admin-info/admin-info-popup-addkey/admin-info-popup-addkey.component';
 
+import { FooterComponent } from './components/footer/footer.component'
+
 import { PollsAdminPanelPipe } from './pipes/polls-admin-panel-filter.pipe'
 
 import {MatNativeDateModule} from '@angular/material/core';
@@ -61,7 +63,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     PollsAdminPanelPopupComponent,
     AdminInfoPopupComponent,
     AdminInfoPopupAddkeyComponent,
-    PollsAdminPanelPipe
+    PollsAdminPanelPipe,
+    FooterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

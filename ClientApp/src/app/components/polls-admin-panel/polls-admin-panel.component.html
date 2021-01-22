@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container fg">
 
     <div class="form-group">
         <h3>Filtruj ankiety</h3>
-        <input class="form-control col-4" placeholder="wpisz tytuł ankiety" [(ngModel)]="searchTerm"/>
-    </div>  
+        <input class="form-control col-4" placeholder="wpisz tytuł ankiety" [(ngModel)]="searchTerm" />
+    </div>
 
     <mat-tab-group mat-align-tabs="start" dynamicHeight>
         <mat-tab label="Ankiety użytkowników">
@@ -17,7 +17,7 @@
                 <div *ngIf="pollsActiveA.length>0">
                     <h3 class="mt-2">Twoje ankiety</h3>
 
-                    
+
 
                     <h3 class="row d-flex justify-content-center mt-5 mb-3">Lista ankiet</h3>
 
@@ -33,15 +33,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let stat of pollsActiveA | pollFilter : searchTerm"> <!--(click)="selectPoll(stat)"-->
+                            <tr *ngFor="let stat of pollsActiveA | pollFilter : searchTerm">
+                                <!--(click)="selectPoll(stat)"-->
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                                 <td>
-                                     <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button>
-                                     <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
+                                    <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button>
+                                    <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -97,5 +98,5 @@
 
     </mat-tab-group>
 
-    
+
 </div>
