@@ -95,7 +95,7 @@ namespace Ankietyzator.Services.Implementations
             var response = new ServiceResponse<List<GetAnswerDto>>();
 
             var answers = await _context.Answers
-                .Where(a => _context.Questions.Any(q => q.QuestionId == a.QuestionId && q.Poll == pollId && q.Type==2))
+                .Where(a => _context.Questions.Any(q => q.QuestionId == a.QuestionId && q.Poll == pollId && q.Type==3))
                 .Select(ans => _mapper.Map<GetAnswerDto>(ans))
                 .ToListAsync();
 

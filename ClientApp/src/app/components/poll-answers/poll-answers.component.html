@@ -29,7 +29,7 @@
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
                 </div>
 
-                <div class="card" *ngIf="question.type==2">
+                <div class="card" *ngIf="question.type==3">
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
                     <div class="form-group">
@@ -39,7 +39,7 @@
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
                 </div>
 
-                <div class="card" *ngIf="question.type==3">
+                <div class="card" *ngIf="question.type==2">
                     <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
                     <ng-container *ngIf="{ min: question.options.split('/')[0], max: question.options.split('/')[1], step: question.options.split('/')[2] } as options">
 

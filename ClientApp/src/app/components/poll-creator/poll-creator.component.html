@@ -21,8 +21,8 @@
                     <div *ngIf="question.type == null">
                         <button class="btn btn-primary mr-1" (click)="setType(0,inx)">Jeden wybór</button>
                         <button class="btn btn-primary mr-1" (click)="setType(1,inx)">Wielokrotnego wyboru </button>
-                        <button class="btn btn-primary mr-1" (click)="setType(2,inx)">Tekstowy</button>
-                        <button class="btn btn-primary mr-1" (click)="setType(3,inx)">Suwak</button>
+                        <button class="btn btn-primary mr-1" (click)="setType(3,inx)">Tekstowy</button>
+                        <button class="btn btn-primary mr-1" (click)="setType(2,inx)">Suwak</button>
                         <button class="btn btn-primary mr-1" (click)="setType(4,inx)">Liczbowy</button>
                     </div>
 
@@ -110,7 +110,7 @@
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 2" class="mt-3">
+                    <div *ngIf="question.type == 3" class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: tekstowy</h5>
                         <div class="mt-5">
                             <label>Podaj pytanie:</label>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
 
-                    <div *ngIf="question.type == 3 " class="mt-3">
+                    <div *ngIf="question.type == 2 " class="mt-3">
                         <h5 class="pt-4">Wybrano typ pytania: suwak</h5>
                         <div>
                             <label>Podaj pytanie:</label>
