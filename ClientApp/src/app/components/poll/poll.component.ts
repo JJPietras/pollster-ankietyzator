@@ -16,7 +16,8 @@ import { PollsService } from "../../services/polls-service";
 export class PollComponent{
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute, public pollsService: PollsService) {
-    
+    if (!this.pollsService.pollSource)
+      this.router.navigate(['/select-poll'])
   }
   poll: Poll;
   answersFilled: boolean;

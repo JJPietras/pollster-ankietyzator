@@ -17,6 +17,8 @@ export class PollStatisticsComponent implements OnInit {
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute, private pollsService: PollsService) {
     this.pollId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!this.pollsService.pollStatsSource)
+      this.router.navigate(['/poll-statistics'])
   }
 
   questionStats: QuestionStats[];
@@ -59,16 +61,16 @@ export class PollStatisticsComponent implements OnInit {
               type: 'pie'
             }],
             layout: {
-              title: "(" + stat.questionId + ") " + stat.title
+              title: "(" + stat.position + ") " + stat.title
             }
           })
         }
         else{
-          this.graphs.push({title: "(" + stat.questionId + ") " + stat.title, counts: stat.answerCounts})
+          this.graphs.push({title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts})
         }
       }
       else if (stat.type==3){
-        this.graphs.push({title: "(" + stat.questionId + ") " + stat.title, counts: stat.answerCounts})
+        this.graphs.push({title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts})
       }
       else {
         let values = [];
@@ -93,7 +95,7 @@ export class PollStatisticsComponent implements OnInit {
 
           layout: {
             xaxis: {range: [stat.options.split("/")[0], stat.options.split("/")[1]]},
-            title: "(" + stat.questionId + ") " + stat.title
+            title: "(" + stat.position + ") " + stat.title
           }
         })
       }

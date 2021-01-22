@@ -15,13 +15,13 @@
                     </div>
 
                     <div *ngIf="graph.title">
-                        <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
-                        <h5 class="row d-flex justify-content-center mb-2 mt-3">{{graph.counts}} osób odpowiedziało na to pytanie.</h5>
+                        <p class="row d-flex justify-content-center q-header">{{graph.title}}</p>
+                        <p class="row d-flex justify-content-center mb-5 mt-4 q-header">{{graph.counts}} osób/y odpowiedziało na to pytanie.</p>
                     </div>
 
                     <div *ngIf="!graph.data && !graph.title">
-                        <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
-                        <h5 class="row d-flex justify-content-center mb-2 mt-3">Brak odpowiedzi na to pytanie.</h5>
+                        <p class="row d-flex justify-content-center" q-header>{{graph.title}}</p>
+                        <p class="row d-flex justify-content-center mb-5 mt-4 q-header">Brak odpowiedzi na to pytanie.</p>
                     </div>
                 </div>
 

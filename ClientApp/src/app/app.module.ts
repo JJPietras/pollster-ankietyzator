@@ -94,7 +94,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: 'poll-answers', component: PollAnswersComponent },
       { path: 'polls-admin', component: PollsAdminPanelComponent }
       
-    ]),
+    ], {
+      scrollPositionRestoration: 'enabled',
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
