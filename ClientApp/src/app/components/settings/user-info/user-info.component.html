@@ -7,7 +7,7 @@
             <div class="mt-5 mb-5 form-group col-6">
                 <h2>Klucze zmiany uprawnień</h2>
                 <h4 class="mt-5">Nazwa klucza:</h4>
-                    <input class="font-weight-bold form-control" placeholder="{{keys.key}}" readonly/>
+                    <input *ngIf="keys.key" class="font-weight-bold form-control" placeholder="{{keys.key}}" readonly/>
                       
             </div>  
 

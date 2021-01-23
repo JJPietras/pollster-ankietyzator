@@ -34,14 +34,14 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let stat of pollsActiveA | pollFilter : searchTerm">
-                                <!--(click)="selectPoll(stat)"-->
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                                 <td>
-                                    <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button>
+                                    <!-- <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button> -->
+                                 <button class="btn btn-primary mr-2" (click)="selectPoll2(stat)">Pokaż</button>
                                     <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
                                 </td>
                             </tr>
