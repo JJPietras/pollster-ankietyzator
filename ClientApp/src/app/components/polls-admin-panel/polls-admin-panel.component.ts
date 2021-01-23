@@ -189,9 +189,12 @@ export class PollsAdminPanelComponent implements OnInit {
       }
     );
 
-      
-
     }
   
+    
+    selectPoll2(poll: PollStats) {
+      this.pollsService.changePollStats(poll)
+      this.router.navigate(['/poll-statistics/' + poll.pollId])
+    }
 
 }

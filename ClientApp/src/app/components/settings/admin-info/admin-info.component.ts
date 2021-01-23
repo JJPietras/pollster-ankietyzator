@@ -71,7 +71,7 @@ export class AdminInfoComponent implements OnInit {
      //this.keys = this.settingsService.keys.value;
 
      this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
-       // this.keys = result.data;
+        this.keys = result.data;
         this.keysFiltered = result.data;
      })
      //this.keysFiltered = this.keys;

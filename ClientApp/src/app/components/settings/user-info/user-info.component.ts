@@ -33,6 +33,7 @@ export class UserInfoComponent implements OnInit {
   baseUrl : string;
   keys: Key;
   keysM: Key[];
+  emailAccount: string = "";
   //konwersja z stringa na tablice
   tags: string = "";
   tagsArray: string[] = new Array<string>();
@@ -56,6 +57,7 @@ export class UserInfoComponent implements OnInit {
     
     this.baseUrl = baseUrl;
     let tmpusers;
+    this.emailAccount = this.authenticationService.user.value.eMail;
     //let tmpusers = this.authenticationService.user.value;
     //this.userTemp = this.authenticationService.user.value;
 
@@ -89,13 +91,8 @@ export class UserInfoComponent implements OnInit {
 
   ngOnInit(){
     
-    //this.tags =  this.authenticationService.user.value.tags;
-    
     this.tagsArray = (this.tags.split('/')); 
-    //this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
-    //this.keys = this.keysM.find(result => this.userTemp.eMail === result.eMail);
-    //this.keysM = this.settingService.keys.value;
-    
+
   }
 
   public findKey(value: Key[], user: User){
@@ -174,18 +171,16 @@ export class UserInfoComponent implements OnInit {
   saveChanges(){
 
     this.updateDTO.Tags = this.tags;
-    console.log(this.tags);
-    console.log("tagi updateDTO: " + this.updateDTO.Tags);
-    this.updateDTO.EMail =this.authenticationService.user.value.eMail;
+    this.updateDTO.EMail =this.emailAccount;
     this.updateDTO.Key = this.keys.key
 
     if(this.updateDTO){
       
         this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
         //console.log(result);
-    
-         }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));}
-         location.reload();
+        location.reload();
+         }, (error) => console.log(error.message + " + Failed to save changes."));}
+         
 
   }
   
