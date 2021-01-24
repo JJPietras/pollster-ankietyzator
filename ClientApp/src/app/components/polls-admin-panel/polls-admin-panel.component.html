@@ -69,7 +69,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let stat of pollsArchivedA | pollFilter : searchTerm" (click)="selectPoll(stat)" class="clickable">
+                            <tr *ngFor="let stat of pollsArchivedA | pollFilter : searchTerm" (click)="selectPoll2(stat)" class="clickable">
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>

@@ -124,13 +124,29 @@ export class PollStatisticsComponent implements OnInit {
     for (let x of arr) {
       if (x > 0) return true
     }
-    console.log(typeof arr)
     if (typeof arr == 'number') return true
     return false
   }
 
   editPoll() {
+    let newPoll: NewPoll={
+      PreviousPollId: this.pollStats.pollId,
+      title: this.pollStats.title,
+      authorId: this.pollStats.authorId,
+      description: this.pollStats.description,
+      tags: this.pollStats.tags,
+      emails: this.pollStats.emails,
+      nonAnonymous: this.pollStats.nonAnonymous,
+      archived: this.pollStats.archived,
+      questions: this.pollStats.questions,
 
+      newEmail: "",
+      newEmails: this.pollStats.emails.split("/"),
+      newTag: "",
+      newTags: this.pollStats.tags.split("/")
+    }
+    this.pollsService.changeNewPoll(newPoll);
+    this.router.navigate(['/poll-creator/edit']);
   }
 
 }

@@ -159,13 +159,17 @@
 
         <mat-tab label="Ustawienia ankiety">
             <div class="mt-4 pb-3 text-center justify-content-center">
+                <h3 class="m-3">Udostępnij ankietę</h3>
+
+                <h3 class="m-3">Identyfikator ankiety: {{pollStats.pollId}}, identyfikator użytkownika: {{pollStats.authorId}}.</h3>
+
                 <h3 class="m-3">Edycja ankiety</h3>
                 <button class="btn btn-success btn-lg" (click)="editPoll()">Edytuj</button>
 
-                <h3 class="m-3">Opis</h3>
+                <h3 class="m-3">Archiwizacja ankiety</h3>
                 <button class="btn btn-warning btn-lg" (click)="pollsService.archivePoll(pollStats)">Archiwizuj</button>
 
-                <h3 class="m-3">Opis</h3>
+                <h3 class="m-3">Usuwanie ankiety (administrator)</h3>
                 <button class="btn btn-danger btn-lg" *ngIf="authenticationService.user.value.userType>1" (click)="pollsService.deletePoll(pollStats)">Usuń</button>
             </div>
 

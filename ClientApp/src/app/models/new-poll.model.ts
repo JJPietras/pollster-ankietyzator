@@ -1,5 +1,6 @@
 interface NewPoll {
-    authorId: number;
+    PreviousPollId?: number;
+    authorId?: number;
     title: string;
     description: string;
     tags: string;
@@ -12,3 +13,4 @@ interface NewPoll {
     newTag: string;
     newTags: string[];
   }
+

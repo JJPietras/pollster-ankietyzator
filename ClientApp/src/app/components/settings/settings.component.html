@@ -9,11 +9,18 @@
             </div>
         </mat-tab>
 
+        <mat-tab *ngIf="userType > 0" label="Ankieter">
+
+            <app-clone-polls></app-clone-polls>
+
+        </mat-tab>
+
         <mat-tab *ngIf="userType > 1" label="Administrator">
             <div>
                 <app-admin-info></app-admin-info>
             </div>
         </mat-tab>
+
 
     </mat-tab-group>
 
