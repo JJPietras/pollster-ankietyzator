@@ -64,9 +64,12 @@
         "inquirer": "^6.2.2",
         "inquirer-autocomplete-prompt": "^1.0.1"
     },
-    "optionalDependencies": {
+    "optionalDependencies": { <<
+        << << < HEAD
 
-        "protractor": "~5.4.2",
+        ===
+        === = >>>
+        >>> > 226 dc71c154b5c04c4bd6f48b2f33cb7a85a76cd "protractor": "~5.4.2",
         "ts-node": "~8.4.1",
         "tslint": "~5.20.0"
     }
