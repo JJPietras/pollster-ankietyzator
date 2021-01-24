@@ -24,9 +24,8 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Tytuł</th>
                                 <th scope="col">Opis</th>
-                                <th scope="col">Wypełnienia</th>
+                                <th scope="col">Autor</th>
                                 <th scope="col">Anonimowość</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -34,7 +33,7 @@
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
-                                <td>{{stat.completions}}</td>
+                                <td>{{stat.authorEmail}}</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
 
                             </tr>
@@ -63,8 +62,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Tytuł</th>
                                 <th scope="col">Opis</th>
-                                <th scope="col">Wypełnienia</th>
-                                <th scope="col">Udział procetowy</th>
+                                <th scope="col">Autor</th>
                                 <th scope="col">Anonimowość</th>
                             </tr>
                         </thead>
@@ -73,8 +71,7 @@
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
-                                <td>{{stat.completions}}</td>
-                                <td>{{stat.percentage}}%</td>
+                                <td>{{stat.authorEmail}}</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                             </tr>
                         </tbody>
