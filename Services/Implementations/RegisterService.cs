@@ -27,6 +27,7 @@ namespace Ankietyzator.Services.Implementations
 
         private const string InvalidKeyStr = "Provided polster key is invalid";
         private const string GetAccountsStr = "Successfully queried registrations";
+        private const string NoEmailProvided = "No email provided";
 
         private readonly AnkietyzatorDbContext _context;
 
@@ -67,6 +68,8 @@ namespace Ankietyzator.Services.Implementations
 
         public async Task<ServiceResponse<Account>> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
         {
+            if (updateAccountDto.EMail == null) return new ServiceResponse<Account>()
+                .Failure(NoEmailProvided, HttpStatusCode.UnprocessableEntity);
             var response = await UpdateAccount(updateAccountDto);
             return response.Data == null
                 ? response
@@ -118,7 +121,7 @@ namespace Ankietyzator.Services.Implementations
             }
         }
 
-        private async Task UpdateCurrentIdentity(HttpContext context, Account account)
+        private static async Task UpdateCurrentIdentity(HttpContext context, Account account)
         {
             var identities = context.User.Identities;
             var newId = new ClaimsPrincipal();
