@@ -1,11 +1,10 @@
 <div class="container">
+    <div class="mt-3 mb-2">
 
-    <h1 class="font-weight-bold">Panel administratora</h1>
-
-    <div class="mt-5 mb-2">
-        <h3 class="font-weight-bold">Filtruj</h3>
         <div class="mt-1 mb-2 row d-flex justify-content-center">
-
+            <div class="col-4 mt-3">
+                <h3 class="font-weight-bold">Filtruj</h3>
+            </div>
             <div class="col-4">
                 <label class="font-weight-bold">Email</label>
                 <input id="mailFilter" class="form-control" [(ngModel)]="emailFilter" placeholder="Email">
@@ -24,39 +23,40 @@
     </div>
 
     <div class="float-right">
-        <button class="btn btn-primary" (click)="onAddKey()">Dodaj Klucz</button>
+        <button class="btn btn-primary mt-2" (click)="editUser(null)">Dodaj Klucz</button>
     </div>
 
     <h3 class="mt-3 mb-2 font-weight-bold">Lista kluczy</h3>
     <div class="d-flex justify-content-center mt-3">
 
         <table class="table table-bordered">
-            <thead class="bg-primary table-thead">
+            <thead class="table-thead">
                 <tr>
-                    <th scope="col">Klucz</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">rodzaj użytkownika</th>
-                    <th scope="col" class="text-center">akcja</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Nazwa</th>
+                    <th scope="col">Rodzaj użytkownika</th>
+                    <th scope="col" class="text-center">Akcja</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let item of keys | keysAdminPipe: emailFilter: keyUserTypeFilter">
-                    <td>{{item.key}}</td>
-                    <td> {{item.eMail}} </td>
+
+            <tbody *ngIf="settingsService.users">
+                <tr *ngFor="let item of settingsService.users.value | usersAdminPipe: emailFilter: keyUserTypeFilter">
+                    <td> {{item.eMail}}</td>
+                    <td> {{item.name}} </td>
                     <td>
                         <span *ngIf="item.userType == 0">Użytkownik</span>
                         <span *ngIf="item.userType == 1">Ankieter</span>
                         <span *ngIf="item.userType == 2">Admin</span>
                     </td>
                     <td>
-                        <div class="d-flex justify-content-center mt-2 ">
-                            <button class="btn btn-danger ml-2 mr-2" (click)="this.removeKey(item.key)">Usuń</button>
-                            <button class="btn btn-primary" (click)="onCreate(item)">Wybierz</button>
+                        <div class="d-flex justify-content-center">
+                            <button class="btn btn-primary" (click)="editUser(item)">Edytuj</button>
                         </div>
                     </td>
                 </tr>
-
             </tbody>
+
+            <h1 *ngIf="!settingsService.users" class="row d-flex justify-content-center mt-5 mb-3">Wczytywanie</h1>
         </table>
     </div>
 </div>

@@ -19,7 +19,7 @@
             <mat-form-field class="w-100">
                 <input type="text" matInput [matAutocomplete]="auto" [(ngModel)]="key.eMail" />
                 <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let account of settingsService.keys | async" [(value)]="account.eMail">
+                    <mat-option *ngFor="let account of settingsService.users | async" [(value)]="account.eMail">
                         {{ account.eMail }}
                     </mat-option>
                 </mat-autocomplete>

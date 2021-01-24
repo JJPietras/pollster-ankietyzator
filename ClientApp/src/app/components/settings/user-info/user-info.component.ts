@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
     BrowserModule,
     FormsModule
   ],
-  declarations: [ AppComponent]
+  declarations: [AppComponent]
 })
 
 export class UserInfoComponent {
@@ -30,45 +30,44 @@ export class UserInfoComponent {
 
   newTag: string;
   user: User;
-  
+
   newKey: string = null;
 
-  updateDTO : UpdateAccountDto;
- 
-  constructor(public authenticationService: AuthenticationService,public http: HttpClient, 
+  updateDTO: UpdateAccountDto;
+
+  constructor(public authenticationService: AuthenticationService, public http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string, private router: Router, public settingService: SettingsService) {
 
-    if (this.authenticationService.user){
+    if (this.authenticationService.user) {
       this.user = this.authenticationService.user.value;
-      this.tagsArray = this.user.tags.split('/'); 
+      this.tagsArray = this.user.tags.split('/');
     }
-    else{
+    else {
       this.authenticationService.getUser();
       this.http.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
         this.user = result.data;
-        this.tagsArray = this.user.tags.split('/'); 
+        this.tagsArray = this.user.tags.split('/');
       }, error => {
         console.error("Failed to fetch the user session. Please, log in again.")
       });
     }
-      
   }
 
-  deleteTag(option: number){
+  deleteTag(option: number) {
     this.tagsArray.splice(option, 1);
   }
 
-  addTag(){
-    if (this.newTag.trim() == ""){
+  addTag() {
+    if (this.newTag.trim() == "") {
       Swal.fire("Podaj poprawny tag.", "", "error");
     }
-    else{
+    else {
       this.tagsArray.push(this.newTag);
       this.newTag = ""
     }
   }
 
-  saveChanges(){
+  saveChanges() {
     this.updateDTO = {
       Tags: this.tagsArray.join("/"),
       EMail: this.user.eMail,
@@ -76,26 +75,27 @@ export class UserInfoComponent {
     }
 
     console.log(this.updateDTO)
-    if(this.updateDTO){
-        this.settingService.showLoading("Aktualizacja zmian")
+    if (this.updateDTO) {
+      this.settingService.showLoading("Aktualizacja zmian")
 
-        this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
-          Swal.close()
-          console.log(result);
-          this.authenticationService.getUser();
-         },  (error) => {
-          Swal.close();
-          Swal.fire("Błąd", error.message, "error");
-          console.log(error.message);
-        });}
+      this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result => {
+        Swal.close()
+        console.log(result);
+        this.authenticationService.getUser();
+      }, (error) => {
+        Swal.close();
+        Swal.fire("Błąd", error.message, "error");
+        console.log(error.message);
+      });
+    }
   }
 
-  addKey(){
+  addKey() {
     Swal.fire({
       title: "Klucz uprawnień",
       text: "Podaj klucz:",
       input: 'text',
-      showCancelButton: true        
+      showCancelButton: true
     }).then((result) => {
       if (result.value || result.value == "") {
         this.newKey = result.value;
@@ -103,7 +103,6 @@ export class UserInfoComponent {
       else {
         this.newKey = null;
       }
-  });
-  }    
+    });
+  }
 }
-

@@ -31,13 +31,18 @@ export class ClonePollsComponent {
   }
 
   clonePoll() {
-    this.pollsService.showLoading("Klonowanie ankiety.")
-    this.http.get<Request>(this.baseUrl + 'polls/clone-poll/' + this.pollsterId + '/' + this.pollId).subscribe(result => {
-      Swal.close()
-      console.log(result)
-      Swal.fire("Gratulacje", "ankieta została sklonowana", "info").then(
-        () => { this.router.navigate(['/'])})
-    }, error => { Swal.fire("Błąd", error.message, "error")});
+    if (!this.pollsterId || !this.pollId || this.pollsterId <1 || this.pollId <1){
+      Swal.fire("Błąd", "uzupełnij wszystkie pola poprawnie", "error")
+    }
+    else{
+      this.pollsService.showLoading("Klonowanie ankiety.")
+      this.http.get<Request>(this.baseUrl + 'polls/clone-poll/' + this.pollsterId + '/' + this.pollId).subscribe(result => {
+        Swal.close()
+        console.log(result)
+        Swal.fire("Gratulacje", "ankieta została sklonowana", "info").then(
+          () => { this.router.navigate(['/'])})
+      }, error => { Swal.fire("Błąd", error.message, "error")});
+    }
   }
 
   pollsterId: number;

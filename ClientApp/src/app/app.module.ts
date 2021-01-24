@@ -19,7 +19,7 @@ import { SelectPollComponent } from './components/select-poll/select-poll.compon
 import { PollStatisticsComponent } from './components/poll-statistics/poll-statistics.component'
 import { PollsStatisticsComponent } from './components/polls-statistics/polls-statistics.component'
 import { UserInfoComponent } from './components/settings/user-info/user-info.component'
-import { AdminKeysComponent } from './components/settings/admin-keys/admin-keys.component'
+
 import { PollCreatorComponent } from './components/poll-creator/poll-creator.component'
 import { PollAnswersComponent } from './components/poll-answers/poll-answers.component'
 import { PollsAdminPanelComponent } from './components/polls-admin-panel/polls-admin-panel.component'
@@ -29,11 +29,12 @@ import { FooterComponent } from './components/footer/footer.component'
 import { PollsAdminPanelPipe } from './pipes/polls-admin-panel-filter.pipe'
 
 import { KeysAdminPipe } from './pipes/admin-keys-filter.pipe'
+import { UsersAdminPipe } from './pipes/admin-users-filter.pipe'
 
 import {MatNativeDateModule} from '@angular/material/core';
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-//import { BootstrapTabDirective } from './directives/bootstrap-tab.directive'
+
 import { ClonePollsComponent } from './components/settings/clone-polls/clone-polls.component'
 
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
@@ -41,7 +42,13 @@ import { CommonModule } from '@angular/common';
 import { PlotlyModule } from 'angular-plotly.js';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatAutocompleteModule, MatFormFieldModule, MatInput, MatInputModule, MatSelect, MatSelectModule } from '@angular/material';
+
 import { AdminEditKeyComponent } from './components/settings/admin-keys/admin-edit-key/admin-edit-key.component';
+import { AdminKeysComponent } from './components/settings/admin-keys/admin-keys.component'
+
+import { AdminUsersComponent } from './components/settings/admin-users/admin-users.component';
+import { AdminEditUserComponent } from './components/settings/admin-users/admin-edit-user/admin-edit-user.component';
+
 import { PollsAdminPanelPopupComponent } from './components/polls-admin-panel/polls-admin-panel-popup/polls-admin-panel-popup.component';
 
 
@@ -57,13 +64,13 @@ PlotlyModule.plotlyjs = PlotlyJS;
     PollStatisticsComponent, PollsStatisticsComponent,
     SettingsComponent, UserInfoComponent,
     LoginComponent,
-    AdminKeysComponent,
+    AdminKeysComponent, AdminUsersComponent,
+    AdminEditKeyComponent, AdminEditUserComponent,
     PollCreatorComponent,
     PollAnswersComponent,
     PollsAdminPanelComponent,
     PollsAdminPanelPopupComponent,
-    AdminEditKeyComponent,
-    PollsAdminPanelPipe, KeysAdminPipe,
+    PollsAdminPanelPipe, KeysAdminPipe, UsersAdminPipe,
     FooterComponent,
     ClonePollsComponent
   ],
@@ -101,7 +108,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [AdminEditKeyComponent, PollsAdminPanelPopupComponent]
+  entryComponents: [AdminEditKeyComponent, AdminEditUserComponent, PollsAdminPanelPopupComponent]
 })
 
 export class AppModule {

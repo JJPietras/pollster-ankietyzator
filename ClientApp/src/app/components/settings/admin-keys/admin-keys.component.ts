@@ -22,26 +22,17 @@ export class AdminKeysComponent {
   emailFilter: string = "";
   keyUserTypeFilter: number = -1;
 
-  keys: Key[];
 
   constructor(public authenticationService: AuthenticationService, public http: HttpClient, @Inject('BASE_URL') public baseUrl: string, private router: Router
     ,public settingsService: SettingsService, private dialog: MatDialog) {
 
     this.getKeys();
-
-    //  this.http.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
-    //    this.UsersAccounts = result.data;
-    //  })
-     
-     console.log(this.authenticationService.user.value);
   }
 
   getKeys(){
-    this.keys = undefined;
+    this.settingsService.keysSource = undefined;
     this.http.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
-      this.keys = result.data;
-      this.settingsService.changeKeys(this.keys)
-      console.log(this.keys);
+      this.settingsService.changeKeys(result.data);
    }, (error) => { console.log(error.message); })
   }
 
@@ -69,7 +60,6 @@ export class AdminKeysComponent {
           this.settingsService.showLoading("Usuwanie klucza.");
           
           this.http.delete(this.baseUrl + 'keys/remove-key/' + val).subscribe(result =>{
-            console.log(result);
             Swal.close();
             this.getKeys();
           },  (error) => {
