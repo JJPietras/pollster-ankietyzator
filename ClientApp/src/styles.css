@@ -1,16 +1,98 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
 /* Provide sufficient contrast against white background */
+
+html {
+    background-color: #eeeeee;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.nav_color {
+    background-color: #6247AA;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+[main] {
+    min-height: 90%;
+}
+
+[footer] {
+    height: 150px;
+    margin-top: -150px;
+}
+
+.bg {
+    background-color: #eeeeee;
+    position: relative;
+    min-height: 100%;
+}
+
+.fg {
+    background-color: #ffffff;
+    margin-bottom: 5%;
+    margin-top: 5%;
+    box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    /* 5px rounded corners */
+    padding: 2%;
+    border-radius: 15px 15px 15px 15px;
+}
+
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 code {
-  color: #e01a76;
+    color: #e01a76;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+}
+
+.side-by-side {
+    overflow: auto;
+    float: left;
+    position: relative;
+}
+
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.fill-page {
+    height: 80%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.b-close {
+    outline: none !important;
+    box-shadow: none !important;
 }

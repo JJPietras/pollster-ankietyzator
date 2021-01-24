@@ -1,0 +1,65 @@
+<div class="container fg">
+
+    <mat-tab-group mat-align-tabs="start" dynamicHeight>
+        <mat-tab label="Ankiety niewypełnione">
+
+            <div *ngIf="pollsUnfilled">
+                <table *ngIf="pollsUnfilled.length>0" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tytuł ankiety</th>
+                            <th scope="col">Tagi</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Mail Autora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let poll of pollsUnfilled" (click)="selectPoll(poll)" class="clickable">
+                            <td>{{poll.title}}</td>
+                            <td>{{poll.tags}}</td>
+                            <td>{{poll.authorName}}</td>
+                            <td>{{poll.authorEmail}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsUnfilled.length==0">Brak ankiet</h2>
+            </div>
+
+            <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="!pollsUnfilled">Wczytywanie...</h2>
+
+        </mat-tab>
+        <mat-tab label="Ankiety wypełnione">
+
+            <div *ngIf="pollsFilled ">
+                <table *ngIf="pollsFilled.length>0" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tytuł ankiety</th>
+                            <th scope="col">Tagi</th>
+                            <th scope="col">Autor</th>
+                            <th scope="col">Mail Autora</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let poll of pollsFilled">
+                            <td>{{poll.title}}</td>
+                            <td>{{poll.tags}}</td>
+                            <td>{{poll.authorName}}</td>
+                            <td>{{poll.authorEmail}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsFilled.length==0">Brak ankiet</h2>
+            </div>
+
+            <h2 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="!pollsFilled">Wczytywanie...</h2>
+
+        </mat-tab>
+    </mat-tab-group>
+
+
+</div>

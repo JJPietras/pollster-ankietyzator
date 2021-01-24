@@ -1,0 +1,45 @@
+<div class="container">
+    <button type="btn" class="b-close close" aria-label="Close" (click)="onClose()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+    <div *ngIf="user; else loading" class="mt-4 mb-4">
+        <h2>Klucze zmiany uprawnień</h2>
+        <h4 class="mt-4">Wprowadzony klucz:</h4>
+
+        <div class="row ml-1 mr-1">
+            <input class="form-control col-sm-8" placeholder="Brak nowego klucza uprawnień" [(ngModel)]="newKey" readonly/>
+            <div class="col-sm-1 "></div>
+            <button class="btn btn-success btn-sm float-sm-right col-sm-3" (click)="addKey()">Dodaj nowy klucz</button>
+        </div>
+
+        <div class="mt-4 ">
+            <h2>Modyfikowanie własnych Tagów</h2>
+
+            <h5 class="mt-4">Dodane tagi:</h5>
+            <ul class="list-group">
+                <li *ngFor="let tag of tagsArray; let inx=index" class="list-group-item">{{tag}}
+                    <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteTag(inx)">&times;</button>
+                </li>
+            </ul>
+
+            <div *ngIf="tagsArray.length<1" class="alert alert-secondary mt-2">Brak</div>
+
+            <div class="mt-4">
+                <label>Dodaj tag</label>
+                <input class="form-control" placeholder="Podaj tag" [(ngModel)]="newTag" [ngModelOptions]="{standalone: true}" />
+                <button class="btn btn-success mt-3" (click)="addTag()">Dodaj</button>
+            </div>
+        </div>
+
+        <div class="form-group float-right">
+            <button class="btn btn-success" (click)="saveChanges()">Zapisz zmiany</button>
+        </div>
+
+    </div>
+
+    <ng-template #loading>
+        <h1 class="row d-flex justify-content-center mt-5 mb-3">Wczytywanie</h1>
+    </ng-template>
+
+</div>

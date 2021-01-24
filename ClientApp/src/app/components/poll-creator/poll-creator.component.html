@@ -1,0 +1,262 @@
+<div class="container fg" style="padding-bottom: 6%;">
+    <form class="needs-validation" *ngIf="newPoll">
+        <div>
+            <h3>Tytuł</h3>
+            <input class="form-control" name="title" [(ngModel)]="newPoll.title" placeholder="ustaw tytuł" [(ngModel)]="newPoll.title" required/>
+
+        </div>
+
+        <div class="mt-4 mb-2">
+            <h3>Opis</h3>
+            <textarea class="form-control" name="desc" [(ngModel)]="newPoll.description" placeholder="ustaw opis" required></textarea>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="mt-5">Tworzenie pytań</h3>
+            <div class="mb-1 p-2 border">
+
+                <div *ngFor="let question of questionsCreator; let inx=index" class="mt-5 mb-2 p-3 border">
+                    <button class="btn btn-danger btn-md float-sm-right" (click)="removeQuestion(inx)">&times;</button>
+                    <h3>Pytanie nr {{inx+1}}</h3>
+                    <div *ngIf="question.type == null">
+                        <button class="btn btn-primary mr-1" (click)="setType(0,inx)">Jeden wybór</button>
+                        <button class="btn btn-primary mr-1" (click)="setType(1,inx)">Wielokrotnego wyboru </button>
+                        <button class="btn btn-primary mr-1" (click)="setType(3,inx)">Tekstowy</button>
+                        <button class="btn btn-primary mr-1" (click)="setType(2,inx)">Suwak</button>
+                        <button class="btn btn-primary mr-1" (click)="setType(4,inx)">Liczbowy</button>
+                    </div>
+
+                    <div *ngIf="question.type == 0" class="mt-3">
+                        <h5 class="pt-4">Wybrano typ pytania: Pojedynczego wyboru</h5>
+                        <div class="mt-3">
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" />
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
+                        </div>
+                        <h5 class="mt-3">Odpowiedzi:</h5>
+
+                        <ul class="list-group">
+                            <li *ngFor="let option of question.options; let in2=index" class="list-group-item">{{option}}
+                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
+                            </li>
+                        </ul>
+                        <!-- <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div> -->
+                        <div class="alert mt-2 {{(question.options.length<2)? 'alert-danger' : 'alert-success'}}">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div>
+
+                        <div class="mt-4">
+                            <label>Wprowadź tekst odpowiedzi</label>
+                            <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="questionsCreator[inx].helpText" [ngModelOptions]="{standalone: true}" />
+                            <button class="btn btn-success mt-2" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj opcje</button>
+                        </div>
+
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
+                            <label class="form-check-label">Nie wymaga odpowiedzi</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                    </div>
+
+                    <div *ngIf="question.type == 1" class="mt-3">
+                        <h5 class="pt-4">Wybrano typ pytania: Wielokrotnego wyboru</h5>
+                        <div class="mt-3">
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
+                        </div>
+
+                        <h5 class="mt-4">Odpowiedzi:</h5>
+                        <ul class="list-group">
+                            <li *ngFor="let option of question.options; let in2=index" class="list-group-item">{{option}}
+                                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteOption(inx, in2)">&times;</button>
+                            </li>
+                        </ul>
+                        <!-- <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div> -->
+
+                        <div class="alert mt-2 {{(question.options.length<2)? 'alert-danger' : 'alert-success'}}">
+                            Wymagane jest dodanie conajmniej 2 odpowiedzi
+                        </div>
+                        <div class="mt-4">
+                            <label>Dodaj nową odpowiedź</label>
+                            <input class="form-control" placeholder="odpowiedzi" [(ngModel)]="questionsCreator[inx].helpText" [ngModelOptions]="{standalone: true}" />
+                            <button class="btn btn-success mt-2" (click)="addOption(inx, questionsCreator[inx].helpText)">Dodaj
+                                opcje</button>
+                        </div>
+
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
+                            <label class="form-check-label">Nie wymaga odpowiedzi</label>
+                        </div>
+
+                        <!-- <div>
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+
+                        </div>
+                        <div class="mt-2">
+                        </div> -->
+
+                        <div class="mt-2">
+                            <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                    </div>
+
+                    <div *ngIf="question.type == 3" class="mt-3">
+                        <h5 class="pt-4">Wybrano typ pytania: tekstowy</h5>
+                        <div class="mt-5">
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
+                        </div>
+
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
+                            <label class="form-check-label">Nie wymaga odpowiedzi</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
+                            <input class="form-control" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                    </div>
+
+                    <div *ngIf="question.type == 2 " class="mt-3">
+                        <h5 class="pt-4">Wybrano typ pytania: suwak</h5>
+                        <div>
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
+                        </div>
+                        <div>
+                            <label>Wartości:</label>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" min="0" placeholder="Podaj skok wartości" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/>
+                        </div>
+
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
+                            <label class="form-check-label">Nie wymaga odpowiedzi</label>
+                        </div>
+                        <div class="mt-2">
+                            <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                    </div>
+
+                    <div *ngIf="question.type == 4" class="mt-3">
+                        <h5 class="pt-4">Wybrano typ pytania: liczbowy</h5>
+                        <div class="mt-5">
+                            <label>Podaj pytanie:</label>
+                            <input class="form-control" placeholder="pytanie" [(ngModel)]="questionsCreator[inx].title" [ngModelOptions]="{standalone: true}" required/>
+                            <div class="alert {{(!questionsCreator[inx].title || questionsCreator[inx].title == '')? 'alert-danger' : 'alert-success'}} mt-2">To pole jest wymagane.</div>
+                        </div>
+                        <div class="mt-5">
+                            <label>Wartości:</label>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj minimum" [(ngModel)]="questionsCreator[inx].options[0]" [ngModelOptions]="{standalone: true}" required/>
+                            <input class="form-control mt-2" type="number" placeholder="Podaj maksimum" [(ngModel)]="questionsCreator[inx].options[1]" [ngModelOptions]="{standalone: true}" required/>
+                            <!-- <input class="form-control mt-2" type="number" placeholder="Podaj wartość początkową" [(ngModel)]="questionsCreator[inx].options[2]" [ngModelOptions]="{standalone: true}" required/> -->
+                        </div>
+                        <div class="form-check mt-3">
+                            <input type="checkbox" class="form-check-input" [(ngModel)]="questionsCreator[inx].allowEmpty" [ngModelOptions]="{standalone: true}">
+                            <label class="form-check-label">Nie wymaga odpowiedzi</label>
+                        </div>
+
+                        <div class="mt-2">
+                            <label class="form-check-label">Maksymalna długość (0 - dowolna)</label>
+                            <input class="form-control mt-2" type="number" placeholder="" value="0" [(ngModel)]="questionsCreator[inx].maxLength" [ngModelOptions]="{standalone: true}" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 pb-3 text-center justify-content-center">
+                    <button class="btn btn-primary btn-lg" (click)="addQuestion()">Dodaj pytanie</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="mt-3">
+            <div>
+                <h3>Przypisz użytkowników - Email:</h3>
+                <div class="form-group">
+                    <textarea class="form-control" name="mails" rows="3" [(ngModel)]="newPoll.emails" required></textarea>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3>Ustal tagi dla ankiety: </h3>
+                <input class="form-control" name="tags" [(ngModel)]="newPoll.tags" required/>
+            </div>
+
+        </div> -->
+        <!-- <div *ngIf="question.options.length<2" class="alert alert-danger mt-2">
+            Wymagane jest dodanie conajmniej 2 odpowiedzi
+        </div> -->
+
+        <!-- <div class="alert mt-2 {{(newPoll.newEmails.length<1)? 'alert-danger' : 'alert-success'}}">
+            Wymagane jest dodanie conajmniej 1 odpowiedzi
+        </div> -->
+
+
+        <h5 class="mt-4">Dodane edresy E-mail:</h5>
+        <ul class="list-group">
+            <li *ngFor="let mail of newPoll.newEmails; let inx=index" class="list-group-item">{{mail}}
+                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteMail(inx)">&times;</button>
+            </li>
+        </ul>
+
+        <div *ngIf="newPoll.newEmails.length<1" class="alert alert-secondary mt-2">Brak</div>
+
+        <div class="mt-4">
+            <label>Dodaj adres</label>
+            <input class="form-control" placeholder="E-mail" [(ngModel)]="newPoll.newEmail" [ngModelOptions]="{standalone: true}" />
+            <button class="btn btn-success mt-2" (click)="addMail()">Dodaj</button>
+        </div>
+
+        <h5 class="mt-4">Dodane tagi:</h5>
+        <ul class="list-group">
+            <li *ngFor="let tag of newPoll.newTags; let inx=index" class="list-group-item">{{tag}}
+                <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteTag(inx)">&times;</button>
+            </li>
+        </ul>
+
+        <div *ngIf="newPoll.newTags.length<1" class="alert alert-secondary mt-2">Brak</div>
+
+        <div class="mt-4">
+            <label>Dodaj tag</label>
+            <input class="form-control" placeholder="Podaj tag" [(ngModel)]="newPoll.newTag" [ngModelOptions]="{standalone: true}" />
+            <button class="btn btn-success mt-2" (click)="addTag()">Dodaj</button>
+        </div>
+
+
+        <h3 class="mt-3">Ustal anonimowość ankiety: </h3>
+        <div class="row mt-3">
+            <div class="col d-flex justify-content-center">
+                <label class="center-vert " for="anonim0">Nieanonimowa</label>
+                <input type="radio" class="chonky-radio" name="anonim0" id=anonim0 [value]="true" [(ngModel)]="newPoll.nonAnonymous" />
+            </div>
+            <div class="col d-flex justify-content-center">
+                <label class="center-vert" for="anonim1">Anonimowa</label>
+                <input type="radio" class="chonky-radio" name="anonim1" id=anonim1 [value]="false" [(ngModel)]="newPoll.nonAnonymous" />
+            </div>
+        </div>
+
+        <div class="mt-3 float-left">
+            <button class="btn btn-danger">Anuluj</button>
+        </div>
+        <div class="mt-3 float-right">
+            <button *ngIf="type=='new'" class="btn btn-success" (click)="validate()">Utwórz</button>
+            <button *ngIf="type=='edit'" class="btn btn-warning" (click)="validate()">Aktualizuj</button>
+        </div>
+    </form>
+
+</div>

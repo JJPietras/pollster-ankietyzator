@@ -1,0 +1,25 @@
+<div class="container fg">
+    <h1>Ustawienia</h1>
+
+    <mat-tab-group *ngIf="authenticationService.user" mat-align-tabs="start" dynamicHeight>
+        <mat-tab label="Użytkownik">
+            <div class="container justify-content-center">
+                <app-user-info></app-user-info>
+            </div>
+        </mat-tab>
+
+        <mat-tab *ngIf="authenticationService.user.value.userType > 0" label="Ankieter">
+            <app-clone-polls></app-clone-polls>
+        </mat-tab>
+
+        <mat-tab *ngIf="authenticationService.user.value.userType > 1" label="Administrator - Klucze">
+            <app-admin-keys></app-admin-keys>
+        </mat-tab>
+
+        <mat-tab *ngIf="authenticationService.user.value.userType > 1" label="Administrator - Użytkownicy">
+            <app-admin-users></app-admin-users>
+        </mat-tab>
+
+    </mat-tab-group>
+
+</div>
