@@ -1,10 +1,10 @@
 import {PipeTransform, Pipe } from '@angular/core'
 
 @Pipe({
-    name: 'keysAdminPipe'
+    name: 'usersAdminPipe'
 })
 
-export class KeysAdminPipe implements PipeTransform{
+export class UsersAdminPipe implements PipeTransform{
   
       transform(items: User[], searchText: string, selectedCategory: number): User[] {
         if(!items) return [];

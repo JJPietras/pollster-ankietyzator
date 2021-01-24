@@ -1,5 +1,5 @@
 interface User {
-  accountId: number;
+  accountId?: number;
   name: string;
   eMail: string;
   tags: string;
