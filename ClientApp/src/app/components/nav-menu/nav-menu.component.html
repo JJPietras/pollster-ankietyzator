@@ -1,157 +1,64 @@
-<!--<header>
-  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">Ankietyzator</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
-        aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
+<header class="mb-5">
+    <nav class="navbar navbar-expand-lg  fixed-top nav_color  navbar-transparent  " color-on-scroll="500">
+        <div class="container">
+            <a class="navbar-brand" [routerLink]="['/']">Ankietyzator</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div *ngIf="authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-        [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow">
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
-          </li>
+            <div *ngIf="authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" [ngClass]="{ show: isExpanded }">
+                <ul class="navbar-nav flex-grow ml-auto">
+                    <!-- <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
+                        <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
+                    </li> -->
 
-          <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll-creator']">Utwórz Ankietę</a>
-          </li>
+                    <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/poll-creator/new']">Utwórz Ankietę</a>
+                    </li>
 
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/select-poll']">Ankiety</a>
-          </li>
+                    <li *ngIf=" authenticationService.user.value.userType>1" class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/polls-admin']">Admin - ankiety</a>
+                    </li>
 
-          <li *ngIf="authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll-statistics']">Statystyki</a>
-          </li>
+                    <li class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/select-poll']">Ankiety</a>
+                    </li>
 
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/settings']">Ustawienia</a>
-          </li>
+                    <li *ngIf="authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/poll-statistics']">Statystyki</a>
+                    </li>
 
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" >Zalogowano jako ({{authenticationService.user.value.name}})</a>
-          </li>
+                    <li class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/settings']">Ustawienia</a>
+                    </li>
 
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a style="cursor: pointer;" class="nav-link text-dark" (click)="authenticationService.LogOutFromGoogle()">Wyloguj</a>
-          </li>
+                    <li class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark">Zalogowano jako ({{authenticationService.user.value.name}})</a>
+                    </li>
 
-        </ul>
-      </div>
+                    <li class="nav-item" [routerLinkActive]="['link-active']">
+                        <a style="cursor: pointer;" class="nav-link text-dark" (click)="authenticationService.LogOutFromGoogle()">Wyloguj</a>
+                    </li>
 
-      <div *ngIf="!authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-        [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow">
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
-          </li>
+                </ul>
+            </div>
 
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/user-login']">Zaloguj</a>
-          </li>
+            <div *ngIf="!authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" [ngClass]="{ show: isExpanded }">
+                <ul class="navbar-nav flex-grow">
 
-          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
+                    <li class="nav-item" [routerLinkActive]="['link-active']">
+                        <a class="nav-link text-dark" [routerLink]="['/user-login']">Zaloguj</a>
+                    </li>
+
+                    <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" (click)="authenticationService.SignInWithGoogle()">Zaloguj</a>
           </li> -->
 
-          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" (click)="authenticationService.loginViaGoogle()">Login service</a>
-          </li> 
-        </ul>
-      </div>
-    </div>
-  </nav>
-</header>-->
-<header class="mb-5 header-margin-bottom">
-  <nav class="navbar navbar-expand-lg  fixed-top bg-primary navbar-transparent  " color-on-scroll="500">
-    <div class="container">
-        <a class="navbar-brand" [routerLink]="['/']">Ankietyzator</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
-        aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div *ngIf="authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-        [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow ml-auto">
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
-          </li>
-
-          <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll-creator']">Utwórz Ankietę</a>
-          </li>
-
-          <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/polls-admin']">Admin - ankiety</a>
-          </li>
-
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/select-poll']">Ankiety</a>
-          </li>
-
-          <li *ngIf="authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/poll-statistics']">Statystyki</a>
-          </li>
-
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/settings']">Ustawienia</a>
-          </li>
-
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" >Zalogowano jako ({{authenticationService.user.value.name}})</a>
-          </li>
-
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a style="cursor: pointer;" class="nav-link text-dark" (click)="authenticationService.LogOutFromGoogle()">Wyloguj</a>
-          </li>
-
-        </ul>
-      </div>
-
-      <div *ngIf="!authenticationService.user" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-        [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow">
-          <li class="nav-item" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Strona Główna</a>
-          </li>
-
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/user-login']">Zaloguj</a>
-          </li>
-
-          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" (click)="authenticationService.SignInWithGoogle()">Zaloguj</a>
-          </li> -->
-
-          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
+                    <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" (click)="authenticationService.loginViaGoogle()">Login service</a>
           </li> -->
-        </ul>
-      </div>
-    </div>
-  </nav>
-</header>
-<!--
-        <div class="navbar-translate">
-            <a class="navbar-brand" href="https://creativetimofficial.github.io/now-ui-kit-angular/index" rel="tooltip" title="Designed by Invision. Coded by Creative Tim" data-placement="bottom" target="_blank">
-                Now Ui Kit Angular - Docs
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar bar1"></span>
-                <span class="navbar-toggler-bar bar2"></span>
-                <span class="navbar-toggler-bar bar3"></span>
-            </button>
+                </ul>
+            </div>
         </div>
-        <div class="collapse navbar-collapse" data-nav-image="../src/assets/img/blurred-image-1.jpg" data-color="orange">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="https://creativetimofficial.github.io/now-ui-kit-angular/index">Back to Kit</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/creativetimofficial/now-ui-kit-angular/issues">Have an issue?</a>
-                </li>
-            </ul>
-        </div>-->
+    </nav>
+</header>

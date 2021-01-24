@@ -25,7 +25,7 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
   newKey = {
     key: "",
     eMail: "",
-    userType: null
+    userType: 0
   }
 
   accountControl= new FormControl();
@@ -44,6 +44,15 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
     public settingsService: SettingsService){
 
       this.receivedData = data;
+
+      /*this.httpclient.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
+        this.usersAccounts = result;
+      },error => console.log(error))
+
+      this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
+        this.keyArray = result;
+      },error => console.log(error))*/
+
       this.usersAccounts = this.authenticationService.users.value;
       this.keyArray = this.settingsService.keys.value;
       //this.receivedUsers = this.authenticationService.users.value;
@@ -88,7 +97,7 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Nie podałeś klucza'
+        text: 'Nie podałeś nazwy klucza'
       })
     }
   
@@ -110,7 +119,25 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
     }
 
     else{
-      this.settingsService.addKey(this.newKey);
+      //this.settingsService.addKey(this.newKey);
+      this.httpclient.post<Key>(this.baseUrl + 'keys/add-key', this.newKey).subscribe(result =>{
+
+        Swal.fire({
+          title: 'Dodano nowy klucz !',
+          confirmButtonText: `Ok`,
+        }).then((result) => {
+            location.reload();
+        })
+
+      }, error =>  Swal.fire({
+        title: 'Ups, Wystąpił problem spróbuj dodaćklucz jeszcze raz  !',
+        confirmButtonText: `Ok`,
+      }).then((result) => {
+          
+      }))
+
+      
+      
     }
 
     

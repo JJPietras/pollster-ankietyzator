@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container fg">
     <mat-tab-group mat-align-tabs="start" dynamicHeight>
         <mat-tab label="Dane statystyczne">
             <div *ngIf="!questionStats">
@@ -13,9 +13,15 @@
                     <div *ngIf="graph.data">
                         <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
                     </div>
-                    <div *ngIf="!graph.data">
-                        <h5 class="row d-flex justify-content-center mt-5">{{graph.title}}</h5>
-                        <h5 class="row d-flex justify-content-center mb-2 mt-3">Brak odpowiedzi na to pytanie.</h5>
+
+                    <div *ngIf="graph.title">
+                        <p class="row d-flex justify-content-center q-header">{{graph.title}}</p>
+                        <p class="row d-flex justify-content-center mb-5 mt-4 q-header">{{graph.counts}} osób/y odpowiedziało na to pytanie.</p>
+                    </div>
+
+                    <div *ngIf="!graph.data && !graph.title">
+                        <p class="row d-flex justify-content-center" q-header>{{graph.title}}</p>
+                        <p class="row d-flex justify-content-center mb-5 mt-4 q-header">Brak odpowiedzi na to pytanie.</p>
                     </div>
                 </div>
 
@@ -53,7 +59,7 @@
                             </div>
                         </div>
 
-                        <div class="card" *ngIf="question.type==2">
+                        <div class="card" *ngIf="question.type==3">
                             <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
 
                             <div class="form-group">
@@ -63,7 +69,7 @@
                             <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>
                         </div>
 
-                        <div class="card" *ngIf="question.type==3">
+                        <div class="card" *ngIf="question.type==2">
                             <h5 class="mb-2">({{question.position}}) {{question.title}}</h5>
                             <ng-container *ngIf="{ min: question.options.split('/')[0], max: question.options.split('/')[1], step: question.options.split('/')[2] } as options">
 
@@ -132,7 +138,7 @@
                             <div *ngIf="pollAnonymousAnswers.length>0">
                                 <div *ngFor="let question of pollStats.questions">
 
-                                    <div class="card" *ngIf="question.type==2">
+                                    <div class="card" *ngIf="question.type==3">
                                         <h3 class="mb-2">({{question.position}}) {{question.title}}</h3>
                                         <h3>Odpowiedzi:</h3>
                                         <div class="card" *ngFor="let answer of getAnswers(question.questionId)">
@@ -149,6 +155,24 @@
                     </div>
                 </div>
             </div>
+        </mat-tab>
+
+        <mat-tab label="Ustawienia ankiety">
+            <div class="mt-4 pb-3 text-center justify-content-center">
+                <h3 class="m-3">Udostępnij ankietę</h3>
+
+                <h3 class="m-3">Identyfikator ankiety: {{pollStats.pollId}}, identyfikator użytkownika: {{pollStats.authorId}}.</h3>
+
+                <h3 class="m-3">Edycja ankiety</h3>
+                <button class="btn btn-success btn-lg" (click)="editPoll()">Edytuj</button>
+
+                <h3 class="m-3">Archiwizacja ankiety</h3>
+                <button class="btn btn-warning btn-lg" (click)="pollsService.archivePoll(pollStats)">Archiwizuj</button>
+
+                <h3 class="m-3">Usuwanie ankiety (administrator)</h3>
+                <button class="btn btn-danger btn-lg" *ngIf="authenticationService.user.value.userType>1" (click)="pollsService.deletePoll(pollStats)">Usuń</button>
+            </div>
+
         </mat-tab>
 
         <!-- <app-poll-answers [content]="product"></app-poll-answers> -->
