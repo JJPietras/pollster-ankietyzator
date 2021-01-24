@@ -16,7 +16,7 @@
                         <a class="nav-link text-dark" [routerLink]="['/poll-creator']">Utwórz Ankietę</a>
                     </li>
 
-                    <li *ngIf=" authenticationService.user.value.userType>0" class="nav-item" [routerLinkActive]="['link-active']">
+                    <li *ngIf=" authenticationService.user.value.userType>1" class="nav-item" [routerLinkActive]="['link-active']">
                         <a class="nav-link text-dark" [routerLink]="['/polls-admin']">Admin - ankiety</a>
                     </li>
 

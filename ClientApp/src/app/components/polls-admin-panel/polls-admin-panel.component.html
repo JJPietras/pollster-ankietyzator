@@ -15,9 +15,6 @@
                 <h1 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsActiveA.length==0">Ankiety</h1>
 
                 <div *ngIf="pollsActiveA.length>0">
-                    <h3 class="mt-2">Twoje ankiety</h3>
-
-
 
                     <h3 class="row d-flex justify-content-center mt-5 mb-3">Lista ankiet</h3>
 
@@ -29,21 +26,18 @@
                                 <th scope="col">Opis</th>
                                 <th scope="col">Wypełnienia</th>
                                 <th scope="col">Anonimowość</th>
-                                <th scope="col">Akcja</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let stat of pollsActiveA | pollFilter : searchTerm">
+                            <tr *ngFor="let stat of pollsActiveA | pollFilter : searchTerm" (click)="selectPoll2(stat)" class="clickable">
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
-                                <td>
-                                    <!-- <button class="btn btn-primary mr-2" (click)="onShow(stat)">Pokaż</button> -->
-                                 <button class="btn btn-primary mr-2" (click)="selectPoll2(stat)">Pokaż</button>
-                                    <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
-                                </td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -61,9 +55,8 @@
                 <h1 class="row d-flex justify-content-center mt-5 mb-3" *ngIf="pollsArchivedA.length==0">Brak ankiet</h1>
 
                 <div *ngIf="pollsArchivedA.length>0">
-                    <h3 class="mt-2">Ankiety archiwalne</h3>
 
-                    <h3 class="row d-flex justify-content-center mt-5 mb-3">Lista ankiet</h3>
+                    <h3 class="row d-flex justify-content-center mt-3 mb-3">Lista ankiet</h3>
 
                     <table class="table table-hover">
                         <thead>
@@ -74,21 +67,16 @@
                                 <th scope="col">Wypełnienia</th>
                                 <th scope="col">Udział procetowy</th>
                                 <th scope="col">Anonimowość</th>
-                                <th scope="col">Akcja</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let stat of pollsArchivedA | pollFilter : searchTerm" (click)="selectPoll(stat.pollId)">
+                            <tr *ngFor="let stat of pollsArchivedA | pollFilter : searchTerm" (click)="selectPoll(stat)" class="clickable">
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
                                 <td>{{stat.percentage}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
-                                <td>
-                                    <button class="btn btn-primary" (click)="onShow(stat)">Pokaż</button>
-                                    <button class="btn btn-primary" (click)="deletePoll(stat)">X</button>
-                                </td>
                             </tr>
                         </tbody>
                     </table>
