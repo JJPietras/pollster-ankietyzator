@@ -9,6 +9,8 @@ import { AuthenticationService } from "../../../services/authorisation.service";
 import { UpdateAccountDto } from '../../../models/updateDTO.model';
 import { throwToolbarMixedModesError } from '@angular/material';
 import { SettingsService } from 'src/app/services/settings.service';
+import { Observable } from 'rxjs';
+import { subscribeOn } from 'rxjs/operators';
 
 
 @Component({
@@ -30,8 +32,10 @@ export class UserInfoComponent implements OnInit {
 
   baseUrl : string;
   keys: Key;
+  keysM: Key[];
+  emailAccount: string = "";
   //konwersja z stringa na tablice
-  tags: string = "to/nie/to/pwowinno/sie/wyswietlic";
+  tags: string = "";
   tagsArray: string[] = new Array<string>();
   //index tagu ktory zostal wybrany
    currentIndex: number;
@@ -39,6 +43,7 @@ export class UserInfoComponent implements OnInit {
   modifiedtext: string;
   //
   keyChange: string;
+  userTemp;
   
   updateDTO : UpdateAccountDto = {
     EMail: '',
@@ -51,22 +56,49 @@ export class UserInfoComponent implements OnInit {
     @Inject('BASE_URL') baseUrl: string, private router: Router, public settingService: SettingsService) {
     
     this.baseUrl = baseUrl;
-    this.tags =  this.authenticationService.user.value.tags.toString();
-    this.keys = this.settingService.keys.value.find(result =>{
-      if(this.authenticationService.user.value.eMail == result.eMail){
-        return result;
-      }  
-        
-    });
+    let tmpusers;
+    this.emailAccount = this.authenticationService.user.value.eMail;
+    //let tmpusers = this.authenticationService.user.value;
+    //this.userTemp = this.authenticationService.user.value;
+
+    this.httpclient.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
+      tmpusers = result.data;
+      this.tags = tmpusers
+
+    }, error => console.error(error))
+
+    
+
+    this.httpclient.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
+      this.userTemp = result.data;
+      
+    }, error => console.error(error))
+
+     
+    
+    this.tags =  this.authenticationService.user.value.tags;
+
+    this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
+      
+      this.keysM = result.data;
+      this.keys = this.settingService.findKey(this.authenticationService.user.value.eMail);
+      
+    }, error => console.error(error));
+    // /this.keys = this.settingService.findKey(this.userTemp.eMail);
+    
+    
   }
 
   ngOnInit(){
-    this.tags =  this.authenticationService.user.value.tags.toString();
+    
     this.tagsArray = (this.tags.split('/')); 
-    console.log(this.keys);
+
   }
 
-
+  public findKey(value: Key[], user: User){
+    this.keys = value.find(result => user.eMail === result.eMail);
+    //return this.keys;
+  }
 
   //ADD TAG
   public addTag(){
@@ -76,9 +108,7 @@ export class UserInfoComponent implements OnInit {
       this.modifiedtext = "";
 
       this.tags ="";
-     this.tagsArray.forEach(slowo => {
-        this.tags = this.tags +  "/" + slowo.toString(); 
-     })
+      this.tags = this.tagsArray.join('/');
     }
      
 
@@ -141,15 +171,16 @@ export class UserInfoComponent implements OnInit {
   saveChanges(){
 
     this.updateDTO.Tags = this.tags;
-    this.updateDTO.EMail =this.authenticationService.user.value.eMail;
+    this.updateDTO.EMail =this.emailAccount;
     this.updateDTO.Key = this.keys.key
 
     if(this.updateDTO){
       
         this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
-        console.log(result);
-    
-         }, (error) => console.log(error.message + " + Failed to fetch the user session. Please, log in again."));}
+        //console.log(result);
+        location.reload();
+         }, (error) => console.log(error.message + " + Failed to save changes."));}
+         
 
   }
   

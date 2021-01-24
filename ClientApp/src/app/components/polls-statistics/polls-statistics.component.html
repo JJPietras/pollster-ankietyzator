@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container fg">
 
     <mat-tab-group mat-align-tabs="start" dynamicHeight>
         <mat-tab label="Aktywne ankiety">
@@ -25,16 +25,18 @@
                                 <th scope="col">Wypełnienia</th>
                                 <th scope="col">Udział procetowy</th>
                                 <th scope="col">Anonimowość</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let stat of pollsActive" (click)="selectPoll(stat)" style="cursor: pointer;">
+                            <tr *ngFor="let stat of pollsActive" (click)="selectPoll(stat)" class="clickable">
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
                                 <td>{{stat.percentage}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -69,7 +71,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let stat of pollsArchived" (click)="selectPoll(stat.pollId)" style="cursor: pointer;">
+                            <tr *ngFor="let stat of pollsArchived" (click)="selectPoll(stat)" style="cursor: pointer;">
                                 <th scope="row">{{stat.pollId}}</th>
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>

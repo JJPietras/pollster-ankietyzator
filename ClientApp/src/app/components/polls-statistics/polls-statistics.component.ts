@@ -18,7 +18,7 @@ export class PollsStatisticsComponent implements OnInit {
   public graphActive: any;
   public graphArchived: any;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private pollsService: PollsService) {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, public pollsService: PollsService) {
 
   }
 
@@ -27,6 +27,7 @@ export class PollsStatisticsComponent implements OnInit {
 
   ngOnInit() {
     this.getPollsData()
+
   }
 
   selectPoll(poll: PollStats) {
@@ -35,8 +36,8 @@ export class PollsStatisticsComponent implements OnInit {
   }
 
   getPollsData() {
-    let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-un-archived');
-    let r2 = this.http.get<Request>(this.baseUrl + 'polls/get-archived');
+    let r1 = this.http.get<Request>(this.baseUrl + 'polls/get-pollster-un-archived');
+    let r2 = this.http.get<Request>(this.baseUrl + 'polls/get-pollster-archived');
     let r3 = this.http.get<Request>(this.baseUrl + 'stats/get-polls-stats');
 
     forkJoin([r1, r2, r3]).subscribe(result => {
@@ -74,6 +75,10 @@ export class PollsStatisticsComponent implements OnInit {
         }
       };
     }, error => console.error(error));
+
+  }
+
+  archivePoll(pollId: number){
 
   }
 

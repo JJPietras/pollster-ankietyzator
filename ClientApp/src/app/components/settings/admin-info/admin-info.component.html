@@ -9,7 +9,7 @@
         
             <div class="col-4">
                 <label class="font-weight-bold">Email</label>
-                <input class="form-control" [(ngModel)]="emailFilter" (change)="filterEmail()" placeholder="Email">
+                <input class="form-control" [(ngModel)]="emailFilter" (ngModelChange)="filterEmail()" placeholder="Email">
             </div>  
 
 

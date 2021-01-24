@@ -16,7 +16,8 @@ import { PollsService } from "../../services/polls-service";
 export class PollComponent{
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router, private route: ActivatedRoute, public pollsService: PollsService) {
-    
+    if (!this.pollsService.pollSource)
+      this.router.navigate(['/select-poll'])
   }
   poll: Poll;
   answersFilled: boolean;
@@ -62,7 +63,7 @@ export class PollComponent{
     this.poll.questions.forEach(
       q => {
         if (q.type==1){
-            var finalAnswer = []
+            let finalAnswer = []
             q.answer.forEach((element, index) => {
               if (element)
                 finalAnswer.push(index);
@@ -78,14 +79,14 @@ export class PollComponent{
           }
         }
     )
-    console.log(this.answers);
+    //console.log(this.answers);
   }
 
   checkAnswer(answer: any, allowEmpty: boolean){
     if (!allowEmpty){
       if (answer==null || answer == ""){
         this.answersFilled = false;
-        console.log(allowEmpty)
+        //console.log(allowEmpty)
       }
     }
   }
@@ -96,8 +97,8 @@ export class PollComponent{
   }
 
   validate(): boolean{
-    var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
-    var valid = true;
+    let form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
+    let valid = true;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -108,7 +109,7 @@ export class PollComponent{
   }
 
   checkboxValidate(answers: any[]): boolean{
-    var res = false;
+    let res = false;
     answers.forEach(a => {
       if (a==true)
         res = true;

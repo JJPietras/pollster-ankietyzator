@@ -2,6 +2,7 @@ import { Injectable, OnInit, Inject } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UpdateAccountDto } from "../models/updateDTO.model";
+import { map, filter, switchMap } from 'rxjs/operators';
 @Injectable({
     providedIn: "root",
 })
@@ -40,6 +41,13 @@ export class SettingsService {
       }, error => console.error("Failed to get users. Only Admin can get users accounts."))
      
     }
+
+    public findKey(email: String){
+      return this.keys.value.find(p => p.eMail === email);//.map(keys => keys.find(p => p.eMail === email));
+      //.find(p => p.eMail === email);
+     
+    }
+
 
     //DELETE KEY
     public deleteKey(val : any){

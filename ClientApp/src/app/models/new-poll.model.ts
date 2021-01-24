@@ -1,5 +1,6 @@
 interface NewPoll {
-    authorId: number;
+    PreviousPollId?: number;
+    authorId?: number;
     title: string;
     description: string;
     tags: string;
@@ -7,4 +8,9 @@ interface NewPoll {
     nonAnonymous: boolean;
     archived: boolean;
     questions: NewQuestion[];
+    newEmail: string;
+    newEmails: string[];
+    newTag: string;
+    newTags: string[];
   }
+
