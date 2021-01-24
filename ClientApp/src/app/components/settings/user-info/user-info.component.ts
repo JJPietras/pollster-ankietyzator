@@ -76,8 +76,7 @@ export class UserInfoComponent {
       EMail: this.user.eMail,
       Key: this.newKey
     }
-
-    console.log(this.updateDTO)
+    //console.log(this.updateDTO)
     if (this.updateDTO) {
       this.settingService.showLoading("Aktualizacja zmian")
 

@@ -169,7 +169,7 @@
                 <h3 class="m-3">Archiwizacja ankiety</h3>
                 <button class="btn btn-warning btn-lg" (click)="pollsService.archivePoll(pollStats)">Archiwizuj</button>
 
-                <h3 class="m-3">Usuwanie ankiety (administrator)</h3>
+                <h3 class="m-3" *ngIf="authenticationService.user.value.userType>1">Usuwanie ankiety (administrator)</h3>
                 <button class="btn btn-danger btn-lg" *ngIf="authenticationService.user.value.userType>1" (click)="pollsService.deletePoll(pollStats)">Usuń</button>
             </div>
 
