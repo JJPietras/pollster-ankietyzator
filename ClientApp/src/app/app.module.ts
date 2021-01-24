@@ -33,7 +33,7 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 //import { BootstrapTabDirective } from './directives/bootstrap-tab.directive'
-
+import { ClonePollsComponent } from './components/settings/clone-polls/clone-polls.component'
 
 import * as PlotlyJS from 'plotly.js/dist/plotly.js';
 import { CommonModule } from '@angular/common';
@@ -64,7 +64,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     AdminInfoPopupComponent,
     AdminInfoPopupAddkeyComponent,
     PollsAdminPanelPipe,
-    FooterComponent
+    FooterComponent,
+    ClonePollsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -90,7 +91,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
       { path: 'select-poll', component: SelectPollComponent },
       { path: 'poll-statistics', component: PollsStatisticsComponent },
       { path: 'poll-statistics/:id', component: PollStatisticsComponent },
-      { path: 'poll-creator', component: PollCreatorComponent },
+      { path: 'poll-creator/:type', component: PollCreatorComponent },
       { path: 'poll-answers', component: PollAnswersComponent },
       { path: 'polls-admin', component: PollsAdminPanelComponent }
       

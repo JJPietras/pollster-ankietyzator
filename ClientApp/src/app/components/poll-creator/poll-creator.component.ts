@@ -1,8 +1,8 @@
 import {Component, OnInit, OnDestroy, Input, Inject, EventEmitter, Output} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {Router, ActivatedRoute} from '@angular/router'; 
+import {Router, ActivatedRoute} from '@angular/router';  
 import { AuthenticationService } from 'src/app/services/authorisation.service';
-import { PollsService } from 'src/app/services/polls-service';
+import { PollsService } from 'src/app/services/polls-service'; 
 import { QuestionType } from 'src/app/models/question-type.model';
 import Swal from 'sweetalert2';
 
@@ -15,29 +15,52 @@ import Swal from 'sweetalert2';
 })
 
 export class PollCreatorComponent implements OnInit {
-
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
-   private router: Router, private authenticationService: AuthenticationService, private pollsService: PollsService) {
-  }
-
   questionsCreator: NewQuestionCreator[]=[];
   newPoll: NewPoll;
   submited = false;
-  ngOnInit() {
-    this.newPoll={
-      title: "",
-      authorId: undefined,
-      description: "",
-      tags: "",
-      emails: "",
-      nonAnonymous: false,
-      archived: false,
-      questions: [],
-      newEmail: "",
-      newEmails: [],
-      newTag: "",
-      newTags: []
+
+  type = "new";
+  
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
+   private router: Router, private authenticationService: AuthenticationService, private pollsService: PollsService, private route: ActivatedRoute) {
+    this.type = this.route.snapshot.paramMap.get('type');
+
+    if (this.type=="edit"){
+      this.newPoll=pollsService.newPollSource.value;
+      this.newPoll.questions.forEach(q => {
+        let opt = (q.type==3)? q.options : q.options.split("/")
+        let temp: NewQuestionCreator = {
+          position: q.position,
+          title: q.title,
+          options: opt,
+          allowEmpty: q.allowEmpty,
+          maxLength: q.maxLength,
+          type: q.type,
+          helpText: "",
+      };
+        this.questionsCreator.push(temp)
+      })
     }
+    else {
+      this.newPoll={
+        title: "",
+        authorId: undefined,
+        description: "",
+        tags: "",
+        emails: "",
+        nonAnonymous: false,
+        archived: false,
+        questions: [],
+        newEmail: "",
+        newEmails: [],
+        newTag: "",
+        newTags: []
+      }
+    }
+  }
+
+  ngOnInit() {
+    
   }
   
   setType(type: any, index: any){
@@ -58,8 +81,12 @@ export class PollCreatorComponent implements OnInit {
     });
     this.newPoll.emails = this.newPoll.newEmails.join("/");
     this.newPoll.tags = this.newPoll.newTags.join("/");
-    //console.log(this.newPoll);
-    this.postPoll()
+    console.log(this.newPoll);
+
+    if (this.type=='new')
+      this.postPoll()
+    else if (this.type=='edit')
+      this.putPoll()
   }
 
   removeQuestion(index: number){
@@ -97,6 +124,34 @@ export class PollCreatorComponent implements OnInit {
     }
   }
   
+  putPoll(){
+    if(this.newPoll && !this.submited){
+      this.submited = true;
+      this.pollsService.showLoading("Aktualizacja ankiety.")
+      
+      this.http
+        .put<NewPoll>(this.baseUrl + "polls/update-poll", this.newPoll)
+        .subscribe(
+          (result) => {
+            
+            Swal.close();
+            Swal.fire("Gratulacje", "zaktualizowano ankietę", "info").then(
+              () => { this.router.navigate(['/'])}
+            );
+          },
+          (error) => {
+            Swal.close();
+            Swal.fire("Błąd", error.message, "error");
+            console.log(error.message);
+            this.submited = false;
+          }
+        );
+    }
+    else{
+      Swal.fire("Nie można przesłać odpowiedzi.", "", "error");
+    }
+  }
+
   convertQuestion(question: NewQuestionCreator): NewQuestion{
     let options: string;
 

@@ -11,7 +11,9 @@ export class PollsService {
   pollSource: BehaviorSubject<Poll>;
   currentPoll: Observable<Poll>;
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) { }
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private router: Router) { 
+
+  }
 
   changePoll(poll: Poll) {
     if (!this.pollSource) {
@@ -31,6 +33,17 @@ export class PollsService {
       this.currentPollStats = this.pollStatsSource.asObservable();
     }
     this.pollStatsSource.next(poll);
+  }
+
+  newPollSource: BehaviorSubject<NewPoll>;
+  currentNewPoll: Observable<NewPoll>;
+
+  changeNewPoll(poll: NewPoll) {
+    if (!this.newPollSource) {
+      this.newPollSource = new BehaviorSubject(poll);
+      this.currentNewPoll = this.newPollSource.asObservable();
+    }
+    this.newPollSource.next(poll);
   }
 
   deletePoll(poll: PollStats) {
