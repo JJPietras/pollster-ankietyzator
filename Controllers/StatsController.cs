@@ -3,8 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
-using Ankietyzator.Models.DataModel.StatModel;
-using Ankietyzator.Models.DTO.PollDTOs;
 using Ankietyzator.Models.DTO.StatsDTOs;
 using Ankietyzator.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
