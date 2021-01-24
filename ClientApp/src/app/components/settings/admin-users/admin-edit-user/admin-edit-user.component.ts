@@ -11,8 +11,7 @@ import { AdminUsersComponent } from '../admin-users.component';
 
 @Component({
   selector: 'app-admin-edit-user',
-  templateUrl: './admin-edit-user.component.html',
-  styleUrls: ['./admin-edit-user.component.css']
+  templateUrl: './admin-edit-user.component.html'
 })
 
 export class AdminEditUserComponent  {

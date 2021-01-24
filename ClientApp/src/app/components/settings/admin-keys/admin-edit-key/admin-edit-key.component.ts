@@ -11,8 +11,7 @@ import { AdminKeysComponent } from '../admin-keys.component';
 
 @Component({
   selector: 'app-admin-info-popup',
-  templateUrl: './admin-edit-key.component.html',
-  styleUrls: ['./admin-edit-key.component.css']
+  templateUrl: './admin-edit-key.component.html'
 })
 
 export class AdminEditKeyComponent  {
