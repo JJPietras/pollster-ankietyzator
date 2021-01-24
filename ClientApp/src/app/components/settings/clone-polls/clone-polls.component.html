@@ -1,13 +1,14 @@
 <div>
 
-    <h1 class="mt-3">Podaj identyfikator ankietera oraz ankiety.</h1>
+    <h1 class="mt-3 mb-3">Podaj identyfikator ankietera oraz ankiety.</h1>
     <form>
+        <h3>Inni ankieterzy mogą udostępnić Tobie swój identyfikator oraz identyfikator ankiety, by udostępnić Ci jej schemat.</h3>
 
         <input class="form-control mt-5" type="number" placeholder="Identyfikator ankiety" [(ngModel)]="pollId" [ngModelOptions]="{standalone: true}" required/>
 
         <input class="form-control mt-5" type="number" placeholder="Identyfikator ankietera" [(ngModel)]="pollsterId" [ngModelOptions]="{standalone: true}" required/>
 
-        <button class="btn btn-success btn-lg mt-5" (click)="clonePoll()">Sklonuj ankietę.</button>
+        <button class="btn btn-success btn-lg mt-5" (click)="clonePoll()">Sklonuj ankietę</button>
     </form>
 
 </div>

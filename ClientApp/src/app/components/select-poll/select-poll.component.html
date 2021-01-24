@@ -7,7 +7,6 @@
                 <table *ngIf="pollsUnfilled.length>0" class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Numer ankiety</th>
                             <th scope="col">Tytuł ankiety</th>
                             <th scope="col">Tagi</th>
                             <th scope="col">Autor</th>
@@ -16,7 +15,6 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let poll of pollsUnfilled" (click)="selectPoll(poll)" class="clickable">
-                            <th scope="row">{{poll.pollId}}</th>
                             <td>{{poll.title}}</td>
                             <td>{{poll.tags}}</td>
                             <td>{{poll.authorName}}</td>
@@ -37,7 +35,6 @@
                 <table *ngIf="pollsFilled.length>0" class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Numer ankiety</th>
                             <th scope="col">Tytuł ankiety</th>
                             <th scope="col">Tagi</th>
                             <th scope="col">Autor</th>
@@ -47,7 +44,6 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let poll of pollsFilled">
-                            <th scope="row">{{poll.pollId}}</th>
                             <td>{{poll.title}}</td>
                             <td>{{poll.tags}}</td>
                             <td>{{poll.authorName}}</td>
