@@ -33,7 +33,7 @@ namespace Ankietyzator.Controllers
         }*/
         
         [HttpGet("get-keys")]
-        //TODO: uncomment [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUpgradeKeys()
         {
             var keysResponse = await _keyService.GetUpgradeKeys();
@@ -43,7 +43,7 @@ namespace Ankietyzator.Controllers
         //===================== PUT ========================//
         
         [HttpPut("update-key")]
-        //TODO: uncomment [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUpgradeKey(UpdateUpgradeKeyDto upgradeKey)
         {
             var keysResponse = await _keyService.UpdateUpgradeKey(upgradeKey);
@@ -55,7 +55,7 @@ namespace Ankietyzator.Controllers
         //===================== POST =======================//
         
         [HttpPost("add-key")]
-        //TODO: uncomment [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddUpgradeKey(UpgradeKey upgradeKey)
         {
             var keysResponse = await _keyService.AddUpgradeKey(upgradeKey);

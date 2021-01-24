@@ -11,13 +11,8 @@ export class PollsAdminPanelPipe implements PipeTransform{
         if(!polls || !searchTerm){
           return polls;
         }
-    
+        
         return polls.filter(poll =>
           poll.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);
-    
-      
       }
-
-
-
 }

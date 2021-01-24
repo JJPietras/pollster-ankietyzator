@@ -15,12 +15,17 @@
 
         </mat-tab>
 
-        <mat-tab *ngIf="userType > 1" label="Administrator">
+        <mat-tab *ngIf="userType > 1" label="Administrator - Klucze">
             <div>
-                <app-admin-info></app-admin-info>
+                <app-admin-keys></app-admin-keys>
             </div>
         </mat-tab>
 
+        <mat-tab *ngIf="userType > 1" label="Administrator - Użytkownicy">
+            <div>
+                <app-admin-keys></app-admin-keys>
+            </div>
+        </mat-tab>
 
     </mat-tab-group>
 

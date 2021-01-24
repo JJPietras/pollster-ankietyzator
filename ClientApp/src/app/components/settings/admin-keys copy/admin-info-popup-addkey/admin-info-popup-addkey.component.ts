@@ -9,7 +9,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/authorisation.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import Swal from 'sweetalert2';
-import { AdminInfoComponent } from '../admin-info.component';
+import { AdminKeysComponent } from '../admin-keys.component';
 
 @Component({
   selector: 'app-admin-info-popup-addkey',
@@ -37,7 +37,7 @@ export class AdminInfoPopupAddkeyComponent implements OnInit {
   
   get key(){ return this.keyControl};
   
-  constructor(public dialogRef: MatDialogRef<AdminInfoComponent>,
+  constructor(public dialogRef: MatDialogRef<AdminKeysComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,  public httpclient: HttpClient, 
     public authenticationService: AuthenticationService,
     @Inject('BASE_URL') public baseUrl: string, private router: Router,
