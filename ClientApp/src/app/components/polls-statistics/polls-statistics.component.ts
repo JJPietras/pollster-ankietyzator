@@ -79,6 +79,8 @@ export class PollsStatisticsComponent implements OnInit {
   }
 
   getPercentage(filled: number, list: PollStats[]): string{
+    if (list.reduce((sum, current) => sum + current.completions, 0) == 0)
+      return "0";
     return (filled / list.reduce((sum, current) => sum + current.completions, 0) * 100).toFixed(1);
    }
 }
