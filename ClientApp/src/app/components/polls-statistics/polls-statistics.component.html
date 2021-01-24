@@ -34,7 +34,7 @@
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
-                                <td>{{stat.percentage}}%</td>
+                                <td>{{getPercentage(stat.completions, pollsActive)}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
 
                             </tr>
@@ -76,7 +76,7 @@
                                 <td>{{stat.title}}</td>
                                 <td>{{stat.description}}</td>
                                 <td>{{stat.completions}}</td>
-                                <td>{{stat.percentage}}%</td>
+                                <td>{{getPercentage(stat.completions, pollsArchived)}}%</td>
                                 <td>{{(stat.nonAnonymous)? "Nieanonimowa" : "Anonimowa"}}</td>
                             </tr>
                         </tbody>
