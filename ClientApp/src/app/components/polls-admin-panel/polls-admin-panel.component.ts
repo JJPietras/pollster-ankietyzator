@@ -6,7 +6,6 @@ import { forkJoin } from 'rxjs';
 import { PollsService } from "../../services/polls-service";
 import Swal from 'sweetalert2';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { PollsAdminPanelPopupComponent } from './polls-admin-panel-popup/polls-admin-panel-popup.component';
 
 @Component({
   selector: 'app-polls-admin-panel',
@@ -47,17 +46,6 @@ export class PollsAdminPanelComponent implements OnInit {
 
     this.loadDetails();
 
-  }
-
-  onShow(poll: PollStats) {
-    this.selectPoll(poll);
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = false;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = "60%";
-    dialogConfig.data = { n: this.pollId, pActive: this.pollsActiveA, pArchive: this.pollsArchivedA, pStats: this.pollStats };
-    this.dialog.open(PollsAdminPanelPopupComponent, dialogConfig).afterClosed().subscribe(result => {
-    });
   }
 
   getPollsData() {
