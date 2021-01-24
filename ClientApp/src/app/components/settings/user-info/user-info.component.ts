@@ -1,17 +1,14 @@
 
-import { Component, Inject, Pipe, NgModule, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Component, Inject, NgModule, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router'
 import { FormsModule } from '@angular/forms';
-import {  BrowserModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from '../../app.component';
 import { AuthenticationService } from "../../../services/authorisation.service";
 import { UpdateAccountDto } from '../../../models/updateDTO.model';
-import { throwToolbarMixedModesError } from '@angular/material';
 import { SettingsService } from 'src/app/services/settings.service';
-import { Observable } from 'rxjs';
-import { subscribeOn } from 'rxjs/operators';
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-info',
@@ -27,164 +24,86 @@ import { subscribeOn } from 'rxjs/operators';
   declarations: [ AppComponent]
 })
 
+export class UserInfoComponent {
 
-export class UserInfoComponent implements OnInit {
-
-  baseUrl : string;
-  keys: Key;
-  keysM: Key[];
-  emailAccount: string = "";
-  //konwersja z stringa na tablice
-  tags: string = "";
   tagsArray: string[] = new Array<string>();
-  //index tagu ktory zostal wybrany
-   currentIndex: number;
-  //modyfikowany
-  modifiedtext: string;
-  //
-  keyChange: string;
-  userTemp;
+
+  newTag: string;
+  user: User;
   
-  updateDTO : UpdateAccountDto = {
-    EMail: '',
-    Tags: 'w',
-    Key: ''
-  };
+  newKey: string = null;
+
+  updateDTO : UpdateAccountDto;
  
+  constructor(public authenticationService: AuthenticationService,public http: HttpClient, 
+    @Inject('BASE_URL') private baseUrl: string, private router: Router, public settingService: SettingsService) {
 
-  constructor(public authenticationService: AuthenticationService,public httpclient: HttpClient, 
-    @Inject('BASE_URL') baseUrl: string, private router: Router, public settingService: SettingsService) {
-    
-    this.baseUrl = baseUrl;
-    let tmpusers;
-    this.emailAccount = this.authenticationService.user.value.eMail;
-    //let tmpusers = this.authenticationService.user.value;
-    //this.userTemp = this.authenticationService.user.value;
-
-    this.httpclient.get<Request>(this.baseUrl + 'accounts/get-accounts').subscribe(result => {
-      tmpusers = result.data;
-      this.tags = tmpusers
-
-    }, error => console.error(error))
-
-    
-
-    this.httpclient.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
-      this.userTemp = result.data;
-      
-    }, error => console.error(error))
-
-     
-    
-    this.tags =  this.authenticationService.user.value.tags;
-
-    this.httpclient.get<Request>(this.baseUrl + 'keys/get-keys').subscribe(result =>{
-      
-      this.keysM = result.data;
-      this.keys = this.settingService.findKey(this.authenticationService.user.value.eMail);
-      
-    }, error => console.error(error));
-    // /this.keys = this.settingService.findKey(this.userTemp.eMail);
-    
-    
-  }
-
-  ngOnInit(){
-    
-    this.tagsArray = (this.tags.split('/')); 
-
-  }
-
-  public findKey(value: Key[], user: User){
-    this.keys = value.find(result => user.eMail === result.eMail);
-    //return this.keys;
-  }
-
-  //ADD TAG
-  public addTag(){
-    if(!(this.modifiedtext.length == 0)){
-      this.tags = this.tags + '/'+ this.modifiedtext;
-      this.tagsArray.push(this.modifiedtext);
-      this.modifiedtext = "";
-
-      this.tags ="";
-      this.tags = this.tagsArray.join('/');
+    if (this.authenticationService.user){
+      this.user = this.authenticationService.user.value;
+      this.tagsArray = this.user.tags.split('/'); 
     }
-     
-
-    
-    
-  }
-
-  //CHANGE TAG
-  public changeTag(){
-    if(!(this.modifiedtext.length == 0)){
-      if (this.currentIndex !== -1) {
-          this.tagsArray[this.currentIndex] = this.modifiedtext;
-      }  
-      this.modifiedtext = "";
-
-      this.resetStringItems(this.tagsArray);
+    else{
+      this.authenticationService.getUser();
+      this.http.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
+        this.user = result.data;
+        this.tagsArray = this.user.tags.split('/'); 
+      }, error => {
+        console.error("Failed to fetch the user session. Please, log in again.")
+      });
     }
-
-  }
-
-
-  //REMOVE TAG
-  public removeTag(){
       
-    if (this.currentIndex !== -1) {
-        this.tagsArray.splice(this.currentIndex, 1);
-    }  
-    this.modifiedtext = "";
-
-    this.resetStringItems(this.tagsArray);
-    
- }
-
- //SELECTED TAG FROM LIST 
-   onItemSelected(val: any){
-    
-    this.modifiedtext = String(val);
-    this.currentIndex  = this.tagsArray.indexOf(this.modifiedtext);
-    
   }
 
-  //METHOD TO USE RESET STRING
-  public resetStringItems(val: string[]){
-
-    this.tags ="";
-    val.forEach(slowo => {
-        this.tags = this.tags + slowo.toString() + "/" ; 
-     })
-     this.tags = this.tags.slice(0,-1);
-
+  deleteTag(option: number){
+    this.tagsArray.splice(option, 1);
   }
 
-  //check if obj is empty
-  isEmptyObject(obj) {
-    return (obj && (Object.keys(obj).length === 0));
+  addTag(){
+    if (this.newTag.trim() == ""){
+      Swal.fire("Podaj poprawny tag.", "", "error");
+    }
+    else{
+      this.tagsArray.push(this.newTag);
+      this.newTag = ""
+    }
   }
 
-
-  //save changes
   saveChanges(){
+    this.updateDTO = {
+      Tags: this.tagsArray.join("/"),
+      EMail: this.user.eMail,
+      Key: this.newKey
+    }
 
-    this.updateDTO.Tags = this.tags;
-    this.updateDTO.EMail =this.emailAccount;
-    this.updateDTO.Key = this.keys.key
-
+    console.log(this.updateDTO)
     if(this.updateDTO){
-      
-        this.httpclient.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
-        //console.log(result);
-        location.reload();
-         }, (error) => console.log(error.message + " + Failed to save changes."));}
-         
+        this.settingService.showLoading("Aktualizacja zmian")
 
+        this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result =>{
+          Swal.close()
+          console.log(result);
+          this.authenticationService.getUser();
+         },  (error) => {
+          Swal.close();
+          Swal.fire("Błąd", error.message, "error");
+          console.log(error.message);
+        });}
   }
-  
 
-  
+  addKey(){
+    Swal.fire({
+      title: "Klucz uprawnień",
+      text: "Podaj klucz:",
+      input: 'text',
+      showCancelButton: true        
+    }).then((result) => {
+      if (result.value || result.value == "") {
+        this.newKey = result.value;
+      }
+      else {
+        this.newKey = null;
+      }
+  });
+  }    
 }
 

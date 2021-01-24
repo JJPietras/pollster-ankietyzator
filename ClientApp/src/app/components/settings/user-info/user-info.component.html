@@ -1,52 +1,30 @@
 <div class="container">
     <h1 class="font-weight-bold">Panel użytkownika</h1>
 
-    <!--<div *ngIf="!isEmptyObject(keys)"></div>-->
-
-    <div *ngIf="(keys | keyvalue)?.length; else other">
-        <div class="mt-5 mb-5 form-group col-6">
-            <h2>Klucze zmiany uprawnień</h2>
-            <h4 class="mt-5">Nazwa klucza:</h4>
-            <input *ngIf="keys.key" class="font-weight-bold form-control" placeholder="{{keys.key}}" readonly/>
-
+    <div *ngIf="user; else loading" class="mt-4 mb-4">
+        <h2>Klucze zmiany uprawnień</h2>
+        <h4 class="mt-4">Wprowadzony klucz:</h4>
+        <div class="row ml-1 mr-1">
+            <input class="font-weight-bold form-control col-sm-9 " placeholder="Brak nowego klucza uprawnień" [(ngModel)]="newKey" readonly/>
+            <button class="btn btn-success btn-sm float-sm-right col-sm-3" (click)="addKey()">Dodaj nowy klucz</button>
         </div>
 
+        <div class="mt-4 ">
+            <h2>Modyfikowanie własnych Tagów</h2>
 
-        <div class="d-flex justify-content-center">
-            <div class="mt-5 w-50  justify-content-center">
-                <h2>Modyfikowanie własnych Tagów</h2>
-                <form>
-                    <div>
-                        <div class="mt-3">
-                            <!--   (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)"    -->
-                            <select class="form-control" (change)="modifiedtext=$event.target.value; this.onItemSelected(modifiedtext)">
-                        <option >Wybierz Tag:</option>
-                            <option *ngFor="let item of tagsArray"  [value]="item"> 
-                                {{item}} 
-                            </option>
-                            <br>
-                            
-                        </select>
+            <h5 class="mt-4">Dodane tagi:</h5>
+            <ul class="list-group">
+                <li *ngFor="let tag of tagsArray; let inx=index" class="list-group-item">{{tag}}
+                    <button class="btn btn-danger btn-sm float-sm-right" (click)="deleteTag(inx)">&times;</button>
+                </li>
+            </ul>
 
-                        </div>
+            <div *ngIf="tagsArray.length<1" class="alert alert-secondary mt-2">Brak</div>
 
-                        <div class="mt-5">
-                            <input class="form-control" name="dodaj" placeholder="Wprowadź" [(ngModel)]="modifiedtext" [ngModelOptions]="{standalone: true}">
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn btn-primary mr-1" (click)="addTag()">
-                                Dodaj
-                            </button>
-                                <button class="btn btn-primary mr-1" (click)="changeTag()">
-                                Zamień
-                            </button>
-                                <button class="btn btn-primary" (click)="removeTag()">
-                                Usuń
-                            </button>
-                            </div>
-                        </div>
-
-                    </div>
-                </form>
+            <div class="mt-4">
+                <label>Dodaj tag</label>
+                <input class="form-control" placeholder="Podaj tag" [(ngModel)]="newTag" [ngModelOptions]="{standalone: true}" />
+                <button class="btn btn-success mt-3" (click)="addTag()">Dodaj</button>
             </div>
         </div>
 
@@ -54,10 +32,10 @@
             <button class="btn btn-success" (click)="saveChanges()">Zapisz zmiany</button>
         </div>
 
-        <!-- </div>   -->
-
-        <ng-template #other>
-            <h2>Brak przypisanego klucza do twojego konta.</h2>
-        </ng-template>
-
     </div>
+
+    <ng-template #loading>
+        <h2>Wczytywanie</h2>
+    </ng-template>
+
+</div>

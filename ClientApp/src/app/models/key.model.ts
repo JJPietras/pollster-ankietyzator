@@ -1,5 +1,5 @@
 interface Key{
-    KeyId: number;
+    KeyId?: number;
     key: string;
     eMail: string;
     userType: number;
