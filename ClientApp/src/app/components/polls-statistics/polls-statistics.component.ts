@@ -78,8 +78,7 @@ export class PollsStatisticsComponent implements OnInit {
 
   }
 
-  archivePoll(pollId: number){
-
-  }
-
+  getPercentage(filled: number, list: PollStats[]): string{
+    return (filled / list.reduce((sum, current) => sum + current.completions, 0) * 100).toFixed(1);
+   }
 }
