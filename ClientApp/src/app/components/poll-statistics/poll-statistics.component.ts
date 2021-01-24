@@ -74,31 +74,37 @@ export class PollStatisticsComponent implements OnInit {
         this.graphs.push({ title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts })
       }
       else {
-        let values = [];
-        let counts = [];
-
-        stat.answerCounts.split("/").forEach(
-          cnt => {
-            values.push(Number(cnt.split(";")[0]));
-            counts.push(Number(cnt.split(";")[1]));
-          })
-
-        this.graphs.push({
-          data: [{
-            x: values,
-            y: counts,
-            type: 'bar',
-            marker: {
-              color: 'rgb(49,130,189)',
-              opacity: 0.7,
+        let cunt = stat.answerCounts.split("/")
+        if (this.checkForAnswers(cunt)) {
+          let values = [];
+          let counts = [];
+  
+          stat.answerCounts.split("/").forEach(
+            cnt => {
+              values.push(Number(cnt.split(";")[0]));
+              counts.push(Number(cnt.split(";")[1]));
+            })
+  
+          this.graphs.push({
+            data: [{
+              x: values,
+              y: counts,
+              type: 'bar',
+              marker: {
+                color: 'rgb(49,130,189)',
+                opacity: 0.7,
+              }
+            }],
+  
+            layout: {
+              xaxis: { range: [stat.options.split("/")[0], stat.options.split("/")[1]] },
+              title: "(" + stat.position + ") " + stat.title
             }
-          }],
-
-          layout: {
-            xaxis: { range: [stat.options.split("/")[0], stat.options.split("/")[1]] },
-            title: "(" + stat.position + ") " + stat.title
-          }
-        })
+          })
+        }
+        else {
+          this.graphs.push({ title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts })
+        }
       }
     });
   }
@@ -149,4 +155,14 @@ export class PollStatisticsComponent implements OnInit {
     this.router.navigate(['/poll-creator/edit']);
   }
 
+  getCount(counts: string): string{
+    if (!counts || counts.length==0)
+    return "0";
+    
+    let temp = counts.split("/");
+    if (temp.length>0)
+      return counts.split("/")[0];
+    else
+      return "0";
+  }
 }

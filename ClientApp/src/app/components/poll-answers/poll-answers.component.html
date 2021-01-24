@@ -46,7 +46,8 @@
                         <label>Podaj wartość od {{options.min}} do {{options.max}}</label>
                         <p>Wybrana wartość: {{(question.answer)? question.answer: "wybierz liczbę"}}</p>
 
-                        <input type="range" class="custom-range" min="{{options.min}}" max="{{options.max}}" [value]="getAnswer(question.questionId)" id={{question.questionId}} disabled="disabled">
+                        <!-- <input type="range" class="custom-range" min="{{options.min}}" max="{{options.max}}" [value]="getAnswer(question.questionId)" id={{question.questionId}} disabled="disabled"> -->
+                        <ngx-slider [(value)]="question.answer" [options]="{floor: options.min, ceil: options.max, step: options.step, showTicks: true}"></ngx-slider>
                     </ng-container>
 
                     <div class="alert alert-secondary mt-2" *ngIf="!question.allowEmpty">To pole jest wymagane</div>

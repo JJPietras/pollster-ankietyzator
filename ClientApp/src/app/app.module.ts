@@ -49,6 +49,7 @@ import { AdminKeysComponent } from './components/settings/admin-keys/admin-keys.
 import { AdminUsersComponent } from './components/settings/admin-users/admin-users.component';
 import { AdminEditUserComponent } from './components/settings/admin-users/admin-edit-user/admin-edit-user.component';
 
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -87,6 +88,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
     BrowserAnimationsModule,
     CommonModule, PlotlyModule,
     NgbModule,
+    NgxSliderModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user-login', component: LoginComponent },

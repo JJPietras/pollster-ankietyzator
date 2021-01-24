@@ -27,7 +27,9 @@ export class PollComponent{
     this.poll = this.pollsService.pollSource.value;
     this.poll.questions.forEach(q => {
       if (q.type==1)
-        q.answer = new Array<number>(q.options.split('/').length)
+        q.answer = new Array<number>(q.options.split('/').length);
+      if (q.type==2)
+        q.answer = null;
     });
   }
 
