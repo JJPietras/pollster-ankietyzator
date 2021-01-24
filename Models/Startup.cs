@@ -61,8 +61,8 @@ namespace Ankietyzator.Models
             }).AddGoogle(options =>
             {
                 IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
-                options.ClientId = googleAuthNSection["ClientId"];
-                options.ClientSecret = googleAuthNSection["ClientSecret"];
+                options.ClientId = "239751999427-njuioj9lb28dimdq02pn3gv1itqcd8be.apps.googleusercontent.com";//googleAuthNSection["ClientId"];
+                options.ClientSecret = "jmwj5AIGrZNkia7-WTHmpd5E";//googleAuthNSection["ClientSecret"];
                 options.SaveTokens = true;
                 options.ClaimActions.Clear();
                 options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
