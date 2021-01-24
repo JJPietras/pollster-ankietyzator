@@ -155,18 +155,12 @@ namespace Ankietyzator.Services.Implementations
             {
                 var questionsResponse = await GetQuestionsDto(pollForm, response, pollFormsDto);
                 if (questionsResponse.Data == null) return response.Failure(questionsResponse);
-                Console.WriteLine("HERE");
             }
             
             foreach (GetPollFormDto formDto in pollFormsDto)
             {
                 formDto.AuthorEmail = pollster.EMail;
                 formDto.AuthorName = pollster.Name;
-            }
-
-            foreach (GetPollFormDto getPollFormDto in pollFormsDto)
-            {
-                Console.WriteLine(getPollFormDto.Title);
             }
 
             return response.Success(pollFormsDto, PollFormsSuccessStr);
