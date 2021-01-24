@@ -1,11 +1,10 @@
 <div class="container">
-    <h1 class="font-weight-bold">Panel użytkownika</h1>
-
     <div *ngIf="user; else loading" class="mt-4 mb-4">
         <h2>Klucze zmiany uprawnień</h2>
         <h4 class="mt-4">Wprowadzony klucz:</h4>
         <div class="row ml-1 mr-1">
-            <input class="font-weight-bold form-control col-sm-9 " placeholder="Brak nowego klucza uprawnień" [(ngModel)]="newKey" readonly/>
+            <input class="form-control col-sm-8" placeholder="Brak nowego klucza uprawnień" [(ngModel)]="newKey" readonly/>
+            <div class="col-sm-1 "></div>
             <button class="btn btn-success btn-sm float-sm-right col-sm-3" (click)="addKey()">Dodaj nowy klucz</button>
         </div>
 

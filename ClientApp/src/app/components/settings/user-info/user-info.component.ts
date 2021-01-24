@@ -12,8 +12,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-info',
-  templateUrl: './user-info.component.html',
-  styleUrls: ['./user-info.component.scss']
+  templateUrl: './user-info.component.html'
 })
 
 @NgModule({
@@ -43,14 +42,18 @@ export class UserInfoComponent {
       this.tagsArray = this.user.tags.split('/');
     }
     else {
-      this.authenticationService.getUser();
-      this.http.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
-        this.user = result.data;
-        this.tagsArray = this.user.tags.split('/');
-      }, error => {
-        console.error("Failed to fetch the user session. Please, log in again.")
-      });
+      this.refreshUser();
     }
+  }
+
+  refreshUser(){
+    this.authenticationService.getUser();
+    this.http.get<Request>(this.baseUrl + 'accounts/get-account').subscribe(result => {
+      this.user = result.data;
+      this.tagsArray = this.user.tags.split('/');
+    }, error => {
+      console.error("Failed to fetch the user session. Please, log in again.")
+    });
   }
 
   deleteTag(option: number) {
@@ -81,7 +84,7 @@ export class UserInfoComponent {
       this.http.put<UpdateAccountDto>(this.baseUrl + "accounts/update-my-account", this.updateDTO).subscribe(result => {
         Swal.close()
         console.log(result);
-        this.authenticationService.getUser();
+        this.refreshUser();
       }, (error) => {
         Swal.close();
         Swal.fire("Błąd", error.message, "error");
