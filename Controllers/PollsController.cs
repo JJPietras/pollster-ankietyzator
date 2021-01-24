@@ -28,7 +28,7 @@ namespace Ankietyzator.Controllers
         //#### USER ####//
 
         [HttpGet("get-user-un-filled")]
-        [Authorize(Roles = "user, admin")]
+        [Authorize(Roles = "user, pollster, admin")]
         public async Task<IActionResult> GetUserUnFilledPollForms()
         {
             var pollsResponse = await _polling.GetUserPollForms(GetUserEmail(), false);
@@ -38,7 +38,7 @@ namespace Ankietyzator.Controllers
         }
 
         [HttpGet("get-user-filled")]
-        [Authorize(Roles = "user, admin")] //TODO: remove admin from both
+        [Authorize(Roles = "user, pollster, admin")] //TODO: remove admin from both
         public async Task<IActionResult> GetUserFilledPollForms()
         {
             var pollsResponse = await _polling.GetUserPollForms(GetUserEmail(), true);
