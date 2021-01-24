@@ -49,8 +49,6 @@ import { AdminKeysComponent } from './components/settings/admin-keys/admin-keys.
 import { AdminUsersComponent } from './components/settings/admin-users/admin-users.component';
 import { AdminEditUserComponent } from './components/settings/admin-users/admin-edit-user/admin-edit-user.component';
 
-import { PollsAdminPanelPopupComponent } from './components/polls-admin-panel/polls-admin-panel-popup/polls-admin-panel-popup.component';
-
 
 PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -69,7 +67,6 @@ PlotlyModule.plotlyjs = PlotlyJS;
     PollCreatorComponent,
     PollAnswersComponent,
     PollsAdminPanelComponent,
-    PollsAdminPanelPopupComponent,
     PollsAdminPanelPipe, KeysAdminPipe, UsersAdminPipe,
     FooterComponent,
     ClonePollsComponent
@@ -108,7 +105,7 @@ PlotlyModule.plotlyjs = PlotlyJS;
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [AdminEditKeyComponent, AdminEditUserComponent, PollsAdminPanelPopupComponent]
+  entryComponents: [AdminEditKeyComponent, AdminEditUserComponent]
 })
 
 export class AppModule {
