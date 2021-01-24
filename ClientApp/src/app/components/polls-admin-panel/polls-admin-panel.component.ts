@@ -55,7 +55,8 @@ export class PollsAdminPanelComponent implements OnInit {
 
     forkJoin([r1, r2, r3]).subscribe(result => {
       const [active, archived, stats] = result;
-
+      console.log(active)
+      console.log(archived)
       this.pollsActiveA = active.data.map(item => {
         const obj = stats.data.find(o => o.pollId === item.pollId);
         return { ...item, ...obj };
