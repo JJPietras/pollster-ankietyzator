@@ -63,7 +63,7 @@ export class PollComponent{
     this.poll.questions.forEach(
       q => {
         if (q.type==1){
-            var finalAnswer = []
+            let finalAnswer = []
             q.answer.forEach((element, index) => {
               if (element)
                 finalAnswer.push(index);
@@ -97,8 +97,8 @@ export class PollComponent{
   }
 
   validate(): boolean{
-    var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
-    var valid = true;
+    let form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
+    let valid = true;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -109,7 +109,7 @@ export class PollComponent{
   }
 
   checkboxValidate(answers: any[]): boolean{
-    var res = false;
+    let res = false;
     answers.forEach(a => {
       if (a==true)
         res = true;

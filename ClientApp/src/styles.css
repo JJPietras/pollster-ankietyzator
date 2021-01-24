@@ -87,3 +87,7 @@ code {
 .fill-page {
     height: 80%;
 }
+
+.clickable {
+    cursor: pointer;
+}

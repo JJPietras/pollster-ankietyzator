@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 export class PollCreatorComponent implements OnInit {
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string,
-   private router: Router, private authenticationService: AuthenticationService) {
+   private router: Router, private authenticationService: AuthenticationService, private pollsService: PollsService) {
   }
 
   questionsCreator: NewQuestionCreator[]=[];
@@ -41,7 +41,7 @@ export class PollCreatorComponent implements OnInit {
   }
   
   setType(type: any, index: any){
-    var options: any = [];
+    let options: any = [];
     if (type == 2 || type == 4)
       options= Array(3);
     else if (type == 3)
@@ -73,16 +73,19 @@ export class PollCreatorComponent implements OnInit {
   postPoll(){
     if(this.newPoll && !this.submited){
       this.submited = true;
+      this.pollsService.showLoading("Tworzenie ankiety.")
       this.http
         .post<NewPoll>(this.baseUrl + "polls/create-poll", this.newPoll)
         .subscribe(
           (result) => {
             //console.log(result);
+            Swal.close();
             Swal.fire("Gratulacje", "utworzono ankietę", "info").then(
               () => { this.router.navigate(['/'])}
             );
           },
           (error) => {
+            Swal.close();
             Swal.fire("Błąd", error.message, "error");
             console.log(error.message);
             this.submited = false;
@@ -95,7 +98,7 @@ export class PollCreatorComponent implements OnInit {
   }
   
   convertQuestion(question: NewQuestionCreator): NewQuestion{
-    var options: string;
+    let options: string;
 
     if (question.type == 3)
       options = question.options;
@@ -171,9 +174,9 @@ export class PollCreatorComponent implements OnInit {
 
   validate(){
     //console.log(this.newPoll);
-    var form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
-    var optionsAdded = true;
-    var typesAdded = true;
+    let form = document.getElementsByClassName('needs-validation')[0] as HTMLFormElement;
+    let optionsAdded = true;
+    let typesAdded = true;
     this.questionsCreator.forEach(q => {
       if (q.type!=null){
         if (q.type < 2)

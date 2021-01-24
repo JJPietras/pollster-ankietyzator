@@ -122,7 +122,4 @@ export class AuthenticationService{
     return window.open(url, name, options);
   }
 
-  
-
-
 }
