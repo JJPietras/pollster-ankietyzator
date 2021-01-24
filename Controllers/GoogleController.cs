@@ -57,7 +57,7 @@ namespace Ankietyzator.Controllers
             //return Redirect("https://localhost:5001");
             string baseString = "https://www.google.com/accounts/Logout?continue=";
             string appEngine = "https://appengine.google.com/_ah/logout?continue="; 
-            return Redirect(baseString + appEngine + "https://localhost:5001");
+            return Redirect(baseString + appEngine + "https://cc-2020-group-one-ankietyzator.azurewebsites.net/");
         }
         
         //===================================== HELPER METHODS =====================================//

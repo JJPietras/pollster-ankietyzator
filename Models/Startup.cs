@@ -57,10 +57,10 @@ namespace Ankietyzator.Models
             {
                 options.LoginPath = "/google/google-login";
                 options.LogoutPath = "/google/google-logout";
-                options.ReturnUrlParameter = "https://localhost:5001";
+                options.ReturnUrlParameter = "https://cc-2020-group-one-ankietyzator.azurewebsites.net/";
             }).AddGoogle(options =>
             {
-                IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
+                //IConfigurationSection googleAuthNSection = Configuration.GetSection("Authentication:Google");
                 options.ClientId = "239751999427-njuioj9lb28dimdq02pn3gv1itqcd8be.apps.googleusercontent.com";//googleAuthNSection["ClientId"];
                 options.ClientSecret = "jmwj5AIGrZNkia7-WTHmpd5E";//googleAuthNSection["ClientSecret"];
                 options.SaveTokens = true;
@@ -68,7 +68,7 @@ namespace Ankietyzator.Models
                 options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
                 options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
                 options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-                options.ReturnUrlParameter = "https://localhost:5001";
+                options.ReturnUrlParameter = "https://cc-2020-group-one-ankietyzator.azurewebsites.net/";
             });
 
             /*services.AddAuthorization(options =>
