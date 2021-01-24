@@ -65,7 +65,8 @@ namespace Ankietyzator.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateOtherAccount(UpdateAccountDto updateAccountDto)
         {
-            ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
+            ServiceResponse<Account> accountResponse = await _register.UpdateOtherAccount(updateAccountDto);
+            //ServiceResponse<Account> accountResponse = await _register.UpdateMyAccount(updateAccountDto, HttpContext);
             var response = new Response<Account>(accountResponse);
             return accountResponse.Code switch
             {
