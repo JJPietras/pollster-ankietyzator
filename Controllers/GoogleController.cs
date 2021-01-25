@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ankietyzator.Models;
@@ -53,13 +54,23 @@ namespace Ankietyzator.Controllers
         [Route("google-logout")]
         public async Task<RedirectResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            const string cookieScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            await HttpContext.SignOutAsync(cookieScheme);
+
             var token = await HttpContext.GetTokenAsync("access_token");
-            Console.WriteLine(token);
-            //return Redirect("https://localhost:5001");
-            string baseString = "https://www.google.com/accounts/Logout?continue=";
-            string appEngine = "https://appengine.google.com/_ah/logout?continue="; 
-            return Redirect(baseString + appEngine + "https://cc-2020-group-one-ankietyzator.azurewebsites.net/");
+            string ass= "https://accounts.google.com/o/oauth2/revoke?token=" + token;
+            HttpClient client = new HttpClient();
+            var values = new Dictionary<string, string>
+            {
+                { "token", token }
+            };
+
+            var content = new FormUrlEncodedContent(values);
+            var response = await client.PostAsync("https://accounts.google.com/o/oauth2/revoke", content);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            return Redirect("https://cc-2020-group-one-ankietyzator.azurewebsites.net/"); // "https://cc-2020-group-one-ankietyzator.azurewebsites.net/" "https://localhost:5001"
         }
         
         //===================================== HELPER METHODS =====================================//
