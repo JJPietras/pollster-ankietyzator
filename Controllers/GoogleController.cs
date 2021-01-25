@@ -46,7 +46,7 @@ namespace Ankietyzator.Controllers
             string role = await AddAccountTypeRole(result, registered ? account.UserType.GetRole() : "user");
 
             string message = registered ? "User signed-up: " : "Registered new user: ";
-            Console.WriteLine(message + account.EMail + " " + account.Name + " role: " + role);
+            Console.WriteLine(message + account.EMail + " " + account.Name + " role: " + role );
             return Redirect("~/");
         }
 
@@ -54,6 +54,8 @@ namespace Ankietyzator.Controllers
         public async Task<RedirectResult> Logout()
         {
             await HttpContext.SignOutAsync();
+            var token = await HttpContext.GetTokenAsync("access_token");
+            Console.WriteLine(token);
             //return Redirect("https://localhost:5001");
             string baseString = "https://www.google.com/accounts/Logout?continue=";
             string appEngine = "https://appengine.google.com/_ah/logout?continue="; 
