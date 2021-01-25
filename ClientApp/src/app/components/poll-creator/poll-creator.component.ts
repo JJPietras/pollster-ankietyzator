@@ -187,7 +187,7 @@ export class PollCreatorComponent implements OnInit {
       Swal.fire("Nie można dodać pustego pytania.", "", "error");
     }
     else{
-      this.questionsCreator[question].options.push(text);
+      this.questionsCreator[question].options.push(text.split("/").join("\\"));
       //console.log(this.questionsCreator);
       this.questionsCreator[question].helpText = ""
     }
@@ -221,7 +221,7 @@ export class PollCreatorComponent implements OnInit {
       Swal.fire("Podaj poprawny tag.", "", "error");
     }
     else{
-      this.newPoll.newTags.push(this.newPoll.newTag);
+      this.newPoll.newTags.push(this.newPoll.newTag.split("/").join("-"));
       //console.log(this.questionsCreator);
       this.newPoll.newTag = ""
     }

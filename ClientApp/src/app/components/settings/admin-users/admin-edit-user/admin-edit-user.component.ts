@@ -63,7 +63,7 @@ export class AdminEditUserComponent  {
       Swal.fire("Podaj poprawny tag.", "", "error");
     }
     else {
-      this.tagsArray.push(this.newTag);
+      this.tagsArray.push(this.newTag.split("/").join("-"));
       this.newTag = ""
     }
   }
