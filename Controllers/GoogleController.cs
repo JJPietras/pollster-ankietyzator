@@ -58,7 +58,7 @@ namespace Ankietyzator.Controllers
             await HttpContext.SignOutAsync(cookieScheme);
 
             var token = await HttpContext.GetTokenAsync("access_token");
-            string ass= "https://accounts.google.com/o/oauth2/revoke?token=" + token;
+            
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {

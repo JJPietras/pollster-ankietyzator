@@ -75,7 +75,7 @@ export class PollStatisticsComponent implements OnInit {
       }
       else {
         let cunt = stat.answerCounts.split("/")
-        if (this.checkForAnswers(cunt)) {
+        //if (this.checkForAnswers(cunt)) {
           let values = [];
           let counts = [];
   
@@ -101,10 +101,10 @@ export class PollStatisticsComponent implements OnInit {
               title: "(" + stat.position + ") " + stat.title
             }
           })
-        }
-        else {
-          this.graphs.push({ title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts })
-        }
+        // }
+        // else {
+        //   this.graphs.push({ title: "(" + stat.position + ") " + stat.title, counts: stat.answerCounts })
+        // }
       }
     });
   }
