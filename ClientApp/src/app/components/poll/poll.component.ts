@@ -38,10 +38,12 @@ export class PollComponent{
     this.reformatAndAccept();
 
     if (this.answersFilled && this.validate()){
+      this.pollsService.showLoading("Przesyłanie ankiety.")
       this.http
       .post<Answer[]>(this.baseUrl + "answers/add-answers", this.answers)
       .subscribe(
         (result) => {
+          Swal.close();
           console.log(result);
           Swal.fire("Dziękujemy.", "Dodano odpowiedzi.", "info").then(
             () => {
@@ -51,6 +53,7 @@ export class PollComponent{
         },
         (error) => {
           Swal.fire("Błąd", error.message, "error");
+          Swal.close();
         }
       );
     }
