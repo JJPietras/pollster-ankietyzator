@@ -14,6 +14,20 @@
 * JetBrains Rider 2020.1
 * JetBrains DataGrip 2020.1
 
+## Stack:
+
+### Backend
+
+* ASP.NET Core 3.1
+* Entity Framework Core 3.1
+* C# 8.0
+
+### Frontend
+#### (Forced downgrade due to deployment limitations)
+
+* TypeScript 3.5.3
+* Anguar 8
+
 ## Azure Components:
 
 * SQL Database
